@@ -494,6 +494,77 @@ svg.plot{width:100%;height:auto;overflow:hidden}
   .cdi-side{border-left:none;border-top:1px solid var(--line);padding-left:0;padding-top:11px;
     flex-direction:row;justify-content:space-between;text-align:left}
 }
+
+/* ============ LISTA POR BANCO ============ */
+#posList[data-pronto] .grp{animation:none}
+#posList{overflow:visible}
+.grp{position:relative;animation:sobe .45s var(--mola) backwards}
+.grp + .grp{border-top:1px solid var(--line)}
+.grp-row{display:flex;align-items:center;gap:13px;padding:15px 15px 17px;cursor:pointer;
+  position:relative;transition:background .2s, transform .3s var(--mola);min-height:70px}
+.grp-row:active{transform:scale(.985);background:var(--surface-2)}
+.grp-row .mid{flex:1;min-width:0}
+.grp-row .mid b{display:block;font-size:15px;font-weight:600;letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.grp-row .mid span{display:block;font-size:12px;color:var(--ink-3);margin-top:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.grp-row .end{text-align:right;flex:none}
+.grp-row .end b{display:block;font-size:15.5px;font-weight:600;font-family:'JetBrains Mono',monospace;
+  font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.grp-row .end span{display:block;font-size:11.5px;color:var(--up);margin-top:2px}
+.grp.open .grp-row{background:var(--surface-2)}
+.grp.open .chev{transform:rotate(90deg)}
+/* barrinha de participação na carteira */
+.grp-bar{position:absolute;left:70px;right:44px;bottom:8px;height:2.5px;border-radius:3px;
+  background:rgba(14,18,32,.06);overflow:hidden}
+.grp-bar i{display:block;height:100%;background:var(--c);border-radius:3px;opacity:.75;
+  transition:width .8s var(--mola)}
+.grp.open .grp-bar{opacity:0}
+
+/* dobra que anima até a altura real do conteúdo */
+.fold{display:grid;grid-template-rows:0fr;transition:grid-template-rows .42s var(--mola)}
+.fold-in{overflow:hidden;min-height:0}
+.grp.open > .fold, .apl.open > .fold{grid-template-rows:1fr}
+
+.grp-body{background:var(--surface-2);padding:2px 12px 12px;border-left:3px solid var(--c)}
+.grp-resumo{display:flex;gap:6px;padding:8px 2px 12px}
+.grp-resumo div{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:8px 9px;text-align:center}
+.grp-resumo span{display:block;font-size:10px;color:var(--ink-3);margin-bottom:3px}
+.grp-resumo b{font-size:12.5px;font-weight:600}
+
+.grp-lista{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.apl + .apl{border-top:1px solid var(--line)}
+.apl-row{display:flex;align-items:center;gap:11px;padding:11px 12px;cursor:pointer;
+  transition:background .2s}
+.apl-row:active{background:var(--surface-2)}
+.apl.open .apl-row{background:rgba(14,18,32,.025)}
+.apl-data{width:38px;flex:none;text-align:center;line-height:1;padding:5px 0;border-radius:10px;
+  background:var(--surface-2);border:1px solid var(--line)}
+.apl-data b{display:block;font-size:15px;font-weight:700;letter-spacing:-.03em}
+.apl-data span{display:block;font-size:9.5px;color:var(--ink-2);text-transform:uppercase;
+  letter-spacing:.04em;margin-top:2px}
+.apl-data i{display:block;font-style:normal;font-size:8.5px;color:var(--ink-3);margin-top:1px}
+.apl-mid{flex:1;min-width:0}
+.apl-mid b{display:block;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.apl-mid span{display:block;font-size:11px;color:var(--ink-3);margin-top:2px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.apl-mid em{font-style:normal;color:var(--ink-2)}
+.apl-end{text-align:right;flex:none}
+.apl-end b{display:block;font-size:13.5px;font-weight:500}
+.apl-end span{display:block;font-size:10.5px;color:var(--up);margin-top:2px}
+.apl-det{padding:2px 12px 12px 61px}
+.apl-det .dl{font-size:12px;padding:6px 0}
+.apl-det .del{padding:10px;font-size:12px}
+@media (max-width:370px){
+  .apl-det{padding-left:12px}
+  .grp-resumo b{font-size:11.5px}
+}
+
+.grp-row .av{position:relative}
+.qtd{position:absolute;right:-4px;bottom:-3px;min-width:19px;height:19px;padding:0 5px;border-radius:999px;
+  background:var(--ink);color:#fff;font-style:normal;font-size:10.5px;font-weight:700;display:grid;place-items:center;
+  border:2px solid var(--card);font-family:'Inter',sans-serif;text-shadow:none;letter-spacing:0}
 </style>
 
 
@@ -1336,63 +1407,131 @@ function chips(dados){
 }
 
 /* ---- lista ---- */
+/* ---- lista agrupada por banco ---- */
+let ABERTOS = new Set();          // bancos expandidos
+let APL_ABERTA = null;            // aplicação com detalhe aberto
+
+function agruparPorBanco(dados){
+  const m = new Map();
+  dados.forEach(x => {
+    if(!m.has(x.p.banco)) m.set(x.p.banco, []);
+    m.get(x.p.banco).push(x);
+  });
+  return [...m.entries()].map(([banco, itens]) => {
+    const aplic = itens.reduce((a,x)=>a+x.p.valor,0);
+    const liq   = itens.reduce((a,x)=>a+x.liquido,0);
+    const bruto = itens.reduce((a,x)=>a+x.bruto,0);
+    const rend  = itens.reduce((a,x)=>a+x.rend,0);
+    const imp   = itens.reduce((a,x)=>a+x.ir+x.iof,0);
+    const dia   = itens.reduce((a,x)=>a+x.delta,0);
+    const comPct = itens.filter(x=>x.pctL!==null);
+    const peso = comPct.reduce((a,x)=>a+x.bruto,0);
+    const pctL = peso ? comPct.reduce((a,x)=>a+x.pctL*x.bruto,0)/peso : null;
+    itens.sort((a,b)=> a.p.data < b.p.data ? 1 : -1);          // mais recente primeiro
+    return {banco, itens, aplic, liq, bruto, rend, imp, dia, pctL};
+  }).sort((a,b)=> b.liq - a.liq);                               // maior montante primeiro
+}
+
 function listaPosicoes(dados){
-  chips(dados);
-  const vis = dados.filter(x => filtro === 'all' || x.p.banco === filtro);
+  const ch = document.getElementById('chips'); if(ch) ch.style.display = 'none';
   const el = document.getElementById('posList');
-  document.getElementById('posN').textContent =
-    dados.length ? `${dados.length} ${dados.length>1?'aplicações':'aplicação'}` : '';
-  if(!vis.length){
+  const grupos = agruparPorBanco(dados);
+  document.getElementById('posN').textContent = dados.length
+    ? `${grupos.length} ${grupos.length>1?'bancos':'banco'} · ${dados.length} ${dados.length>1?'aplicações':'aplicação'}` : '';
+  if(!dados.length){
     el.innerHTML = `<div class="empty">
       <div class="ring"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 6v12M6 12h12"/></svg></div>
       <b>Nada aplicado ainda</b>
       <span>Toque no + para registrar seu primeiro CDB.<br>O rendimento passa a ser apurado a cada dia útil.</span></div>`;
     return;
   }
-  el.innerHTML = vis.map((x,i) => {
-    const c = cor(x.p.banco), prox = proxIR(x.dc);
-    const ini = x.dc<=180?0:x.dc<=360?181:x.dc<=720?361:721;
-    const pct = prox ? Math.min(100,(x.dc-ini)/(prox-ini)*100) : 100;
-    return `<div class="row-wrap" data-id="${x.p.id}">
-      <div class="row">
-        <div class="av" style="background:${c}">${sigla(x.p.banco)}</div>
-        <div class="mid"><b>${x.p.banco}</b><span>${x.p.tipo} · ${rotIdx(x.p)}</span></div>
+  const total = grupos.reduce((a,g)=>a+g.liq,0) || 1;
+
+  el.innerHTML = grupos.map((g,gi) => {
+    const c = cor(g.banco), aberto = ABERTOS.has(g.banco);
+    const qtd = g.itens.length;
+    const sub = g.pctL!==null
+      ? `${g.pctL.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}% do CDI líquido`
+      : `${qtd} ${qtd>1?'aplicações':'aplicação'}`;
+    const itens = g.itens.map(x => {
+      const prox = proxIR(x.dc);
+      const ini = x.dc<=180?0:x.dc<=360?181:x.dc<=720?361:721;
+      const pct = prox ? Math.min(100,(x.dc-ini)/(prox-ini)*100) : 100;
+      const ab = APL_ABERTA === x.p.id;
+      return `<div class="apl ${ab?'open':''}" data-id="${x.p.id}">
+        <div class="apl-row">
+          <div class="apl-data"><b>${D(x.p.data).getUTCDate().toString().padStart(2,'0')}</b>
+            <span>${D(x.p.data).toLocaleDateString('pt-BR',{month:'short',timeZone:'UTC'}).replace('.','')}</span>
+            <i>${D(x.p.data).getUTCFullYear().toString().slice(2)}</i></div>
+          <div class="apl-mid"><b>${x.p.tipo} · ${rotIdx(x.p)}</b>
+            <span>aplicou <em class="money">${fmtC(x.p.valor)}</em> · ${x.dc} ${x.dc===1?'dia':'dias'}</span></div>
+          <div class="apl-end"><b class="money">${fmtC(x.liquido)}</b>
+            <span class="money">+${fmtC(x.rend)}</span></div>
+        </div>
+        <div class="fold"><div class="fold-in"><div class="apl-det">
+          <div class="dl"><span>Valor bruto</span><b class="money">${fmtC(x.bruto)}</b></div>
+          <div class="dl"><span>IR ${x.isento ? '· isento' : '· ' + fmtC(x.aliq).replace(',00','') + '%'}</span>
+            <b class="money" style="color:var(--tax)">−${fmtC(x.ir)}</b></div>
+          <div class="dl"><span>IOF ${x.isento?'· não incide':(x.dc<30?'· zera em '+(30-x.dc)+'d':'· zerado')}</span>
+            <b class="money" style="color:var(--tax)">−${fmtC(x.iof)}</b></div>
+          ${x.pctL !== null ? `<div class="dl"><span>Equivale a</span>
+            <b class="money" style="color:var(--up)">${fmtC(x.pctL)}% do CDI líquido</b></div>` : ''}
+          <div class="dl"><span>Rendeu ${fmtDia(DIA_RENDE)}</span><b class="money">+${fmtC(x.delta)}</b></div>
+          <div class="track"><i style="width:${pct}%"></i></div>
+          <div class="note-sm">${x.isento ? 'Isento de imposto de renda.' :
+            prox ? `Faltam ${prox-x.dc} dias para o IR cair a ${fmtC(irAliq(prox)).replace(',00','')}%`
+                 : 'Alíquota mínima de 15% alcançada'}</div>
+          <button class="del" data-id="${x.p.id}">Remover aplicação</button>
+        </div></div></div>
+      </div>`;
+    }).join('');
+
+    return `<div class="grp ${aberto?'open':''}" data-banco="${g.banco}" style="--c:${c};animation-delay:${gi*55}ms">
+      <div class="grp-row">
+        <div class="av" style="background:${c}">${sigla(g.banco)}${qtd>1?`<em class="qtd">${qtd}</em>`:''}</div>
+        <div class="mid"><b>${g.banco}</b><span>${sub}</span></div>
         <div class="end">
-          <b class="money">${fmtC(x.liquido)}</b>
-          <span class="money">+${fmtC(x.rend)}</span>
+          <b class="money">${fmtC(g.liq)}</b>
+          <span class="money">+${fmtC(g.rend)}</span>
         </div>
         <svg class="chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>
+        <div class="grp-bar"><i style="width:${(g.liq/total*100).toFixed(2)}%"></i></div>
       </div>
-      <div class="detail"><div class="detail-in">
-        <div class="dl"><span>Aplicado em ${fmtDia(x.p.data)}</span><b class="money">${fmtC(x.p.valor)}</b></div>
-        <div class="dl"><span>Valor bruto</span><b class="money">${fmtC(x.bruto)}</b></div>
-        <div class="dl"><span>Rendimento bruto</span><b class="money" style="color:var(--up)">+${fmtC(x.rend)}</b></div>
-        <div class="dl"><span>IR ${x.isento ? '· isento' : '· ' + fmtC(x.aliq).replace(',00','') + '%'}</span>
-          <b class="money" style="color:var(--tax)">−${fmtC(x.ir)}</b></div>
-        <div class="dl"><span>IOF ${x.isento?'· não incide':(x.dc<30?'· zera em '+(30-x.dc)+'d':'· zerado')}</span>
-          <b class="money" style="color:var(--tax)">−${fmtC(x.iof)}</b></div>
-        ${x.pctL !== null ? `<div class="dl"><span>Equivale a</span>
-          <b class="money" style="color:var(--up)">${fmtC(x.pctL)}% do CDI líquido</b></div>` : ''}
-        <div class="dl"><span>Rendeu ${fmtDia(DIA_RENDE)}</span><b class="money">+${fmtC(x.delta)}</b></div>
-        <div class="track"><i style="width:${pct}%"></i></div>
-        <div class="note-sm">${x.isento ? 'Isento de imposto de renda.' :
-          prox ? `${x.dc} dias corridos · faltam ${prox-x.dc} para o IR cair a ${fmtC(irAliq(prox)).replace(',00','')}%`
-               : `${x.dc} dias corridos · alíquota mínima de 15% alcançada`}</div>
-        <button class="del" data-id="${x.p.id}">Remover aplicação</button>
-      </div></div>
+      <div class="fold"><div class="fold-in"><div class="grp-body">
+        <div class="grp-resumo">
+          <div><span>Aplicado</span><b class="money">${fmtC(g.aplic)}</b></div>
+          <div><span>Rendimento</span><b class="money" style="color:var(--up)">+${fmtC(g.rend)}</b></div>
+          <div><span>IR + IOF</span><b class="money" style="color:var(--tax)">−${fmtC(g.imp)}</b></div>
+        </div>
+        <div class="grp-lista">${itens}</div>
+      </div></div></div>
     </div>`;
   }).join('');
 
-  el.querySelectorAll('.row').forEach(r => r.onclick = () => {
-    const w = r.parentElement, aberto = w.classList.contains('open');
-    el.querySelectorAll('.row-wrap').forEach(o => o.classList.remove('open'));
-    if(!aberto) w.classList.add('open');
+  requestAnimationFrame(() => { el.dataset.pronto = '1'; });
+  el.querySelectorAll('.grp-row').forEach(r => r.onclick = () => {
+    const w = r.parentElement, b = w.dataset.banco;
+    if(ABERTOS.has(b)){ ABERTOS.delete(b); w.classList.remove('open'); }
+    else { ABERTOS.add(b); w.classList.add('open'); }
+  });
+  el.querySelectorAll('.apl-row').forEach(r => r.onclick = e => {
+    e.stopPropagation();
+    const w = r.parentElement, id = w.dataset.id;
+    const ja = w.classList.contains('open');
+    el.querySelectorAll('.apl').forEach(o => o.classList.remove('open'));
+    APL_ABERTA = ja ? null : id;
+    if(!ja) w.classList.add('open');
   });
   el.querySelectorAll('.del').forEach(b => b.onclick = e => {
     e.stopPropagation();
     const p = carteira.find(x => x.id === b.dataset.id);
+    if(b.dataset.conf !== '1'){
+      b.dataset.conf = '1'; b.textContent = 'Toque de novo para remover';
+      setTimeout(()=>{ if(b.isConnected){ b.dataset.conf=''; b.textContent='Remover aplicação'; } }, 3000);
+      return;
+    }
     carteira = carteira.filter(x => x.id !== b.dataset.id);
-    if(!carteira.some(x => x.banco === filtro)) filtro = 'all';
+    APL_ABERTA = null;
     salvar(); render(); toast(`${p.tipo} do ${p.banco} removido`);
   });
 }
