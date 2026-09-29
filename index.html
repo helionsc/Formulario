@@ -153,8 +153,6 @@ body.hide .money,body.hide .hideable{filter:blur(9px);opacity:.6;pointer-events:
 .lg .nm{flex:1;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lg .pc{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink)}
 .donut-c{position:relative}
-.donut-c b{position:absolute;inset:0;display:grid;place-items:center;font-family:'Inter Tight',sans-serif;
-  font-size:13px;color:var(--ink-2);font-weight:600;text-align:center;line-height:1.2}
 
 /* chips */
 .chips{display:flex;gap:7px;overflow-x:auto;margin:0 -16px 11px;padding:2px 16px 6px;scrollbar-width:none}
@@ -318,10 +316,6 @@ body.hide .minibar .mb-l b{filter:blur(8px)}
 .del{padding:13px}
 
 /* rosca sem texto invadindo o anel */
-.alloc{gap:14px;padding:16px 14px}
-.alloc svg{width:96px;height:96px}
-.donut-c b{font-size:15px;line-height:1.1}
-.donut-c b span{font-size:9px;display:block;color:var(--ink-3)}
 .lg{font-size:12.5px;min-height:20px}
 
 /* gráficos contidos no cartão */
@@ -565,6 +559,39 @@ svg.plot{width:100%;height:auto;overflow:hidden}
 .qtd{position:absolute;right:-4px;bottom:-3px;min-width:19px;height:19px;padding:0 5px;border-radius:999px;
   background:var(--ink);color:#fff;font-style:normal;font-size:10.5px;font-weight:700;display:grid;place-items:center;
   border:2px solid var(--card);font-family:'Inter',sans-serif;text-shadow:none;letter-spacing:0}
+
+/* ============ ROSCA DE ALOCAÇÃO ============ */
+.alloc{display:grid;grid-template-columns:128px 1fr;gap:14px;align-items:center;padding:18px 16px 16px}
+.alloc svg{width:128px;height:128px;display:block;overflow:visible}
+.donut-c{position:relative;width:128px;height:128px}
+.donut-c b{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;pointer-events:none;text-align:center;padding:0 16px;line-height:1.15;font-family:'Inter',sans-serif}
+.donut-c .dc-k{font-size:10.5px;color:var(--ink-3);font-weight:600;letter-spacing:.02em;
+  max-width:76px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.donut-c .dc-v{font-family:'JetBrains Mono',monospace;font-size:14.5px;font-weight:700;letter-spacing:-.06em;color:var(--ink);white-space:nowrap}
+.donut-c .dc-s{font-size:9.5px;color:var(--ink-3);font-family:'Inter',sans-serif}
+.donut-c .dc-s.money{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-2)}
+.fatia{cursor:pointer;transition:stroke-width .3s var(--mola), opacity .25s;
+  stroke-dasharray:100;stroke-dashoffset:100;animation:traca .8s var(--mola) forwards;
+  animation-delay:calc(var(--i) * 90ms)}
+#secAlloc[data-animou] .fatia{animation:none;stroke-dashoffset:0}
+@keyframes traca{to{stroke-dashoffset:0}}
+.fatia.apag{opacity:.28}
+.alloc .lgs{display:flex;flex-direction:column;gap:2px;min-width:0}
+.alloc .lg{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:8px;padding:7px 8px;
+  border-radius:11px;cursor:pointer;transition:background .2s, opacity .25s;min-height:42px}
+.alloc .lg:active{background:var(--surface-2)}
+.alloc .lg.on{background:var(--surface-2)}
+.alloc .lg.apag{opacity:.45}
+.alloc .lg i{width:10px;height:10px;border-radius:3px;flex:none}
+.alloc .lg .nm{flex:1;min-width:0;font-size:12.5px;color:var(--ink);line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word;white-space:normal;text-overflow:clip}
+.lg-v{display:flex;flex-direction:column;align-items:flex-end;line-height:1.2;flex:none}
+.lg-v .pc{font-size:12.5px;font-weight:600;font-family:'JetBrains Mono',monospace;letter-spacing:-.03em;color:var(--ink)}
+.lg-v em{font-style:normal;font-size:10.5px;color:var(--ink-3);margin-top:1px}
+@media (max-width:350px){
+  .alloc{grid-template-columns:1fr;justify-items:center}
+  .alloc .lgs{width:100%}
+}
 </style>
 
 
@@ -1562,31 +1589,80 @@ function cartaoCDI(dados){
 }
 
 /* ---- rosca de alocação ---- */
+let ALLOC_SEL = null;   // banco destacado na rosca
+
+/* arco de anel entre dois ângulos (graus, 0 = topo, sentido horário) */
+function arco(cx, cy, r, a0, a1){
+  const p = a => { const t = (a-90)*Math.PI/180; return [cx + r*Math.cos(t), cy + r*Math.sin(t)]; };
+  const [x0,y0] = p(a0), [x1,y1] = p(a1);
+  const grande = (a1 - a0) > 180 ? 1 : 0;
+  return `M${x0.toFixed(3)} ${y0.toFixed(3)} A${r} ${r} 0 ${grande} 1 ${x1.toFixed(3)} ${y1.toFixed(3)}`;
+}
+
 function alocacao(dados){
   const sec = document.getElementById('secAlloc');
   if(dados.length < 2){ sec.style.display = 'none'; return; }
-  sec.style.display = 'block';
   const por = {};
   dados.forEach(x => por[x.p.banco] = (por[x.p.banco]||0) + x.liquido);
   const arr = Object.entries(por).map(([b,v])=>({b,v,c:cor(b)})).sort((a,z)=>z.v-a.v);
+  if(arr.length < 2){ sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
   const tot = arr.reduce((a,x)=>a+x.v,0);
-  const R = 46, C = 2*Math.PI*R;
-  let off = 0;
+  if(ALLOC_SEL && !arr.some(x=>x.b===ALLOC_SEL)) ALLOC_SEL = null;
+
+  /* geometria: anel de 150px, espessura 18, 2,4° de respiro entre fatias.
+     Fatias muito pequenas ganham um mínimo visível, descontado das maiores. */
+  const CX = 75, CY = 75, R = 62, ESP = 18, GAP = 2.4, MIN = 5;
+  const pequenas = arr.filter(x => x.v/tot*360 < MIN);
+  const extra = pequenas.reduce((a,x)=> a + (MIN - x.v/tot*360), 0);
+  const grandes = tot - pequenas.reduce((a,x)=>a+x.v,0);
+  let ang = 0;
+  const fatias = arr.map(x => {
+    let deg = x.v/tot*360;
+    deg = deg < MIN ? MIN : deg - extra * (x.v / grandes);
+    const a0 = ang + GAP/2, a1 = ang + deg - GAP/2;
+    ang += deg;
+    return {...x, a0, a1, pct: x.v/tot*100};
+  });
+
   const svg = document.getElementById('donut');
-  svg.innerHTML = `<circle cx="60" cy="60" r="${R}" fill="none" stroke="rgba(14,18,32,.07)" stroke-width="13"/>` +
-    arr.map((x,i) => {
-      const len = x.v/tot*C, dash = `${Math.max(0,len-2.5)} ${C-Math.max(0,len-2.5)}`;
-      const s = `<circle cx="60" cy="60" r="${R}" fill="none" stroke="${x.c}" stroke-width="13"
-        stroke-linecap="round" stroke-dasharray="${dash}" stroke-dashoffset="${-off}"
-        transform="rotate(-90 60 60)" opacity="0">
-        <animate attributeName="opacity" from="0" to="1" dur=".35s" begin="${i*.09}s" fill="freeze"/></circle>`;
-      off += len; return s;
+  svg.setAttribute('viewBox', '0 0 150 150');
+  svg.innerHTML =
+    `<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="rgba(14,18,32,.05)" stroke-width="${ESP}"/>` +
+    fatias.map((f,i) => {
+      const sel = ALLOC_SEL === f.b, apag = ALLOC_SEL && !sel;
+      return `<path class="fatia${sel?' sel':''}${apag?' apag':''}" data-b="${f.b}"
+        d="${arco(CX,CY,R,f.a0,Math.max(f.a0+0.01,f.a1))}" fill="none" stroke="${f.c}"
+        stroke-width="${sel ? ESP+5 : ESP}" stroke-linecap="butt" pathLength="100"
+        style="--i:${i}"/>`;
     }).join('');
-  $('donutC').innerHTML = `${arr.length}<span>${arr.length>1?'bancos':'banco'}</span>`;
+
+  /* centro: total da carteira, ou o banco tocado */
+  const f = fatias.find(x => x.b === ALLOC_SEL);
+  const fmtCurto = v => v >= 1e6 ? `R$ ${nf.format(v/1e6).replace(',00','')} mi`
+                      : v >= 1e4 ? `R$ ${Math.round(v/1000).toLocaleString('pt-BR')} mil`
+                      : fmt(v);
+  $('donutC').innerHTML = f
+    ? `<span class="dc-k" style="color:${f.c}">${f.b.replace(/^Banco /,'')}</span>
+       <span class="dc-v hideable">${fmtC(f.pct)}%</span>
+       <span class="dc-s money hideable">${fmtCurto(f.v)}</span>`
+    : `<span class="dc-k">${arr.length} bancos</span>
+       <span class="dc-v money hideable">${fmtCurto(tot)}</span>
+       <span class="dc-s">toque para ver</span>`;
+
   document.getElementById('allocN').textContent = `${arr.length} instituições`;
-  document.getElementById('allocLegend').innerHTML = arr.slice(0,5).map(x =>
-    `<div class="lg"><i style="background:${x.c}"></i><span class="nm">${x.b}</span>
-     <span class="pc hideable">${fmtC(x.v/tot*100)}%</span></div>`).join('');
+  document.getElementById('allocLegend').innerHTML = fatias.map(x =>
+    `<button class="lg${ALLOC_SEL===x.b?' on':''}${ALLOC_SEL&&ALLOC_SEL!==x.b?' apag':''}" data-b="${x.b}">
+       <i style="background:${x.c}"></i>
+       <span class="nm">${x.b}</span>
+       <span class="lg-v"><b class="pc">${fmtC(x.pct)}%</b><em class="money hideable">${fmtC(x.v)}</em></span>
+     </button>`).join('');
+
+  const alterna = b => { ALLOC_SEL = ALLOC_SEL === b ? null : b; alocacao(calcular()); };
+  svg.querySelectorAll('.fatia').forEach(el => el.onclick = e => { e.stopPropagation(); alterna(el.dataset.b); });
+  document.querySelectorAll('#allocLegend .lg').forEach(el => el.onclick = () => alterna(el.dataset.b));
+  svg.onclick = () => { if(ALLOC_SEL){ ALLOC_SEL = null; alocacao(calcular()); } };
+  if(!sec.dataset.animou) setTimeout(() => { sec.dataset.animou = '1'; }, 1300);
 }
 
 /* ============================================================
