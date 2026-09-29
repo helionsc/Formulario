@@ -18,6 +18,7 @@
   var n = 'n1'; try{ n = localStorage.getItem('nivel-topo') || 'n1'; }catch(e){}
   if(!cores[n]) n = 'n1';
   document.documentElement.setAttribute('data-nivel', n);
+  try{ if(localStorage.getItem('bloqueio-cred')) document.documentElement.classList.add('travado'); }catch(e){}
   var t = document.querySelector('meta[name="theme-color"]'); if(t) t.content = cores[n];
   if(n === 'n2'){ var s = document.getElementById('metaStatus'); if(s) s.content = 'default'; }
 })();
@@ -244,7 +245,9 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-conte
 .f select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' stroke='%2398A0B2' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
 option{background:#fff;color:var(--ink)}
-.f2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.f2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:11px}
+.f2 input{min-width:0;width:100%;box-sizing:border-box}
+@media (max-width:359px){#blkPrazo{grid-template-columns:1fr}}
 .cta{width:100%;margin-top:6px;padding:15px;border:none;border-radius:16px;cursor:pointer;
   font-family:'Inter Tight',sans-serif;font-size:15.5px;font-weight:700;letter-spacing:-.01em;color:#fff;
   background:linear-gradient(150deg,#18C97F,#0EA968);transition:transform .28s var(--ease),filter .2s}
@@ -857,6 +860,104 @@ html[data-nivel] .rl b.t{color:var(--ht)}
 .resumo{gap:5px!important;padding-top:16px!important}
 .rl{font-size:15px}
 .rl:first-child b{font-size:15px}
+
+/* editar / remover */
+.apl-acoes{display:flex;gap:8px;margin-top:12px}
+.apl-acoes button{flex:1;margin:0!important}
+.apl-det .edt{all:unset;box-sizing:border-box;flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:10px;border-radius:var(--r-sm);cursor:pointer;font-size:12.5px;font-weight:600;
+  background:var(--surface-2);border:1px solid var(--line);color:var(--ink)}
+.apl-det .edt:active{transform:scale(.97)}
+.apl-det .edt svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.apl-det .del{padding:10px!important;font-weight:600}
+
+/* =====================================================================
+   APORTES, RESGATES, VENCIMENTOS, SUGESTÕES, BLOQUEIO
+   ===================================================================== */
+.sheet-sub{margin:-8px 0 16px;font-size:13px;color:var(--ink-2)}
+.f label em{font-style:normal;color:var(--ink-3);font-size:10.5px;margin-left:3px}
+/* etiquetas de prazo na linha da aplicação */
+.apl-mid .tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;white-space:normal}
+.tag{font-style:normal;font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;
+  background:rgba(14,18,32,.06);color:var(--ink-2)}
+.tag.vencida{background:rgba(229,72,77,.1);color:#C0353A}
+.tag.car{background:rgba(217,138,11,.12);color:#8F5A06}
+/* subtítulos e listas internas */
+.sub-t{font-size:10.5px;font-weight:700;color:var(--ink-3);letter-spacing:.04em;text-transform:uppercase;margin:14px 0 6px}
+.aportes{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface-2)}
+.ap{display:flex;align-items:center;gap:10px;padding:8px 6px 8px 11px}
+.ap + .ap{border-top:1px solid var(--line)}
+.ap-d{font-size:12px;font-weight:600;color:var(--ink-2);width:58px;flex:none;font-variant-numeric:tabular-nums}
+.ap-v{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.25}
+.ap-v b{font-size:13px;font-weight:600}
+.ap-v i{font-style:normal;font-size:10.5px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ap.rs .ap-v b{color:var(--ink-2)}
+.ap button{all:unset;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--ink-3);flex:none}
+.ap button:active{background:rgba(14,18,32,.08)}
+.ap button svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ap button.conf{width:auto;padding:0 10px;border-radius:999px;background:rgba(229,72,77,.1);color:var(--down);font-size:11px;font-weight:600}
+.aviso{margin-top:10px;padding:9px 11px;border-radius:10px;font-size:11.5px;line-height:1.45;
+  background:rgba(229,72,77,.07);color:#A2302F}
+/* ações em grade 2x2 */
+.apl-acoes.grade{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.apl-det .aporte,.apl-det .resg{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:10px;border-radius:var(--r-sm);cursor:pointer;font-size:12.5px;font-weight:600;color:#fff;background:var(--marca)}
+.apl-det .resg{background:var(--card);color:var(--ink);border:1px solid var(--line-2)}
+.apl-det .aporte svg,.apl-det .resg svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.apl-det .aporte:active,.apl-det .resg:active{transform:scale(.97)}
+.apl-det .del.conf{background:var(--down);color:#fff}
+/* resgate */
+.disp{font-size:13px;color:var(--ink-2);margin:-4px 0 14px;padding:11px 13px;border-radius:var(--r-sm);background:var(--surface-2)}
+.disp b{color:var(--ink);font-weight:700}
+.rchips{display:flex;gap:7px;margin:-2px 0 14px}
+.rchips button{all:unset;padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;
+  background:var(--surface-2);border:1px solid var(--line);color:var(--ink)}
+.rchips button:active{transform:scale(.95)}
+#rPrev b.t{color:var(--tax)}
+#rPrev.erro{background:rgba(229,72,77,.07);border-color:rgba(229,72,77,.25);color:#A2302F}
+/* sugestões */
+.sug-card{padding:4px 0 0}
+.sug{padding:14px 16px 12px}
+.sug + .sug{border-top:1px solid var(--line)}
+.sug-top{display:flex;align-items:flex-start;gap:8px}
+.sug-rota{flex:1;display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:13px}
+.sug-rota b{font-weight:600}
+.sug-rota b span{font-weight:400;color:var(--ink-3);font-size:11.5px}
+.sug-rota svg{width:15px;height:15px;stroke:var(--ink-3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sug-x{all:unset;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--ink-3);flex:none;margin:-3px -6px 0 0}
+.sug-x svg{width:13px;height:13px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round}
+.sug-num{margin-top:8px;display:flex;flex-direction:column;gap:2px}
+.sug-num b{font-size:20px;font-weight:700;color:var(--up)}
+.sug-num span{font-size:11.5px;color:var(--ink-2);line-height:1.4}
+.sug-num em{font-style:normal}
+.sug-nota{padding:10px 16px 13px;font-size:10.5px;color:var(--ink-3);line-height:1.45;border-top:1px solid var(--line);background:var(--surface-2)}
+/* vencimentos */
+.venc-card{padding:4px 0}
+.ve{display:flex;align-items:center;gap:12px;padding:11px 15px}
+.ve + .ve{border-top:1px solid var(--line)}
+.ve-d{width:40px;flex:none;text-align:center;line-height:1;padding:6px 0;border-radius:10px;background:var(--surface-2);border:1px solid var(--line)}
+.ve-d b{display:block;font-size:15px;font-weight:700}
+.ve-d span{display:block;font-size:9.5px;text-transform:uppercase;color:var(--ink-2);margin-top:2px}
+.ve.breve .ve-d{background:rgba(217,138,11,.1);border-color:rgba(217,138,11,.25)}
+.ve.urg .ve-d{background:rgba(229,72,77,.1);border-color:rgba(229,72,77,.25)}
+.ve-m{flex:1;min-width:0}
+.ve-m b{display:block;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ve-m span{display:block;font-size:11.5px;color:var(--ink-3);margin-top:2px}
+.ve-v{font-size:13.5px;font-weight:600;flex:none}
+/* tela de bloqueio */
+#lock{display:none;position:fixed;inset:0;z-index:100;background:var(--hb,#161B27);
+  align-items:center;justify-content:center;padding:24px}
+html.travado #lock{display:flex}
+html.travado .app,html.travado nav,html.travado .minibar,html.travado .sheet,html.travado .scrim{visibility:hidden!important}
+.lock-in{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;color:var(--hi,#fff)}
+.lock-logo{width:64px;height:42px;fill:currentColor;margin-bottom:6px}
+.lock-in > b{font-size:20px;font-weight:600}
+.lock-in > span{font-size:13.5px;color:var(--hi2,rgba(255,255,255,.7));margin-bottom:18px}
+#lockBtn{all:unset;display:flex;align-items:center;gap:10px;padding:14px 22px;border-radius:999px;cursor:pointer;
+  font-size:15px;font-weight:600;background:var(--hi,#fff);color:var(--hb,#161B27)}
+#lockBtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#lockBtn:active{transform:scale(.97)}
+#lockSair{all:unset;margin-top:14px;font-size:12.5px;color:var(--hi2,rgba(255,255,255,.7));text-decoration:underline;cursor:pointer}
 </style>
 
 
@@ -865,6 +966,15 @@ html[data-nivel] .rl b.t{color:var(--ht)}
 </head>
 <body>
 
+<div id="lock" role="dialog" aria-label="App bloqueado">
+  <div class="lock-in">
+    <svg class="lock-logo" viewBox="4 16 105 68" aria-hidden="true"><rect x="6" y="18" width="15" height="64"/><rect x="20.6" y="41" width="20.8" height="15"/><path d="M41 82 V18 h15 L92 60.24 V18 h15 v64 h-15 L56 39.76 V82 z"/></svg>
+    <b>Investimentos</b>
+    <span id="lockMsg">Seus valores estão protegidos</span>
+    <button id="lockBtn"><svg viewBox="0 0 24 24"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16"/><path d="M9 9.5v1M15 9.5v1M12 9v4h-1M9.5 15.5c1.4 1 3.6 1 5 0"/></svg>Desbloquear com Face ID</button>
+    <button id="lockSair" style="display:none">Desativar o bloqueio neste aparelho</button>
+  </div>
+</div>
 <div class="minibar" id="minibar">
   <div class="mb-l"><span>Saldo</span><b class="money" id="mbVal">R$ 0,00</b></div>
   <div class="mb-r">
@@ -928,6 +1038,16 @@ html[data-nivel] .rl b.t{color:var(--ht)}
         </div>
         <div class="cdi-nota" id="cdiNota"></div>
       </div>
+    </div>
+
+    <div class="sec" id="secSug" style="display:none">
+      <div class="sec-h"><h2>Onde seu dinheiro renderia mais</h2><span>em 12 meses</span></div>
+      <div class="card sug-card" id="sugList"></div>
+    </div>
+
+    <div class="sec" id="secVenc" style="display:none">
+      <div class="sec-h"><h2>Próximos vencimentos</h2><span id="vencN"></span></div>
+      <div class="card venc-card" id="vencList"></div>
     </div>
 
     <div class="sec" id="secAlloc" style="display:none">
@@ -1038,43 +1158,67 @@ html[data-nivel] .rl b.t{color:var(--ht)}
 <div class="sheet arrasta" id="sheet" role="dialog" aria-label="Nova aplicação">
   <div class="grab"></div>
   <button class="fechar" aria-label="Fechar" data-fecha><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
-  <h3>Nova aplicação</h3>
-  <div class="f">
-    <label for="fBanco">Banco ou corretora</label>
-    <select id="fBanco"></select>
-  </div>
-  <div class="f2">
+  <h3 id="sheetTit">Nova aplicação</h3>
+  <p class="sheet-sub" id="sheetSub"></p>
+  <div id="blkProduto">
     <div class="f">
-      <label for="fTipo">Tipo</label>
-      <select id="fTipo">
-        <option value="CDB">CDB</option><option value="RDB">RDB</option>
-        <option value="LCI">LCI · isenta</option><option value="LCA">LCA · isenta</option>
-        <option value="LC">Letra de câmbio</option><option value="TESOURO">Tesouro Selic</option>
-        <option value="CRI">CRI / CRA · isenta</option><option value="DEB">Debênture incentivada</option>
-        <option value="POUP">Poupança</option>
-      </select>
+      <label for="fBanco">Banco ou corretora</label>
+      <select id="fBanco"></select>
     </div>
-    <div class="f">
-      <label for="fIndex">Indexador</label>
-      <select id="fIndex">
-        <option value="cdi">% do CDI</option><option value="selic">% da Selic</option>
-        <option value="selic_spread">Selic + spread</option><option value="pre">Prefixado</option>
-        <option value="ipca">IPCA + spread</option>
-      </select>
+    <div class="f2">
+      <div class="f">
+        <label for="fTipo">Tipo</label>
+        <select id="fTipo">
+          <option value="CDB">CDB</option><option value="RDB">RDB</option>
+          <option value="LCI">LCI · isenta</option><option value="LCA">LCA · isenta</option>
+          <option value="LC">Letra de câmbio</option><option value="TESOURO">Tesouro Selic</option>
+          <option value="CRI">CRI / CRA · isenta</option><option value="DEB">Debênture incentivada</option>
+          <option value="POUP">Poupança</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="fIndex">Indexador</label>
+        <select id="fIndex">
+          <option value="cdi">% do CDI</option><option value="selic">% da Selic</option>
+          <option value="selic_spread">Selic + spread</option><option value="pre">Prefixado</option>
+          <option value="ipca">IPCA + spread</option>
+        </select>
+      </div>
     </div>
-  </div>
-  <div class="f2">
     <div class="f"><label id="lblTaxa" for="fTaxa">Percentual do CDI</label>
       <input type="number" id="fTaxa" value="102" step="0.01" min="0" inputmode="decimal"></div>
-    <div class="f"><label for="fValor">Valor aplicado</label>
-      <input type="number" id="fValor" value="10000" step="0.01" min="0" inputmode="decimal"></div>
   </div>
-  <div class="f">
-    <label for="fData">Data da aplicação</label>
-    <input type="date" id="fData">
+  <div class="f2" id="blkAporte">
+    <div class="f"><label for="fValor" id="lblValor">Valor aplicado</label>
+      <input type="number" id="fValor" step="0.01" min="0" inputmode="decimal" placeholder="0,00"></div>
+    <div class="f"><label for="fData">Data da aplicação</label>
+      <input type="date" id="fData"></div>
+  </div>
+  <div class="f2" id="blkPrazo">
+    <div class="f"><label for="fVenc">Vencimento <em>opcional</em></label>
+      <input type="date" id="fVenc"></div>
+    <div class="f"><label for="fCar">Carência até <em>opcional</em></label>
+      <input type="date" id="fCar"></div>
   </div>
   <div class="preview" id="prev">Preencha os campos para ver a simulação.</div>
   <button class="cta" id="btnSave">Adicionar à carteira</button>
+</div>
+
+<div class="sheet arrasta" id="sheetResg" role="dialog" aria-label="Resgatar">
+  <div class="grab"></div>
+  <button class="fechar" aria-label="Fechar" data-fecha><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  <h3>Resgatar</h3>
+  <p class="sheet-sub" id="rSub"></p>
+  <div class="disp" id="rDisp"></div>
+  <div class="f2">
+    <div class="f"><label for="rValor">Valor a resgatar (bruto)</label>
+      <input type="number" id="rValor" step="0.01" min="0" inputmode="decimal" placeholder="0,00"></div>
+    <div class="f"><label for="rData">Data do resgate</label>
+      <input type="date" id="rData"></div>
+  </div>
+  <div class="rchips"><button data-p="0.25">25%</button><button data-p="0.5">50%</button><button data-p="1">Tudo</button></div>
+  <div class="preview" id="rPrev">Informe o valor para ver quanto cai na conta.</div>
+  <button class="cta" id="btnResg">Registrar resgate</button>
 </div>
 
 <div class="sheet arrasta" id="sheetDados" role="dialog" aria-label="Dados">
@@ -1087,6 +1231,11 @@ html[data-nivel] .rl b.t{color:var(--ht)}
       <span>Ligado, o rendimento de hoje já aparece hoje, com taxa estimada.
       Desligado, o saldo fica igual ao extrato do banco — o rendimento de hoje entra amanhã.</span></div>
     <div class="sw" id="swAnt"><i></i></div>
+  </div>
+  <div class="opt" id="optLock" style="display:none">
+    <div class="opt-t"><b>Bloquear com Face ID</b>
+      <span>Pede Face ID ao abrir o app e ao voltar depois de 1 minuto fora. Protege a tela contra olhares; os dados continuam no aparelho e na nuvem.</span></div>
+    <div class="sw" id="swLock"><i></i></div>
   </div>
   <button class="cta ghost" id="dSync">Atualizar taxas agora</button>
   <button class="cta ghost" id="dLink">Copiar link para outro aparelho</button>
@@ -1219,9 +1368,19 @@ function rende(d, ds){
 const ISENTOS = ['LCI','LCA','CRI','DEB','POUP'];
 const irAliq = dc => dc <= 180 ? 22.5 : dc <= 360 ? 20 : dc <= 720 ? 17.5 : 15;
 const proxIR = dc => dc <= 180 ? 181 : dc <= 360 ? 361 : dc <= 720 ? 721 : null;
+/* Parte do aporte que continua investida numa data.
+   Cada resgate retira uma fração (f) do saldo daquele dia; o restante segue rendendo. */
+function mantido(p, ds){
+  let k = 1;
+  if(p.resg) for(const r of p.resg) if(r.data <= ds) k *= (1 - r.f);
+  return k;
+}
+const principal = (p, ds) => p.valor * mantido(p, ds);
+const assinaturaResg = p => (p.resg || []).map(r => r.data + ':' + r.f.toFixed(10)).join(',');
+
 function liquidar(p, bruto, dataRef){
   const dc = Math.round((D(dataRef) - D(p.data)) / 864e5);
-  const rend = bruto - p.valor;
+  const rend = bruto - principal(p, dataRef);
   const isento = ISENTOS.includes(p.tipo);
   let iof = 0;
   if(!isento && rend > 0 && dc >= 1 && dc <= 29) iof = rend * IOF[dc-1]/100;
@@ -1235,18 +1394,25 @@ function liquidar(p, bruto, dataRef){
    5. SÉRIE
    ============================================================ */
 const cacheB = new Map();
-function brutoEm(p, ds){
+/* valor bruto sem resgates (só crescimento), com parada no vencimento */
+function crescido(p, ds){
   if(ds <= p.data) return p.valor;
-  /* a chave descreve o papel, não o id: imune a ids repetidos e a edições */
-  const k = `${p.tipo}|${p.index}|${p.taxa}|${p.valor}|${p.data}|${ds}|${SHIFT}|${CDI_VER}|${ANTECIPA?1:0}`;
+  const k = `${p.tipo}|${p.index}|${p.taxa}|${p.valor}|${p.data}|${p.venc||''}|${ds}|${SHIFT}|${CDI_VER}|${ANTECIPA?1:0}`;
   if(cacheB.has(k)) return cacheB.get(k);
   /* ANTECIPA=false: igual ao extrato — o rendimento do dia útil D só entra em D+1.
      ANTECIPA=true:  conta o próprio dia, usando a taxa projetada até o BC publicar. */
-  let v = p.valor, d = D(p.data), fim = ANTECIPA ? D(ds) : addD(D(ds), -1);
+  let fim = ANTECIPA ? D(ds) : addD(D(ds), -1);
+  /* no vencimento o papel para de render: rende até a véspera */
+  if(p.venc){ const lim = addD(D(p.venc), -1); if(fim > lim) fim = lim; }
+  let v = p.valor, d = D(p.data);
   while(d < fim){ d = addD(d,1); const x = iso(d); if(rende(d, x)) v *= fatorDia(p, x); }
   cacheB.set(k, v);
   return v;
 }
+function brutoEm(p, ds){ return crescido(p, ds) * mantido(p, ds); }
+const vencido  = (p, ds) => !!p.venc && ds >= p.venc;
+const encerrado = (p, ds) => mantido(p, ds) < 1e-9;
+const grupoDe  = p => p.g || p.id;
 
 /* ============================================================
    6. ESTADO
@@ -1372,6 +1538,19 @@ const daNuvem = r => ({
   index: r.indexador, taxa: +r.taxa, valor: +r.valor, data: r.data
 });
 
+/* Campos que a tabela "posicoes" não tem (grupo, vencimento, carência, resgates)
+   viajam no campo livre "prefs" da tabela "carteiras", indexados pelo id do aporte. */
+const EXTRAS = ['g','venc','car','resg'];
+function extrasDe(lista){
+  const m = {};
+  lista.forEach(p => {
+    const e = {}; let tem = false;
+    EXTRAS.forEach(k => { if(p[k] !== undefined && p[k] !== null && !(Array.isArray(p[k]) && !p[k].length)){ e[k] = p[k]; tem = true; } });
+    if(tem) m[p.id] = e;
+  });
+  return m;
+}
+
 /* baixa a carteira da nuvem; devolve true se conseguiu */
 async function puxarNuvem(){
   try{
@@ -1384,9 +1563,22 @@ async function puxarNuvem(){
       NUVEM_MSG = 'sincronizado';
       return true;
     }
-    carteira = linhas.map(daNuvem);
+    let extras = {};
+    try{
+      const c = await api('carteiras?select=prefs');
+      extras = (c && c[0] && c[0].prefs && c[0].prefs.extras) || {};
+    }catch(e){}
+    const locais = new Map(carteira.map(p => [p.id, p]));
+    carteira = linhas.map(r => {
+      const p = daNuvem(r);
+      const e = extras[p.id] || {};
+      /* se a nuvem ainda não tem os extras (aparelho antigo), mantém os locais */
+      const l = locais.get(p.id) || {};
+      EXTRAS.forEach(k => { const v = e[k] !== undefined ? e[k] : l[k]; if(v !== undefined) p[k] = v; });
+      return p;
+    });
     NUVEM_OK = true; NUVEM_MSG = 'sincronizado';
-    try{ localStorage.setItem(KEY, JSON.stringify({carteira, selic:SELIC_HOJE, fonte:FONTE_TAXA, oculto, ts:hoje()})); }catch(e){}
+    try{ localStorage.setItem(KEY, JSON.stringify({carteira, selic:SELIC_HOJE, fonte:FONTE_TAXA, oculto, antecipa:ANTECIPA, ts:hoje()})); }catch(e){}
     return true;
   }catch(e){
     NUVEM_OK = false; NUVEM_MSG = 'offline — dados locais';
@@ -1397,13 +1589,14 @@ async function puxarNuvem(){
 async function empurrarNuvem(){
   try{
     const id = await idCarteira();
+    /* primeiro fixa os ids definitivos, porque os extras são indexados por eles */
+    const linhas = carteira.map(paraNuvem);
+    carteira.forEach((p,i) => p.id = linhas[i].id);
     await api('carteiras', {
       method:'POST',
       headers:{Prefer:'resolution=merge-duplicates'},
-      body: JSON.stringify({id, prefs:{oculto, antecipa:ANTECIPA}, visto_em:new Date().toISOString()})
+      body: JSON.stringify({id, prefs:{oculto, antecipa:ANTECIPA, extras: extrasDe(carteira)}, visto_em:new Date().toISOString()})
     });
-    const linhas = carteira.map(paraNuvem);
-    carteira.forEach((p,i) => p.id = linhas[i].id);
     const atuais = await api('posicoes?select=id');
     const manter = new Set(linhas.map(l => l.id));
     const sobrando = atuais.filter(a => !manter.has(a.id)).map(a => a.id);
@@ -1639,11 +1832,11 @@ function calcular(){
   const A = ANTECIPA ? dia  : iso(addD(D(dia), 1));           // saldo depois do crédito
   const B = ANTECIPA ? iso(addD(D(dia),-1)) : dia;            // saldo antes
   DIA_RENDE = dia; DIA_CREDITO = ANTECIPA ? dia : A;
-  return carteira.map(p => {
+  return carteira.filter(p => !encerrado(p, h)).map(p => {
     const bruto = brutoEm(p, h);
-    const d1 = p.data >= dia ? 0 : brutoEm(p, A) - brutoEm(p, B);
-    return {p, ...liquidar(p, bruto, h), delta: d1,
-            pctB: pctCDI(p, dia), pctL: pctCDILiq(p, dia)};
+    const d1 = (p.data >= dia || vencido(p, dia)) ? 0 : crescido(p, A)*mantido(p, h) - crescido(p, B)*mantido(p, h);
+    return {p, ...liquidar(p, bruto, h), delta: d1, aplic: principal(p, h),
+            pctB: vencido(p, h) ? null : pctCDI(p, dia), pctL: vencido(p, h) ? null : pctCDILiq(p, dia)};
   });
 }
 /* Média ponderada pelo capital: cada real pesa igual, independente do banco. */
@@ -1682,7 +1875,7 @@ function aplicarNivel(aplicado){
 function render(){
   const dados = calcular();
   const T = dados.reduce((a,x)=>({
-    aplic:a.aplic+x.p.valor, bruto:a.bruto+x.bruto, liq:a.liq+x.liquido,
+    aplic:a.aplic+x.aplic, bruto:a.bruto+x.bruto, liq:a.liq+x.liquido,
     imp:a.imp+x.ir+x.iof, delta:a.delta+x.delta
   }), {aplic:0,bruto:0,liq:0,imp:0,delta:0});
   aplicarNivel(T.aplic);
@@ -1706,6 +1899,8 @@ function render(){
 
   const mv = $('mbVal'); if(mv) mv.textContent = fmt(T.liq);
   cartaoCDI(dados);
+  cartaoSugestoes(dados);
+  cartaoVencimentos();
   listaPosicoes(dados);
   alocacao(dados);
   graficoHist(dados);
@@ -1737,7 +1932,7 @@ function agruparPorBanco(dados){
     m.get(x.p.banco).push(x);
   });
   return [...m.entries()].map(([banco, itens]) => {
-    const aplic = itens.reduce((a,x)=>a+x.p.valor,0);
+    const aplic = itens.reduce((a,x)=>a+x.aplic,0);
     const liq   = itens.reduce((a,x)=>a+x.liquido,0);
     const bruto = itens.reduce((a,x)=>a+x.bruto,0);
     const rend  = itens.reduce((a,x)=>a+x.rend,0);
@@ -1755,8 +1950,9 @@ function listaPosicoes(dados){
   const ch = document.getElementById('chips'); if(ch) ch.style.display = 'none';
   const el = document.getElementById('posList');
   const grupos = agruparPorBanco(dados);
+  const nApl = new Set(dados.map(x => grupoDe(x.p))).size;
   document.getElementById('posN').textContent = dados.length
-    ? `${grupos.length} ${grupos.length>1?'bancos':'banco'} · ${dados.length} ${dados.length>1?'aplicações':'aplicação'}` : '';
+    ? `${grupos.length} ${grupos.length>1?'bancos':'banco'} · ${nApl} ${nApl>1?'aplicações':'aplicação'}` : '';
   if(!dados.length){
     el.innerHTML = `<div class="empty">
       <div class="ring"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 6v12M6 12h12"/></svg></div>
@@ -1768,39 +1964,84 @@ function listaPosicoes(dados){
 
   el.innerHTML = grupos.map((g,gi) => {
     const c = cor(g.banco), aberto = ABERTOS.has(g.banco);
-    const qtd = g.itens.length;
+    const qtd = new Set(g.itens.map(x => grupoDe(x.p))).size;
     const sub = g.pctL!==null
       ? `${g.pctL.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}% do CDI líquido`
       : `${qtd} ${qtd>1?'aplicações':'aplicação'}`;
-    const itens = g.itens.map(x => {
-      const prox = proxIR(x.dc);
+    /* dentro do banco: uma linha por aplicação, com os aportes agrupados */
+    const porGrupo = new Map();
+    g.itens.forEach(x => { const k = grupoDe(x.p); if(!porGrupo.has(k)) porGrupo.set(k, []); porGrupo.get(k).push(x); });
+    const aplicacoes = [...porGrupo.entries()].map(([gid, xs]) => {
+      xs.sort((a,b) => a.p.data < b.p.data ? -1 : 1);
+      const soma = k => xs.reduce((a,x) => a + x[k], 0);
+      const cp = xs.filter(x => x.pctL !== null), peso = cp.reduce((a,x)=>a+x.bruto,0);
+      return {gid, xs, p0: xs[0].p, liq: soma('liquido'), bruto: soma('bruto'), rend: soma('rend'),
+              ir: soma('ir'), iof: soma('iof'), delta: soma('delta'), aplic: soma('aplic'),
+              pctL: peso ? cp.reduce((a,x)=>a+x.pctL*x.bruto,0)/peso : null};
+    }).sort((a,b) => a.p0.data < b.p0.data ? 1 : -1);
+
+    const itens = aplicacoes.map(a => {
+      const x = a.xs[0], p = a.p0, n = a.xs.length, hj = hoje();
+      const dataCurta = ds => D(ds).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',timeZone:'UTC'});
+      const dias = ds => Math.round((D(ds) - D(hj)) / 864e5);
+      const prox = n === 1 ? proxIR(x.dc) : null;
       const ini = x.dc<=180?0:x.dc<=360?181:x.dc<=720?361:721;
       const pct = prox ? Math.min(100,(x.dc-ini)/(prox-ini)*100) : 100;
       const ab = APL_ABERTA === x.p.id;
-      return `<div class="apl ${ab?'open':''}" data-id="${x.p.id}">
+      const venc = p.venc ? (vencido(p, hj) ? `<em class="tag vencida">venceu ${dataCurta(p.venc)}</em>`
+                            : `<em class="tag">vence ${dataCurta(p.venc)}</em>`) : '';
+      const car = p.car && p.car > hj ? `<em class="tag car">carência até ${dataCurta(p.car)}</em>` : '';
+      const sub = n > 1 ? `${n} aportes · <em class="money">${fmtC(a.aplic)}</em>`
+                        : `aplicou <em class="money">${fmtC(x.aplic)}</em> · ${x.dc} ${x.dc===1?'dia':'dias'}`;
+      /* histórico de resgates (inclui aportes já encerrados) */
+      const resgMap = new Map();
+      carteira.filter(q => grupoDe(q) === a.gid).forEach(q => (q.resg||[]).forEach(r => {
+        const o = resgMap.get(r.data) || {bruto:0, ir:0}; o.bruto += r.bruto; o.ir += r.ir; resgMap.set(r.data, o);
+      }));
+      const resgs = [...resgMap.entries()].sort((a,b) => a[0] < b[0] ? 1 : -1);
+      const listaAportes = n > 1 ? `<div class="sub-t">Aportes</div><div class="aportes">${a.xs.map(y => `
+          <div class="ap" data-id="${y.p.id}">
+            <span class="ap-d">${dataCurta(y.p.data)}</span>
+            <span class="ap-v"><b class="money">${fmtC(y.liquido)}</b><i class="money">aplicou ${fmtC(y.aplic)}</i></span>
+            <button class="ap-e" data-id="${y.p.id}" aria-label="Editar aporte"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/></svg></button>
+            <button class="ap-x" data-id="${y.p.id}" aria-label="Remover aporte"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+          </div>`).join('')}</div>` : '';
+      const listaResg = resgs.length ? `<div class="sub-t">Resgates</div><div class="aportes">${resgs.map(([d,o]) => `
+          <div class="ap rs"><span class="ap-d">${dataCurta(d)}</span>
+            <span class="ap-v"><b class="money">−${fmtC(o.bruto)}</b><i class="money">${fmtC(o.bruto-o.ir)} na conta · IR ${fmtC(o.ir)}</i></span></div>`).join('')}</div>` : '';
+      return `<div class="apl ${ab?'open':''}" data-id="${x.p.id}" data-g="${a.gid}">
         <div class="apl-row">
-          <div class="apl-data"><b>${D(x.p.data).getUTCDate().toString().padStart(2,'0')}</b>
-            <span>${D(x.p.data).toLocaleDateString('pt-BR',{month:'short',timeZone:'UTC'}).replace('.','')}</span>
-            <i>${D(x.p.data).getUTCFullYear().toString().slice(2)}</i></div>
-          <div class="apl-mid"><b>${x.p.tipo} · ${rotIdx(x.p)}</b>
-            <span>aplicou <em class="money">${fmtC(x.p.valor)}</em> · ${x.dc} ${x.dc===1?'dia':'dias'}</span></div>
-          <div class="apl-end"><b class="money">${fmtC(x.liquido)}</b>
-            <span class="money">+${fmtC(x.rend)}</span></div>
+          <div class="apl-data"><b>${D(p.data).getUTCDate().toString().padStart(2,'0')}</b>
+            <span>${D(p.data).toLocaleDateString('pt-BR',{month:'short',timeZone:'UTC'}).replace('.','')}</span>
+            <i>${D(p.data).getUTCFullYear().toString().slice(2)}</i></div>
+          <div class="apl-mid"><b>${p.tipo} · ${rotIdx(p)}</b>
+            <span>${sub}</span>${venc||car ? `<span class="tags">${venc}${car}</span>` : ''}</div>
+          <div class="apl-end"><b class="money">${fmtC(a.liq)}</b>
+            <span class="money">+${fmtC(a.rend)}</span></div>
         </div>
         <div class="fold"><div class="fold-in"><div class="apl-det">
-          <div class="dl"><span>Valor bruto</span><b class="money">${fmtC(x.bruto)}</b></div>
-          <div class="dl"><span>IR ${x.isento ? '· isento' : '· ' + fmtC(x.aliq).replace(',00','') + '%'}</span>
-            <b class="money" style="color:var(--tax)">−${fmtC(x.ir)}</b></div>
-          <div class="dl"><span>IOF ${x.isento?'· não incide':(x.dc<30?'· zera em '+(30-x.dc)+'d':'· zerado')}</span>
-            <b class="money" style="color:var(--tax)">−${fmtC(x.iof)}</b></div>
-          ${x.pctL !== null ? `<div class="dl"><span>Equivale a</span>
-            <b class="money" style="color:var(--up)">${fmtC(x.pctL)}% do CDI líquido</b></div>` : ''}
-          <div class="dl"><span>Rendeu ${fmtDia(DIA_RENDE)}</span><b class="money">+${fmtC(x.delta)}</b></div>
-          <div class="track"><i style="width:${pct}%"></i></div>
+          <div class="dl"><span>Valor bruto</span><b class="money">${fmtC(a.bruto)}</b></div>
+          <div class="dl"><span>IR ${x.isento ? '· isento' : n > 1 ? '· por aporte' : '· ' + fmtC(x.aliq).replace(',00','') + '%'}</span>
+            <b class="money" style="color:var(--tax)">−${fmtC(a.ir)}</b></div>
+          <div class="dl"><span>IOF ${x.isento?'· não incide':(n===1 && x.dc<30?'· zera em '+(30-x.dc)+'d': a.iof>0.004 ? '· aportes recentes' : '· zerado')}</span>
+            <b class="money" style="color:var(--tax)">−${fmtC(a.iof)}</b></div>
+          ${a.pctL !== null ? `<div class="dl"><span>Equivale a</span>
+            <b class="money" style="color:var(--up)">${fmtC(a.pctL)}% do CDI líquido</b></div>` : ''}
+          <div class="dl"><span>Rendeu ${fmtDia(DIA_RENDE)}</span><b class="money">+${fmtC(a.delta)}</b></div>
+          ${p.venc ? `<div class="dl"><span>Vencimento</span><b>${dataCurta(p.venc)} · ${vencido(p,hj) ? 'vencida' : 'em ' + dias(p.venc) + ' dias'}</b></div>` : ''}
+          ${p.car ? `<div class="dl"><span>Carência</span><b>${p.car > hj ? 'até ' + dataCurta(p.car) + ' · ' + dias(p.car) + ' dias' : 'liberada'}</b></div>` : ''}
+          ${n === 1 ? `<div class="track"><i style="width:${pct}%"></i></div>
           <div class="note-sm">${x.isento ? 'Isento de imposto de renda.' :
             prox ? `Faltam ${prox-x.dc} dias para o IR cair a ${fmtC(irAliq(prox)).replace(',00','')}%`
-                 : 'Alíquota mínima de 15% alcançada'}</div>
-          <button class="del" data-id="${x.p.id}">Remover aplicação</button>
+                 : 'Alíquota mínima de 15% alcançada'}</div>` : ''}
+          ${vencido(p, hj) ? `<div class="aviso">Esta aplicação venceu e parou de render. Registre o resgate quando o valor cair na conta.</div>` : ''}
+          ${listaAportes}${listaResg}
+          <div class="apl-acoes grade">
+            <button class="aporte" data-g="${a.gid}"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Aporte</button>
+            <button class="resg" data-g="${a.gid}"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg>Resgatar</button>
+            <button class="edt" data-id="${x.p.id}"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg>Editar</button>
+            <button class="del" data-g="${a.gid}" data-id="${x.p.id}">Remover</button>
+          </div>
         </div></div></div>
       </div>`;
     }).join('');
@@ -1841,19 +2082,118 @@ function listaPosicoes(dados){
     APL_ABERTA = ja ? null : id;
     if(!ja) w.classList.add('open');
   });
-  el.querySelectorAll('.del').forEach(b => b.onclick = e => {
-    e.stopPropagation();
-    const p = carteira.find(x => x.id === b.dataset.id);
+  el.querySelectorAll('.edt').forEach(b => b.onclick = e => { e.stopPropagation(); abrirEdicao(b.dataset.id); });
+  el.querySelectorAll('.aporte').forEach(b => b.onclick = e => { e.stopPropagation(); abrirAporte(b.dataset.g); });
+  el.querySelectorAll('.resg').forEach(b => b.onclick = e => { e.stopPropagation(); abrirResgate(b.dataset.g); });
+  el.querySelectorAll('.ap-e').forEach(b => b.onclick = e => { e.stopPropagation(); abrirEdicaoAporte(b.dataset.id); });
+  const confirma = (b, rotulo, fazer) => {
     if(b.dataset.conf !== '1'){
-      b.dataset.conf = '1'; b.textContent = 'Toque de novo para remover';
-      setTimeout(()=>{ if(b.isConnected){ b.dataset.conf=''; b.textContent='Remover aplicação'; } }, 3000);
+      b.dataset.conf = '1'; const antes = b.innerHTML; b.textContent = 'Confirmar'; b.classList.add('conf');
+      setTimeout(()=>{ if(b.isConnected){ b.dataset.conf=''; b.innerHTML = antes; b.classList.remove('conf'); } }, 3000);
       return;
     }
-    carteira = carteira.filter(x => x.id !== b.dataset.id);
-    APL_ABERTA = null;
-    salvar(); render(); toast(`${p.tipo} do ${p.banco} removido`);
+    fazer();
+  };
+  el.querySelectorAll('.del').forEach(b => b.onclick = e => {
+    e.stopPropagation();
+    confirma(b, 'Remover', () => {
+      const p = carteira.find(x => x.id === b.dataset.id);
+      const gid = b.dataset.g;
+      carteira = carteira.filter(x => grupoDe(x) !== gid);
+      APL_ABERTA = null;
+      salvar(); render(); toast(`${p ? p.tipo + ' do ' + p.banco : 'Aplicação'} removido`);
+    });
+  });
+  el.querySelectorAll('.ap-x').forEach(b => b.onclick = e => {
+    e.stopPropagation();
+    confirma(b, '', () => {
+      carteira = carteira.filter(x => x.id !== b.dataset.id);
+      salvar(); render(); toast('Aporte removido');
+    });
   });
 }
+
+/* ---- sugestões de realocação ----
+   Compara, para os próximos 12 meses, quanto cada aplicação entrega do CDI depois do IR
+   com a melhor opção da carteira. Mover reinicia o IR, então o destino usa a alíquota
+   de uma aplicação nova mantida por 1 ano (17,5%). */
+let SUG_OCULTAS = new Set();
+try{ SUG_OCULTAS = new Set(JSON.parse(localStorage.getItem('sug-ocultas') || '[]')); }catch(e){}
+function cartaoSugestoes(dados){
+  const sec = $('secSug'); if(!sec) return;
+  const hj = hoje(), cdiA = Math.max(0, SELIC_HOJE - 0.10) / 100;
+  const porG = new Map();
+  dados.forEach(x => {
+    if(x.pctB === null) return;
+    const k = grupoDe(x.p);
+    const o = porG.get(k) || {gid:k, p:x.p, liq:0, pesoB:0, soma12:0, bloq:false};
+    const aliq12 = x.isento ? 0 : irAliq(x.dc + 365);
+    o.liq += x.liquido; o.pesoB += x.bruto; o.soma12 += x.pctB * (1 - aliq12/100) * x.bruto;
+    if((x.p.car && x.p.car > hj) || (x.p.venc && Math.round((D(x.p.venc)-D(hj))/864e5) < 60)) o.bloq = true;
+    porG.set(k, o);
+  });
+  const apls = [...porG.values()].map(o => ({...o, liq12: o.soma12 / o.pesoB}));
+  const destinos = apls.filter(o => !(o.p.venc && o.p.venc <= hj)).map(o => {
+    const isento = ISENTOS.includes(o.p.tipo);
+    const pctB = o.pesoB ? pctCDI(o.p, DIA_RENDE || hj) : null;
+    return {...o, novo12: pctB === null ? null : pctB * (1 - (isento ? 0 : 17.5) / 100)};
+  }).filter(o => o.novo12 !== null);
+  const sug = [];
+  apls.filter(o => !o.bloq && o.liq >= 500).forEach(o => {
+    const melhor = destinos.filter(d => d.gid !== o.gid).sort((a,b) => b.novo12 - a.novo12)[0];
+    if(!melhor) return;
+    const ganhoPP = melhor.novo12 - o.liq12;
+    const ganho = o.liq * cdiA * ganhoPP / 100;
+    const chave = o.gid + '>' + melhor.gid;
+    if(ganhoPP >= 3 && ganho >= 50 && !SUG_OCULTAS.has(chave)) sug.push({o, melhor, ganho, ganhoPP, chave});
+  });
+  sug.sort((a,b) => b.ganho - a.ganho);
+  if(!sug.length){ sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  const nome = p => `${p.banco} <span>${p.tipo} ${rotIdx(p)}</span>`;
+  $('sugList').innerHTML = sug.slice(0,2).map(s => `
+    <div class="sug" data-k="${s.chave}">
+      <div class="sug-top">
+        <div class="sug-rota"><b>${nome(s.o.p)}</b><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg><b>${nome(s.melhor.p)}</b></div>
+        <button class="sug-x" data-k="${s.chave}" aria-label="Dispensar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div class="sug-num"><b class="money hideable">+${fmt(s.ganho)}</b><span>movendo <em class="money hideable">${fmt(s.o.liq)}</em> · de ${fmtC(s.o.liq12)}% para ${fmtC(s.melhor.novo12)}% do CDI líquido</span></div>
+    </div>`).join('') +
+    `<div class="sug-nota">Estimativa com o CDI de hoje. Ao mover, o IR recomeça em 22,5% e o destino pode ter limite de valor ou prazo — confira antes.</div>`;
+  $('sugList').querySelectorAll('.sug-x').forEach(b => b.onclick = () => {
+    SUG_OCULTAS.add(b.dataset.k);
+    try{ localStorage.setItem('sug-ocultas', JSON.stringify([...SUG_OCULTAS])); }catch(e){}
+    cartaoSugestoes(calcular());
+  });
+}
+
+/* ---- linha do tempo de vencimentos e fim de carência ---- */
+function cartaoVencimentos(){
+  const sec = $('secVenc'); if(!sec) return;
+  const hj = hoje(), vistos = new Set(), ev = [];
+  carteira.forEach(p => {
+    const k = grupoDe(p);
+    if(vistos.has(k) || encerrado(p, hj)) return; vistos.add(k);
+    const liq = aportesDo(k).filter(q => !encerrado(q, hj)).reduce((a,q) => a + liquidar(q, brutoEm(q,hj), hj).liquido, 0);
+    if(p.venc && p.venc >= addDias(hj, -30)) ev.push({data:p.venc, tipo:'venc', p, liq});
+    if(p.car && p.car >= hj) ev.push({data:p.car, tipo:'car', p, liq});
+  });
+  ev.sort((a,b) => a.data < b.data ? -1 : 1);
+  if(!ev.length){ sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  $('vencN').textContent = `${ev.length} ${ev.length > 1 ? 'eventos' : 'evento'}`;
+  $('vencList').innerHTML = ev.slice(0,5).map(e => {
+    const d = Math.round((D(e.data) - D(hj)) / 864e5);
+    const quando = d < 0 ? `venceu há ${-d} ${-d===1?'dia':'dias'}` : d === 0 ? 'hoje' : d === 1 ? 'amanhã' : `em ${d} dias`;
+    const urg = d <= 7 ? 'urg' : d <= 30 ? 'breve' : '';
+    return `<div class="ve ${urg}">
+      <div class="ve-d"><b>${D(e.data).getUTCDate().toString().padStart(2,'0')}</b><span>${D(e.data).toLocaleDateString('pt-BR',{month:'short',timeZone:'UTC'}).replace('.','')}</span></div>
+      <div class="ve-m"><b>${e.tipo === 'venc' ? 'Vencimento' : 'Fim da carência'} · ${e.p.banco}</b><span>${e.p.tipo} ${rotIdx(e.p)} · ${quando}</span></div>
+      <div class="ve-v money hideable">${fmtC(e.liq)}</div>
+    </div>`;
+  }).join('');
+}
+const addDias = (ds, n) => iso(addD(D(ds), n));
 
 /* ---- quanto a carteira entrega do CDI ---- */
 function cartaoCDI(dados){
@@ -2033,7 +2373,7 @@ function graficoHist(dados){
     liq: eixo.map(ds => carteira.filter(p=>p.banco===b && p.data<=ds)
       .reduce((a,p)=> a + liquidar(p, brutoEm(p,ds), ds).liquido, 0)),
     apl: eixo.map(ds => carteira.filter(p=>p.banco===b && p.data<=ds)
-      .reduce((a,p)=> a + p.valor, 0))}));
+      .reduce((a,p)=> a + principal(p, ds), 0))}));
   cam.forEach(c => c.ganho = c.liq.map((v,i)=> v - c.apl[i]));
 
   const tot   = eixo.map((_,i)=> cam.reduce((a,c)=>a+c.liq[i],0));
@@ -2042,13 +2382,18 @@ function graficoHist(dados){
   /* rendimento do dia em valor BRUTO, a mesma base do "+R$ X hoje" do topo */
   const brT   = eixo.map(ds => carteira.filter(p=>p.data<=ds).reduce((a,p)=>a+brutoEm(p,ds),0));
   const diario= brT.map((v,i)=> i ? (aplic[i]-aplic[i-1] ? 0 : v - brT[i-1]) : 0);
+  /* referência: o mesmo dinheiro, nas mesmas datas, num CDB a 100% do CDI (com IR) */
+  const refP = p => ({...p, tipo:'CDB', index:'cdi', taxa:100});
+  const bench = eixo.map(ds => carteira.filter(p=>p.data<=ds)
+    .reduce((a,p)=>{ const q = refP(p); return a + liquidar(q, brutoEm(q,ds), ds).liquido; }, 0));
+  const benchG = bench.map((v,i)=> v - aplic[i]);
 
   /* eixo Y conforme o modo */
   let vals;
-  if(modoHist === 'saldo') vals = tot.concat(aplic);
+  if(modoHist === 'saldo') vals = tot.concat(aplic, bench);
   else if(modoHist === 'diario') vals = diario.concat([0]);
   else if(modoHist === 'banco') vals = cam.flatMap(c=>c.ganho).concat([0]);
-  else vals = ganho.concat([0]);
+  else vals = ganho.concat([0], benchG);
 
   let max = Math.max(...vals), min = Math.min(...vals);
   const folga = (max - min) * 0.12 || Math.max(1, max*0.1);
@@ -2089,6 +2434,12 @@ function graficoHist(dados){
         stroke-dasharray="2000" stroke-dashoffset="2000">
         <animate attributeName="stroke-dashoffset" from="2000" to="0" dur="1.1s" fill="freeze"
           calcMode="spline" keySplines=".32 .72 0 1" keyTimes="0;1"/></path>`;
+    /* linha do CDI 100% para comparar */
+    const ref = modoHist === 'saldo' ? bench : benchG;
+    const dr = suave(eixo.map((_,i)=>[X(i), Y(ref[i])]));
+    corpo += `<path d="${dr}" fill="none" stroke="#8A93A6" stroke-width="1.5" stroke-dasharray="5 4" stroke-linecap="round"/>
+      <text x="${W-PR}" y="${Math.min(H-PB-4, Y(ref[ref.length-1]) + 13)}" fill="#8A93A6" font-size="9"
+        text-anchor="end" font-family="Inter,-apple-system,Segoe UI,sans-serif">100% CDI</text>`;
     if(modoHist === 'saldo'){
       const da = eixo.map((_,i)=>`${X(i)},${Y(aplic[i])}`).join(' ');
       corpo += `<polyline points="${da}" fill="none" stroke="rgba(14,18,32,.32)" stroke-width="1.3" stroke-dasharray="4 3"/>
@@ -2111,7 +2462,7 @@ function graficoHist(dados){
     `<line id="chx" x1="0" y1="${PT}" x2="0" y2="${H-PB}" stroke="rgba(14,18,32,.25)" stroke-dasharray="2 3" opacity="0"/>
      <circle id="chd" r="4" fill="#0E1220" stroke="#fff" stroke-width="2" opacity="0"/>`;
 
-  histCtx = {eixo, tot, aplic, ganho, diario, cam, W, H, X, Y};
+  histCtx = {eixo, tot, aplic, ganho, diario, cam, bench, benchG, W, H, X, Y};
   cabecalhoHist(eixo.length-1, true);
   legendaHist(eixo.length-1);
 
@@ -2156,6 +2507,10 @@ function legendaHist(i){
   $('legHist').innerHTML = rows +
     `<div class="lg" style="border-top:1px solid var(--line);padding-top:9px;margin-top:2px">
       <span class="nm">Total aplicado</span><span class="pc money hideable">${fmtC(c.aplic[i])}</span></div>
+     ${modoHist==='rend'||modoHist==='saldo' ? (()=>{ const dif = c.tot[i]-c.bench[i];
+       return `<div class="lg"><i style="background:transparent;border-top:2px dashed #8A93A6;height:0;border-radius:0"></i><span class="nm">Se rendesse 100% do CDI</span>
+       <span class="pc" style="color:${dif>=0?'var(--up)':'var(--down)'};margin-right:10px">${dif>=0?'+':'−'}${fmtC(Math.abs(dif))}</span>
+       <span class="pc money hideable">${fmtC(c.bench[i])}</span></div>`; })() : ''}
      <div class="lg"><span class="nm">Rendimento no dia</span>
       <span class="pc money" style="color:${c.diario[i]>=0?'var(--up)':'var(--down)'}">${c.diario[i]>=0?'+':''}${fmtC(c.diario[i])}</span></div>`;
 }
@@ -2430,13 +2785,70 @@ const PADRAO = {cdi:102, selic:100, selic_spread:0.2, pre:13.5, ipca:6.5};
 $('fBanco').innerHTML = BANCOS.map(b=>`<option>${b.n}</option>`).join('');
 $('fData').value = hoje(); $('fData').max = hoje();
 
+let EDITANDO = null;   // aporte que originou a edição
+let MODO = 'nova';    // nova · editar · aporte · aporte-edit
+let GRUPO_ALVO = null;
+const aportesDo = gid => carteira.filter(p => grupoDe(p) === gid).sort((a,b) => a.data < b.data ? -1 : 1);
+const descProduto = p => `${p.banco} · ${p.tipo} ${rotIdx(p)}`;
 function fecharTudo(){
-  $('sheet').classList.remove('on'); $('sheetDados').classList.remove('on');
+  EDITANDO = null; MODO = 'nova'; GRUPO_ALVO = null;
+  ['sheet','sheetDados','sheetResg'].forEach(i => { const e = $(i); if(e) e.classList.remove('on'); });
   $('scrim').classList.remove('on');
 }
-function abrirSheet(){ fecharTudo(); $('scrim').classList.add('on'); $('sheet').classList.add('on'); previa(); }
+function mostrarForm(modo, titulo, sub, cta){
+  MODO = modo;
+  const vis = {nova:[1,1,1], editar:[1,0,1], aporte:[0,1,0], 'aporte-edit':[0,1,0]}[modo];
+  $('blkProduto').style.display = vis[0] ? '' : 'none';
+  $('blkAporte').style.display  = vis[1] ? '' : 'none';
+  $('blkPrazo').style.display   = vis[2] ? '' : 'none';
+  $('sheetTit').textContent = titulo;
+  $('sheetSub').textContent = sub || ''; $('sheetSub').style.display = sub ? '' : 'none';
+  $('btnSave').textContent = cta;
+  $('lblValor') && ($('lblValor').textContent = modo.startsWith('aporte') ? 'Valor do aporte' : 'Valor aplicado');
+  $('scrim').classList.add('on'); $('sheet').classList.add('on'); previa();
+}
+function preencherProduto(p){
+  const sel = $('fBanco');
+  if(![...sel.options].some(o => o.value === p.banco)) sel.add(new Option(p.banco, p.banco));
+  sel.value = p.banco; $('fTipo').value = p.tipo; $('fIndex').value = p.index;
+  $('lblTaxa').textContent = LBL[p.index] || 'Taxa'; $('fTaxa').value = p.taxa;
+  $('fVenc').value = p.venc || ''; $('fCar').value = p.car || '';
+}
+function abrirSheet(){
+  fecharTudo();
+  $('fValor').value = ''; $('fData').value = hoje(); $('fVenc').value = ''; $('fCar').value = '';
+  mostrarForm('nova', 'Nova aplicação', '', 'Adicionar à carteira');
+  setTimeout(() => $('fValor').focus({preventScroll:true}), 350);
+}
+/* editar a aplicação inteira (todas as datas de aporte mantidas) */
+function abrirEdicao(id){
+  const p = carteira.find(x => x.id === id); if(!p) return;
+  fecharTudo();
+  EDITANDO = id; GRUPO_ALVO = grupoDe(p);
+  const n = aportesDo(GRUPO_ALVO).length;
+  preencherProduto(p);
+  $('fValor').value = p.valor; $('fData').value = p.data;
+  if(n > 1) mostrarForm('editar', 'Editar aplicação', `${n} aportes · as mudanças valem para todos`, 'Salvar alterações');
+  else { mostrarForm('nova', 'Editar aplicação', '', 'Salvar alterações'); MODO = 'editar1'; }
+}
+function abrirAporte(gid){
+  const base = aportesDo(gid)[0]; if(!base) return;
+  fecharTudo(); GRUPO_ALVO = gid;
+  preencherProduto(base);
+  $('fValor').value = ''; $('fData').value = hoje();
+  mostrarForm('aporte', 'Novo aporte', descProduto(base), 'Adicionar aporte');
+  setTimeout(() => $('fValor').focus({preventScroll:true}), 350);
+}
+function abrirEdicaoAporte(id){
+  const p = carteira.find(x => x.id === id); if(!p) return;
+  fecharTudo(); EDITANDO = id; GRUPO_ALVO = grupoDe(p);
+  preencherProduto(p);
+  $('fValor').value = p.valor; $('fData').value = p.data;
+  mostrarForm('aporte-edit', 'Editar aporte', descProduto(p), 'Salvar aporte');
+}
 function fecharSheet(){ $('scrim').classList.remove('on'); $('sheet').classList.remove('on'); }
-$('btnNew').onclick = abrirSheet;
+$('btnNew').onclick = () => abrirSheet();
+$('fVenc').addEventListener('input', previa);
 $('scrim').onclick = fecharTudo;
 document.querySelectorAll('[data-fecha]').forEach(b => b.onclick = fecharTudo);
 addEventListener('keydown', e => { if(e.key === 'Escape') fecharTudo(); });
@@ -2446,7 +2858,7 @@ function previa(){
   const data = $('fData').value, tipo = $('fTipo').value, index = $('fIndex').value;
   const el = $('prev');
   if(!(valor > 0) || !(taxa >= 0) || !data){ el.textContent = 'Preencha os campos para ver a simulação.'; return; }
-  const p = {id:'tmp', banco:'', tipo, index, taxa, valor, data};
+  const p = {id:'tmp', banco:'', tipo, index, taxa, valor, data, venc: $('fVenc').value || null};
   const d = D(data); d.setUTCFullYear(d.getUTCFullYear()+1);
   const ds = iso(d), b = brutoEm(p, ds), r = liquidar(p, b, ds);
   el.innerHTML = `Em 12 meses: <b>${fmt(r.liquido)}</b> líquido · rendimento de <b>+${fmt(r.rend - r.ir - r.iof)}</b>` +
@@ -2466,17 +2878,173 @@ $('fTipo').onchange = e => {
 };
 $('btnSave').onclick = () => {
   const valor = parseFloat($('fValor').value), taxa = parseFloat($('fTaxa').value), data = $('fData').value;
-  if(!(valor > 0) || !(taxa >= 0) || !data){ toast('Confira o valor, a taxa e a data'); return; }
-  const p = {
-    id: 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2,7), banco: $('fBanco').value, tipo: $('fTipo').value,
-    index: $('fIndex').value, taxa, valor, data
-  };
-  carteira.push(p); filtro = 'all';
-  fecharSheet(); render();
-  /* histórico ainda não coberto pela série do BC → busca o que falta */
-  if(!CDI_DE || p.data < CDI_DE) sincronizar(true);
-  salvar().then(ok => toast(ok ? `${p.tipo} do ${p.banco} adicionado`
-                               : 'Adicionado, mas não consegui salvar neste navegador'));
+  const venc = $('fVenc').value || null, car = $('fCar').value || null;
+  const precisaAporte = MODO !== 'editar';
+  const precisaProduto = !MODO.startsWith('aporte');
+  if(precisaAporte && (!(valor > 0) || !data)){ toast('Confira o valor e a data'); return; }
+  if(precisaProduto && !(taxa >= 0)){ toast('Confira a taxa'); return; }
+  if(venc && data && venc <= data && precisaAporte){ toast('O vencimento precisa ser depois da aplicação'); return; }
+  const produto = { banco: $('fBanco').value, tipo: $('fTipo').value, index: $('fIndex').value, taxa, venc, car };
+  const novoId = () => 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+  let msg = '', maisAntiga = data;
+
+  if(MODO === 'editar' || MODO === 'editar1'){
+    const lista = aportesDo(GRUPO_ALVO);
+    if(!lista.length){ toast('Essa aplicação não existe mais'); fecharTudo(); return; }
+    lista.forEach(p => Object.assign(p, produto));
+    if(MODO === 'editar1'){ const p = lista[0]; if((p.resg||[]).length && p.data !== data) p.resg = p.resg.filter(r => r.data >= data); p.valor = valor; p.data = data; }
+    maisAntiga = lista[0].data; msg = 'Aplicação atualizada';
+  } else if(MODO === 'aporte'){
+    const base = aportesDo(GRUPO_ALVO)[0];
+    if(!base){ toast('Essa aplicação não existe mais'); fecharTudo(); return; }
+    if(!base.g) base.g = 'g' + Date.now().toString(36);
+    carteira.push({ id: novoId(), banco: base.banco, tipo: base.tipo, index: base.index, taxa: base.taxa,
+                    venc: base.venc || null, car: base.car || null, g: base.g, valor, data });
+    msg = `Aporte de ${fmt(valor)} adicionado`;
+  } else if(MODO === 'aporte-edit'){
+    const p = carteira.find(x => x.id === EDITANDO);
+    if(!p){ toast('Esse aporte não existe mais'); fecharTudo(); return; }
+    p.valor = valor; p.data = data; msg = 'Aporte atualizado';
+  } else {
+    carteira.push({ id: novoId(), ...produto, valor, data }); filtro = 'all';
+    msg = `${produto.tipo} do ${produto.banco} adicionado`;
+  }
+  cacheB.clear(); fecharTudo(); render();
+  if(!CDI_DE || maisAntiga < CDI_DE) sincronizar(true);
+  salvar().then(ok => toast(ok ? msg : msg + ', mas não consegui salvar neste navegador'));
+};
+
+/* ============================================================
+   RESGATE — debita dos aportes mais antigos primeiro (como os bancos)
+   ============================================================ */
+function disponivelResg(gid, ds){
+  return aportesDo(gid).filter(p => p.data <= ds)
+    .reduce((a,p) => a + brutoEm(p, ds), 0);
+}
+/* simula (ou aplica) o resgate de um valor bruto; devolve o que sai de cada aporte */
+function planoResgate(gid, ds, valor, aplicar){
+  let resta = valor, bruto = 0, imp = 0;
+  const itens = [];
+  for(const p of aportesDo(gid)){
+    if(resta <= 0.004) break;
+    if(p.data > ds) continue;
+    const B = brutoEm(p, ds);
+    if(B <= 0.004) continue;
+    const tira = Math.min(resta, B), f = tira / B;
+    const r = liquidar(p, B, ds);
+    const ir = (r.ir + r.iof) * f;
+    itens.push({p, f, tira, ir});
+    bruto += tira; imp += ir; resta -= tira;
+  }
+  if(aplicar) itens.forEach(({p,f,tira,ir}) => {
+    p.resg = (p.resg || []).concat({data: ds, f: Math.min(1, f), bruto: +tira.toFixed(2), ir: +ir.toFixed(2)})
+                            .sort((a,b) => a.data < b.data ? -1 : 1);
+  });
+  return {bruto, imp, liquido: bruto - imp, itens};
+}
+function abrirResgate(gid){
+  const base = aportesDo(gid)[0]; if(!base) return;
+  fecharTudo(); GRUPO_ALVO = gid;
+  $('rSub').textContent = descProduto(base);
+  $('rValor').value = ''; $('rData').value = hoje();
+  prevResg();
+  $('scrim').classList.add('on'); $('sheetResg').classList.add('on');
+  setTimeout(() => $('rValor').focus({preventScroll:true}), 350);
+}
+function prevResg(){
+  const ds = $('rData').value || hoje(), gid = GRUPO_ALVO;
+  if(!gid) return;
+  const disp = disponivelResg(gid, ds);
+  $('rDisp').innerHTML = `Disponível em ${fmtDia(ds)}: <b class="money hideable">${fmt(disp)}</b> bruto`;
+  const v = parseFloat($('rValor').value);
+  const el = $('rPrev');
+  if(!(v > 0)){ el.textContent = 'Informe o valor para ver quanto cai na conta.'; el.classList.remove('erro'); return; }
+  if(v > disp + 0.005){ el.textContent = `O valor passa do disponível (${fmt(disp)}).`; el.classList.add('erro'); return; }
+  el.classList.remove('erro');
+  const r = planoResgate(gid, ds, v, false);
+  el.innerHTML = `Cai na conta: <b>${fmt(r.liquido)}</b> · IR + IOF retidos <b class="t">${fmt(r.imp)}</b>` +
+    (r.itens.length > 1 ? ` · sai de ${r.itens.length} aportes, do mais antigo para o mais novo` : '');
+}
+['rValor','rData'].forEach(i => $(i).addEventListener('input', prevResg));
+document.querySelectorAll('.rchips button').forEach(b => b.onclick = () => {
+  const ds = $('rData').value || hoje(), disp = disponivelResg(GRUPO_ALVO, ds);
+  const f = +b.dataset.p;
+  $('rValor').value = f === 1 ? disp.toFixed(2) : (Math.floor(disp * f * 100) / 100).toFixed(2);
+  prevResg();
+});
+$('btnResg').onclick = () => {
+  const gid = GRUPO_ALVO, ds = $('rData').value, v = parseFloat($('rValor').value);
+  if(!gid || !ds || !(v > 0)){ toast('Confira o valor e a data'); return; }
+  const disp = disponivelResg(gid, ds);
+  if(v > disp + 0.005){ toast('O valor passa do disponível'); return; }
+  /* resgate de quase tudo encerra a aplicação sem sobrar centavos de arredondamento */
+  const valor = (disp - v) < 0.01 ? disp : v;
+  const r = planoResgate(gid, ds, valor, true);
+  cacheB.clear(); fecharTudo(); render();
+  salvar().then(() => toast(`Resgate de ${fmt(r.bruto)} registrado · ${fmt(r.liquido)} na conta`));
+};
+
+/* ============================================================
+   BLOQUEIO COM FACE ID (WebAuthn, autenticador do próprio aparelho)
+   ============================================================ */
+const LOCK_KEY = 'bloqueio-cred';
+let FALHAS_LOCK = 0, SAIU_EM = 0;
+const b64u = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const deB64u = s => Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0));
+const aleatorio = n => crypto.getRandomValues(new Uint8Array(n));
+const credLock = () => { try{ return localStorage.getItem(LOCK_KEY); }catch(e){ return null; } };
+async function suportaBio(){
+  try{ return !!(window.PublicKeyCredential && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); }
+  catch(e){ return false; }
+}
+async function verificarBio(){
+  const id = credLock(); if(!id) return true;
+  await navigator.credentials.get({publicKey:{
+    challenge: aleatorio(32), timeout: 60000, userVerification: 'required',
+    allowCredentials: [{type:'public-key', id: deB64u(id), transports:['internal']}]
+  }});
+  return true;
+}
+async function ativarBloqueio(){
+  const cred = await navigator.credentials.create({publicKey:{
+    challenge: aleatorio(32), timeout: 60000,
+    rp: {name: 'Investimentos'},
+    user: {id: aleatorio(16), name: 'carteira', displayName: 'Carteira de investimentos'},
+    pubKeyCredParams: [{type:'public-key', alg:-7}, {type:'public-key', alg:-257}],
+    authenticatorSelection: {authenticatorAttachment:'platform', userVerification:'required', residentKey:'preferred'},
+    attestation: 'none'
+  }});
+  localStorage.setItem(LOCK_KEY, b64u(cred.rawId));
+}
+function travar(){ if(credLock()){ document.documentElement.classList.add('travado'); $('lockMsg').textContent = 'Seus valores estão protegidos'; } }
+async function destravar(){
+  try{
+    await verificarBio();
+    document.documentElement.classList.remove('travado');
+    FALHAS_LOCK = 0; $('lockSair').style.display = 'none';
+  }catch(e){
+    FALHAS_LOCK++;
+    $('lockMsg').textContent = 'Não foi possível confirmar. Tente de novo.';
+    if(FALHAS_LOCK >= 3) $('lockSair').style.display = '';
+  }
+}
+$('lockBtn').onclick = destravar;
+$('lockSair').onclick = () => {
+  try{ localStorage.removeItem(LOCK_KEY); }catch(e){}
+  document.documentElement.classList.remove('travado');
+  toast('Bloqueio desativado neste aparelho');
+};
+document.addEventListener('visibilitychange', () => {
+  if(document.hidden){ SAIU_EM = Date.now(); return; }
+  if(credLock() && SAIU_EM && Date.now() - SAIU_EM > 60000) travar();
+});
+suportaBio().then(ok => { if(ok) $('optLock').style.display = ''; });
+$('swLock').onclick = async () => {
+  try{
+    if(credLock()){ await verificarBio(); localStorage.removeItem(LOCK_KEY); toast('Bloqueio com Face ID desligado'); }
+    else { await ativarBloqueio(); toast('Bloqueio com Face ID ligado'); }
+  }catch(e){ toast('Face ID cancelado'); }
+  $('swLock').classList.toggle('on', !!credLock());
 };
 
 /* ============================================================
@@ -2540,6 +3108,7 @@ function abrirDados(){
      <div class="di"><span>Nuvem</span><b style="color:${NUVEM_OK?'var(--up)':'var(--tax)'}">${NUVEM_OK ? 'sincronizado' : NUVEM_MSG}</b></div>
      <div class="di"><span>Código da carteira</span><b style="font-family:'Open Sans',monospace;font-size:11px">${(CARTEIRA_ID||'').slice(0,13)}…</b></div>`;
   $('swAnt').classList.toggle('on', ANTECIPA);
+  $('swLock').classList.toggle('on', !!credLock());
   fecharTudo(); $('scrim').classList.add('on'); $('sheetDados').classList.add('on');
 }
 function fecharDados(){ $('scrim').classList.remove('on'); $('sheetDados').classList.remove('on'); }
