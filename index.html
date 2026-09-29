@@ -828,6 +828,35 @@ body.hide #legFut .pc, body.hide #legHist .pc{filter:blur(8px)}
 .tip{min-width:150px;max-width:min(78vw,240px);white-space:normal;left:50%;top:0;visibility:hidden}
 .tip[style*="opacity: 1"]{visibility:visible}
 .tip b{white-space:nowrap}
+
+/* ============ RESUMO LIMPO (estilo "Saldo + limite") ============ */
+/* cores calibradas por fundo — contraste mínimo 5:1 */
+html[data-nivel="n1"]{--hg:#6FE3B4;--ht:#FFCB7A}
+html[data-nivel="n2"]{--hg:#07683F;--ht:#7A4A05}
+html[data-nivel="n3"]{--hg:#74E0B3;--ht:#FFCB7A}
+html[data-nivel="n4"]{--hg:#C9FBE3;--ht:#FFE7B8}
+.hero .summary{display:none!important}
+.hero .deltas{gap:6px!important;margin-top:8px!important;font-size:14px}
+#pillDay{font-size:14px;font-weight:700}
+html[data-nivel] #pillDay.up{color:var(--hg)}
+html[data-nivel] #pillDay.flat{color:var(--hi2)}
+#pillDay + #totRet::before{content:'· ';color:var(--hi2)}
+html[data-nivel] #totRet{font-size:14px!important;color:var(--hi2)!important;font-weight:500}
+.resumo{display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 0 4px;margin-top:2px}
+.rl{display:flex;align-items:baseline;justify-content:center;flex-wrap:wrap;gap:6px;font-size:15px;line-height:1.3}
+html[data-nivel] .rl span{color:var(--hi2);font-weight:400}
+html[data-nivel] .rl b{color:var(--hi);font-weight:700;letter-spacing:-.005em}
+html[data-nivel] .rl b.g{color:var(--hg)}
+html[data-nivel] .rl b.t{color:var(--ht)}
+.rl .rsep{width:1px;height:13px;background:var(--hl);margin:0 8px;align-self:center}
+.rl:first-child b{font-size:16px}
+.hero .acoes{padding-top:20px!important}
+@media (max-width:370px){ .rl{font-size:13.5px} .rl .rsep{margin:0 4px} }
+
+#pillDay{font-family:'Open Sans',-apple-system,'Segoe UI',sans-serif!important;font-variant-numeric:tabular-nums!important}
+.resumo{gap:5px!important;padding-top:16px!important}
+.rl{font-size:15px}
+.rl:first-child b{font-size:15px}
 </style>
 
 
@@ -865,14 +894,14 @@ body.hide #legFut .pc, body.hide #legHist .pc{filter:blur(8px)}
     <div class="cap"><span id="capTxt">Saldo líquido hoje</span></div>
     <div class="val money" id="bal"><span class="sym">R$</span>0<span class="dec">,00</span></div>
     <div class="deltas">
-      <span class="pill flat hideable" id="pillDay">R$ 0,00 hoje</span>
+      <span class="hideable" id="pillDay">R$ 0,00 hoje</span>
       <span class="hideable" id="totRet">0,00% desde o início</span>
     </div>
   </div>
-  <div class="summary">
-    <div><i>Aplicado</i><b class="money" id="sAplic">0,00</b></div>
-    <div class="g"><i>Rendimento</i><b class="money" id="sRend">0,00</b></div>
-    <div class="t"><i>IR + IOF</i><b class="money" id="sImp">0,00</b></div>
+  <div class="resumo">
+    <div class="rl"><span>Aplicado</span><b class="money" id="sAplic">R$ 0,00</b></div>
+    <div class="rl"><span>Rendimento</span><b class="money g" id="sRend">+R$ 0,00</b></div>
+    <div class="rl"><span>IR + IOF</span><b class="money t" id="sImp">−R$ 0,00</b></div>
   </div>
   <div class="acoes">
     <button data-acao="novo"><span><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>Aplicar</button>
@@ -1663,7 +1692,7 @@ function render(){
 
   const pd = document.getElementById('pillDay');
   const eHoje = DIA_RENDE === hoje();
-  pd.className = 'pill hideable ' + (T.delta > 0.004 ? 'up' : 'flat');
+  pd.className = 'hideable dia ' + (T.delta > 0.004 ? 'up' : 'flat');
   pd.textContent = (T.delta > 0.004 ? '+ ' : '') + fmt(T.delta)
     + (eHoje ? ' hoje' : ` · ${fmtDia(DIA_RENDE)}`);
   pd.title = ANTECIPA && eHoje
@@ -1671,9 +1700,9 @@ function render(){
     : 'último rendimento creditado';
   document.getElementById('totRet').textContent = T.aplic
     ? `${fmtC((T.liq/T.aplic-1)*100)}% desde o início` : 'sem aplicações';
-  document.getElementById('sAplic').textContent = fmtC(T.aplic);
-  document.getElementById('sRend').textContent = '+' + fmtC(T.bruto - T.aplic);
-  document.getElementById('sImp').textContent = '−' + fmtC(T.imp);
+  document.getElementById('sAplic').textContent = fmt(T.aplic);
+  document.getElementById('sRend').textContent = '+' + fmt(T.bruto - T.aplic);
+  document.getElementById('sImp').textContent = '−' + fmt(T.imp);
 
   const mv = $('mbVal'); if(mv) mv.textContent = fmt(T.liq);
   cartaoCDI(dados);
