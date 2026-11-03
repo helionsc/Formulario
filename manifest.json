@@ -11,30 +11,30 @@
   "lang": "pt-BR",
   "icons": [
     {
-      "src": "./icon-192.png",
+      "src": "./icon-192.png?v=ritmo-20261103",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./icon-512.png",
+      "src": "./icon-512.png?v=ritmo-20261103",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./icon-512.png",
+      "src": "./icon-maskable.png?v=ritmo-20261103",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "./icon-1024.png",
+      "src": "./icon-1024.png?v=ritmo-20261103",
       "sizes": "1024x1024",
       "type": "image/png"
     },
     {
-      "src": "./favicon.svg",
+      "src": "./favicon.svg?v=ritmo-20261103",
       "sizes": "any",
       "type": "image/svg+xml"
     }
