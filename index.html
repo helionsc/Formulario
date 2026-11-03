@@ -961,6 +961,11 @@ html.travado .app,html.travado nav,html.travado .minibar,html.travado .sheet,htm
 .sec-h .diario-subtitulo{color:var(--ink-2);font-size:11px}
 .saldo-bruto{margin-top:9px;font-size:11px;line-height:1.5;color:var(--hi2);font-weight:400}
 .saldo-bruto b{font-weight:500}
+#sheetDados{touch-action:pan-y;overscroll-behavior-y:contain}
+#sheetDados>.grab{touch-action:none}
+.backup-json{padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid var(--line)}
+.backup-json h4{margin:0 0 8px;font-size:14px}
+.backup-json p{margin:0 0 12px;font-size:12px;line-height:1.6;color:var(--ink-2)}
 .sheet:not(.on){visibility:hidden}.sheet.on{visibility:visible}
 @media(min-width:700px){nav .nav-in{max-width:520px}.minibar{max-width:520px;margin:auto;left:0;right:0}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
@@ -1004,7 +1009,6 @@ html.travado .app,html.travado nav,html.travado .minibar,html.travado .sheet,htm
       <button class="icon-btn" id="btnSync" aria-label="Atualizar taxas">
         <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
       </button>
-      <input type="file" id="fileBk" accept="application/json" style="display:none">
     </div>
   </div>
   <div class="balance">
@@ -1226,6 +1230,13 @@ html.travado .app,html.travado nav,html.travado .minibar,html.travado .sheet,htm
   <div class="grab"></div>
   <button class="fechar" aria-label="Fechar" data-fecha><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
   <h3>Dados e backup</h3>
+  <section class="backup-json" aria-labelledby="backupJsonTitulo">
+    <h4 id="backupJsonTitulo">Backup em JSON</h4>
+    <p>Salve suas aplicações, histórico e premissas para restaurar em outra versão do app.</p>
+    <button class="cta" id="dExp">Exportar JSON</button>
+    <button class="cta ghost" id="dImp">Importar JSON</button>
+    <input type="file" id="fileBk" accept=".json,application/json,text/json" aria-label="Arquivo de backup JSON" style="display:none">
+  </section>
   <div class="dinfo" id="dInfo"></div>
   <div class="opt" id="optAnt">
     <div class="opt-t"><b>Contar o dia de hoje</b>
@@ -1247,8 +1258,6 @@ html.travado .app,html.travado nav,html.travado .minibar,html.travado .sheet,htm
 
   <button class="cta ghost" id="dSync">Atualizar taxas agora</button>
   <button class="cta ghost" id="dLink">Copiar link para outro aparelho</button>
-  <button class="cta ghost" id="dExp">Baixar backup (.json)</button>
-  <button class="cta ghost" id="dImp">Restaurar de um arquivo</button>
   <button class="cta ghost" id="dRec">Baixar cópia anterior</button>
   <p class="diario-rodape">O link da carteira permite acessar os dados em outro aparelho. Compartilhe apenas com quem pode ver sua carteira. O Face ID protege a tela deste aparelho.</p>
   <button class="cta danger" id="dWipe">Apagar tudo</button>
@@ -2558,15 +2567,15 @@ function moveMind(grupo){
 })();
 
 /* arrastar o bottom sheet para baixo fecha */
-function arrastavel(el, aoFechar){
+function arrastavel(el, aoFechar, pegador = el){
   let y0 = null, dy = 0;
   const alvo = el;
-  alvo.addEventListener('touchstart', e => {
+  pegador.addEventListener('touchstart', e => {
     if(alvo.scrollTop > 0) return;
     y0 = e.touches[0].clientY; dy = 0;
     alvo.classList.add('puxando');
   }, {passive:true});
-  alvo.addEventListener('touchmove', e => {
+  pegador.addEventListener('touchmove', e => {
     if(y0 === null) return;
     dy = e.touches[0].clientY - y0;
     if(dy < 0){ dy = 0; return; }
@@ -2581,8 +2590,8 @@ function arrastavel(el, aoFechar){
     if(dy > 110) aoFechar();
     y0 = null;
   };
-  alvo.addEventListener('touchend', solta);
-  alvo.addEventListener('touchcancel', solta);
+  pegador.addEventListener('touchend', solta);
+  pegador.addEventListener('touchcancel', solta);
 }
 
 /* puxar a tela para baixo atualiza as taxas */
@@ -2592,7 +2601,10 @@ function arrastavel(el, aoFechar){
   el.innerHTML = '<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>';
   document.body.appendChild(el);
   let y0 = null, d = 0, rodando = false;
-  addEventListener('touchstart', e => { if(scrollY <= 0 && !rodando) y0 = e.touches[0].clientY; }, {passive:true});
+  addEventListener('touchstart', e => {
+    if(e.target.closest('.sheet')){y0=null;return;}
+    if(scrollY <= 0 && !rodando) y0 = e.touches[0].clientY;
+  }, {passive:true});
   addEventListener('touchmove', e => {
     if(y0 === null) return;
     d = e.touches[0].clientY - y0;
@@ -2959,6 +2971,7 @@ function abrirDados(){
   $('swAnt').classList.toggle('on', ANTECIPA);
   $('swLock').classList.toggle('on', !!credLock());
   fecharTudo(); $('scrim').classList.add('on'); $('sheetDados').classList.add('on');
+  $('sheetDados').scrollTop = 0;
 }
 function fecharDados(){ $('scrim').classList.remove('on'); $('sheetDados').classList.remove('on'); }
 $('tabDados').onclick = abrirDados;
@@ -3064,8 +3077,9 @@ function guardarRecuperacao(motivo){
 }
 function baixarJSON(obj,nome){
   const url=URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}));
-  const a=document.createElement('a');a.href=url;a.download=nome;a.click();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  const a=document.createElement('a');a.href=url;a.download=nome;a.style.display='none';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),30000);
 }
 async function carregar(){
   let raw=null;
@@ -3476,7 +3490,7 @@ $('diaVoltar').onclick = abrirHistorico;
   render();                           // 2. tela já aparece calculada
   requestAnimationFrame(() => { moveInd(); moveMind('modeHist'); moveMind('modeFut'); });
   arrastavel($('sheet'), fecharTudo);
-  arrastavel($('sheetDados'), fecharTudo);
+  arrastavel($('sheetDados'), fecharTudo, $('sheetDados').querySelector('.grab'));
   // Os painéis de histórico rolam normalmente no celular.
   addEventListener('resize', () => { moveInd(); moveMind('modeHist'); moveMind('modeFut'); });
   await puxarNuvem();                 // 3. compara revisões; preserva edições offline

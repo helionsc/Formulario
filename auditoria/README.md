@@ -31,3 +31,15 @@ Os arquivos JSON desta pasta preservam respostas públicas da série 12 do Banco
 Os testes confirmam a aritmética e a regra de datas dos cenários verificados; não representam conciliação com extratos bancários. Sem taxa publicada, o aplicativo identifica a estimativa. Poupança e IPCA utilizam modelos aproximados; Tesouro não reproduz integralmente preços de mercado, custos e condições de resgate.
 
 O diário provisiona IR e IOF sobre o ganho novo de cada dia, considerando o prazo em D+1. A redução de impostos sobre ganhos antigos pode aumentar o saldo líquido, inclusive no fim de semana, sem constituir rendimento novo. Assim, a soma do diário líquido pode diferir do saldo líquido menos o capital aplicado. Os impostos são efetivamente retidos conforme o evento de resgate ou vencimento.
+
+## Backup JSON no celular
+
+Os botões de exportação e restauração continuavam no código, mas ficavam abaixo das configurações em um painel que bloqueava a rolagem por toque. A correção coloca **Exportar JSON** e **Importar JSON** no início de Dados e backup, permite rolar o conteúdo e limita o gesto de fechar à alça superior. O arquivo continua compatível com o formato anterior.
+
+Para executar também as verificações de backup:
+
+```sh
+node conferencia-backup.mjs
+```
+
+Os 119 testes passaram. No navegador, foi baixado um JSON com duas aplicações fictícias e cinco dias de histórico, importado em uma carteira vazia de outra origem local e reaberto com os dados preservados. Ambos os ambientes estavam sem acesso à nuvem. Os testes também verificam a aceitação do formato antigo e a rejeição de arquivos malformados, aplicações inválidas e arquivos grandes demais.
