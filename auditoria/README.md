@@ -43,3 +43,15 @@ node conferencia-backup.mjs
 ```
 
 Os 119 testes passaram. No navegador, foi baixado um JSON com duas aplicações fictícias e cinco dias de histórico, importado em uma carteira vazia de outra origem local e reaberto com os dados preservados. Ambos os ambientes estavam sem acesso à nuvem. Os testes também verificam a aceitação do formato antigo e a rejeição de arquivos malformados, aplicações inválidas e arquivos grandes demais.
+
+## Menu branco em vidro com tamanho adaptável
+
+A navegação inferior usa uma cápsula branca translúcida, com desfoque, destaque da seção ativa e espaço para a área segura do celular. Ao descer a página, a barra se estreita e recolhe as legendas; ao subir, volta ao tamanho completo. Pequenos movimentos e o elástico no início ou no fim da página não alternam o tamanho. Tocar no menu também o expande. Os botões conservam seus nomes para leitores de tela.
+
+Foram conferidas telas de 320 e 390 px de largura, sem rolagem horizontal e com áreas de toque de pelo menos 48 px no modo compacto. Aplicar e Dados continuam acessíveis; Exportar JSON e Importar JSON aparecem no início do painel. Há alternativas sem transparência e com menos animação conforme as preferências do aparelho.
+
+```sh
+node conferencia-menu.mjs
+```
+
+Os 130 testes passaram. O JavaScript financeiro, de persistência e de backup permanece idêntico ao da versão anterior; as alterações de comportamento se limitam à navegação.

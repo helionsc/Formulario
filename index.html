@@ -661,28 +661,58 @@ body::before{content:'';position:fixed;inset:0;background:#EEF1F7;z-index:-1;poi
   border-bottom:none!important;box-shadow:0 1px 0 rgba(0,0,0,.2)}
 .minibar .icon-btn.sm{background:none;border:none;color:#fff}
 
-/* barra inferior reta, ocupando a largura toda */
-nav{padding:0!important}
-.nav-in{
-  max-width:none!important;border-radius:0!important;
-  background:#fff!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
-  border:none!important;border-top:1px solid rgba(14,18,32,.08)!important;box-shadow:none!important;
-  padding:6px 4px calc(env(safe-area-inset-bottom) + 6px)!important;gap:0!important
+/* Navegação flutuante em vidro, inspirada na referência visual. */
+nav{padding:0 12px calc(env(safe-area-inset-bottom) + 12px);isolation:isolate}
+nav .nav-in{
+  position:relative;isolation:isolate;max-width:496px;min-height:76px;
+  border-radius:999px;padding:6px;gap:2px;
+  background:linear-gradient(160deg,rgba(255,255,255,.65),rgba(255,255,255,.04) 46%),rgba(255,255,255,.68);
+  -webkit-backdrop-filter:blur(24px) saturate(145%);backdrop-filter:blur(24px) saturate(145%);
+  border:1px solid rgba(255,255,255,.88);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.95),inset 0 -1px 1px rgba(66,82,109,.06),0 10px 28px rgba(25,37,58,.14),0 2px 5px rgba(25,37,58,.06);
+  transition:width .28s var(--ease),max-width .28s var(--ease),min-height .28s var(--ease)
 }
-.tab{border-radius:0!important;padding:6px 2px!important;font-size:11px!important;gap:4px!important;
-  color:#6B7385!important;background:none!important}
-.tab svg{width:23px!important;height:23px!important;stroke-width:1.6!important;transform:none!important}
-.tab.on{color:var(--marca)!important;font-weight:600}
-.tab-add .add{width:30px;height:30px;border-radius:50%;background:var(--marca);display:grid;place-items:center;
-  margin-bottom:-3px;box-shadow:0 4px 10px -3px rgba(50,101,254,.55)}
-.tab-add .add svg{width:18px!important;height:18px!important;stroke:#fff;stroke-width:2.4!important;fill:none}
-.nav-ind{display:none!important;top:0!important;height:2.5px!important;border-radius:0 0 3px 3px!important;
-  background:var(--marca)!important}
+nav .tab{
+  position:relative;z-index:1;min-width:0;min-height:62px;
+  padding:8px 2px;border-radius:999px;gap:4px;
+  font-size:10.5px;font-weight:500;line-height:1.2;letter-spacing:0;
+  color:#515B6D;background:transparent;
+  transition:color .22s ease,transform .25s var(--ease),min-height .28s var(--ease),gap .28s var(--ease)
+}
+nav .tab svg{width:25px;height:25px;stroke-width:1.85;transform:none}
+nav .tab.on{color:var(--marca);font-weight:600}
+nav .tab.on svg{transform:scale(1.03);stroke-width:2.1}
+nav .tab:active{transform:scale(.94)}
+nav .tab:focus-visible{outline:2px solid var(--marca);outline-offset:-3px}
+nav .tab-add .add{width:25px;height:25px;display:grid;place-items:center;background:none;border-radius:0;margin:0;box-shadow:none}
+nav .tab-add .add svg{width:25px;height:25px;stroke:currentColor;stroke-width:1.9;fill:none}
+nav .nav-ind{
+  display:block;left:0;top:6px;bottom:6px;height:auto;border-radius:999px;z-index:0;
+  background:rgba(40,60,91,.08);border:1px solid rgba(255,255,255,.7);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.8),0 1px 3px rgba(25,37,58,.06);
+  transition:transform .34s var(--ease),width .34s var(--ease),opacity .2s
+}
+nav .tab-label{display:block;max-height:16px;opacity:1;overflow:hidden;white-space:nowrap;
+  transition:max-height .28s var(--ease),opacity .18s ease,transform .28s var(--ease)}
+nav.compacta .nav-in{width:calc(100% - 32px);max-width:360px;min-height:60px}
+nav.compacta .tab{min-height:48px;gap:0}
+nav.compacta .tab-label{max-height:0;opacity:0;transform:translateY(4px)}
+@media(max-width:340px){nav.compacta .nav-in{width:calc(100% - 16px)}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  nav .nav-in{background:#FAFBFD}
+}
+@media(prefers-reduced-transparency:reduce){
+  nav .nav-in{background:#FAFBFD;-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+@media(prefers-contrast:more){
+  nav .nav-in{background:#fff;border-color:#8B93A2}
+  nav .tab{color:#1B2434}nav .nav-ind{background:#D9DFE9;border-color:#7A8598}
+}
 .fab{display:none}
 
 /* conteúdo começa logo após o cabeçalho */
-.app{padding-bottom:calc(96px + env(safe-area-inset-bottom))!important}
-.toast{bottom:calc(84px + env(safe-area-inset-bottom))!important}
+.app{padding-bottom:calc(120px + env(safe-area-inset-bottom))!important}
+.toast{bottom:calc(104px + env(safe-area-inset-bottom))!important}
 
 /* =====================================================================
    COR DO TOPO POR FAIXA DE PATRIMÔNIO
@@ -737,9 +767,7 @@ html[data-nivel="n2"]{--marca:#5B6574}
 html[data-nivel="n3"]{--marca:#2A2D33}
 html[data-nivel="n4"]{--marca:#7C5E1C}
 
-html[data-nivel] .tab.on{color:var(--marca)!important}
-html[data-nivel] .tab-add .add{background:var(--marca);transition:background .5s;
-  box-shadow:0 5px 12px -4px color-mix(in srgb, var(--marca) 70%, transparent)}
+html[data-nivel] nav .tab.on{color:var(--marca)}
 html[data-nivel] .cta:not(.ghost):not(.danger){background:var(--marca);color:#fff;transition:background .5s}
 html[data-nivel] .chip.on{background:var(--marca);border-color:var(--marca);color:#fff}
 html[data-nivel] .f input:focus,html[data-nivel] .f select:focus{border-color:var(--marca)}
@@ -967,7 +995,14 @@ html.travado .app,html.travado nav,html.travado .minibar,html.travado .sheet,htm
 .backup-json h4{margin:0 0 8px;font-size:14px}
 .backup-json p{margin:0 0 12px;font-size:12px;line-height:1.6;color:var(--ink-2)}
 .sheet:not(.on){visibility:hidden}.sheet.on{visibility:visible}
-@media(min-width:700px){nav .nav-in{max-width:520px}.minibar{max-width:520px;margin:auto;left:0;right:0}}
+@media(min-width:700px){.minibar{max-width:520px;margin:auto;left:0;right:0}}
+/* Detalhes de interface com tipografia e superfícies mais próximas do iOS. */
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif}
+.topbar h1,.sec-h h2,.sheet h3,.tab,.cta{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif}
+.card{border-radius:24px}
+.sheet{border-radius:30px 30px 0 0}
+.hero .acoes span{background:color-mix(in srgb,var(--hi) 7%,transparent);border-width:1px;
+  box-shadow:inset 0 1px 1px color-mix(in srgb,var(--hi) 14%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 
 </style>
@@ -1134,27 +1169,27 @@ html.travado .app,html.travado nav,html.travado .minibar,html.travado .sheet,htm
   </section>
 </div>
 
-<nav>
-  <div class="nav-in"><span class="nav-ind" id="navInd"></span>
-    <button class="tab on" data-v="wallet">
+<nav aria-label="Navegação principal">
+  <div class="nav-in"><span class="nav-ind" id="navInd" aria-hidden="true"></span>
+    <button class="tab on" data-v="wallet" aria-label="Carteira" aria-current="page" aria-controls="v-wallet">
       <svg viewBox="0 0 24 24"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5.5A2.5 2.5 0 0 1 3 16.5v-8Z"/><path d="M3 8.5V7a2 2 0 0 1 2-2h11"/><circle cx="17" cy="12.5" r="1.2"/></svg>
-      Carteira
+      <span class="tab-label">Carteira</span>
     </button>
-    <button class="tab" data-v="hist">
+    <button class="tab" data-v="hist" aria-label="Evolução" aria-controls="v-hist">
       <svg viewBox="0 0 24 24"><path d="M3 18l5.5-6 4 3.5L21 6"/><path d="M3 21h18"/></svg>
-      Evolução
+      <span class="tab-label">Evolução</span>
     </button>
-    <button class="tab tab-add" id="btnNew" aria-label="Nova aplicação">
+    <button class="tab tab-add" id="btnNew" aria-label="Nova aplicação" aria-haspopup="dialog" aria-controls="sheet">
       <span class="add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
-      Aplicar
+      <span class="tab-label">Aplicar</span>
     </button>
-    <button class="tab" data-v="fut">
+    <button class="tab" data-v="fut" aria-label="Projeção" aria-controls="v-fut">
       <svg viewBox="0 0 24 24"><path d="M4 19h16"/><path d="M6 15l4-4 3 2 5-6"/></svg>
-      Projeção
+      <span class="tab-label">Projeção</span>
     </button>
-    <button class="tab" id="tabDados">
+    <button class="tab" id="tabDados" aria-label="Dados" aria-haspopup="dialog" aria-controls="sheetDados">
       <svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>
-      Dados
+      <span class="tab-label">Dados</span>
     </button>
   </div>
 </nav>
@@ -2541,9 +2576,12 @@ const reduz = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 function moveInd(){
   const ind = $('navInd'), on = document.querySelector('.tab.on');
   if(!ind || !on) return;
+  document.querySelectorAll('.tab[data-v]').forEach(t=>{
+    if(t===on)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');
+  });
   const pai = ind.parentElement.getBoundingClientRect(), r = on.getBoundingClientRect();
   ind.style.width = r.width + 'px';
-  ind.style.transform = `translateX(${r.left - pai.left}px)`;
+  ind.style.transform = `translateX(${r.left - pai.left - (ind.parentElement.clientLeft || 0)}px)`;
   ind.style.opacity = 1;
 }
 /* indicador dos modos do gráfico */
@@ -2564,6 +2602,45 @@ function moveMind(grupo){
   const passo = () => { raf = null; mb.classList.toggle('on', scrollY > hero.offsetHeight - 70); };
   addEventListener('scroll', () => { if(!raf) raf = requestAnimationFrame(passo); }, {passive:true});
   passo();
+})();
+
+/* Direção de rolagem com tolerância a pequenos movimentos e ao elástico do iOS. */
+function menuAoRolar(anterior, posicao, limite = Infinity){
+  const y=Math.min(Math.max(0,limite),Math.max(0,Number.isFinite(posicao)?posicao:0));
+  if(y<=48)return {y,direcao:0,trecho:0,compacto:false};
+  const delta=y-anterior.y;
+  if(!delta)return {...anterior,y};
+  const direcao=delta>0?1:-1;
+  const trecho=anterior.direcao===direcao?anterior.trecho+Math.abs(delta):Math.abs(delta);
+  const compacto=direcao>0&&trecho>=28?true:direcao<0&&trecho>=14?false:anterior.compacto;
+  return {y,direcao,trecho,compacto};
+}
+(function menuAdaptavel(){
+  const nav=document.querySelector('nav'),dock=nav&&nav.querySelector('.nav-in');
+  if(!nav||!dock)return;
+  let estado={y:Math.max(0,scrollY),direcao:0,trecho:0,compacto:false},raf=null,largura=window.innerWidth;
+  const expandir=()=>{
+    estado={y:Math.max(0,scrollY),direcao:0,trecho:0,compacto:false};
+    nav.classList.remove('compacta');requestAnimationFrame(moveInd);
+  };
+  const atualizar=()=>{
+    raf=null;
+    const limite=Math.max(0,(document.documentElement.scrollHeight||0)-(window.innerHeight||0));
+    const novo=menuAoRolar(estado,scrollY,limite);
+    if(novo.compacto!==estado.compacto){
+      nav.classList.toggle('compacta',novo.compacto);requestAnimationFrame(moveInd);
+    }
+    estado=novo;
+  };
+  addEventListener('scroll',()=>{if(raf===null)raf=requestAnimationFrame(atualizar);},{passive:true});
+  addEventListener('resize',()=>{
+    if(window.innerWidth!==largura){largura=window.innerWidth;expandir();}
+    else requestAnimationFrame(moveInd);
+  });
+  nav.addEventListener('click',expandir);
+  nav.addEventListener('focusin',e=>{if(e.target.matches(':focus-visible'))expandir();});
+  if(typeof ResizeObserver==='function')new ResizeObserver(moveInd).observe(dock);
+  else dock.addEventListener('transitionend',moveInd);
 })();
 
 /* arrastar o bottom sheet para baixo fecha */
