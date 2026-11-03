@@ -1,0 +1,33 @@
+{
+  "fonte": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.12/dados?formato=json&dataInicial=19/10/2026&dataFinal=27/10/2026",
+  "dados": [
+    {
+      "data": "19/10/2026",
+      "valor": "0.050788"
+    },
+    {
+      "data": "20/10/2026",
+      "valor": "0.050788"
+    },
+    {
+      "data": "21/10/2026",
+      "valor": "0.050788"
+    },
+    {
+      "data": "22/10/2026",
+      "valor": "0.050788"
+    },
+    {
+      "data": "23/10/2026",
+      "valor": "0.050788"
+    },
+    {
+      "data": "26/10/2026",
+      "valor": "0.050788"
+    },
+    {
+      "data": "27/10/2026",
+      "valor": "0.050788"
+    }
+  ]
+}

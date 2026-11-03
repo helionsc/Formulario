@@ -959,6 +959,8 @@ html.travado .app,html.travado nav,html.travado .minibar,html.travado .sheet,htm
 .premissas h4{font-size:14px;margin:0 0 8px}.premissas p{font-size:11px;color:var(--ink-2);line-height:1.6;margin:0 0 12px}
 .premissas .cta{margin-top:0}
 .sec-h .diario-subtitulo{color:var(--ink-2);font-size:11px}
+.saldo-bruto{margin-top:9px;font-size:11px;line-height:1.5;color:var(--hi2);font-weight:400}
+.saldo-bruto b{font-weight:500}
 .sheet:not(.on){visibility:hidden}.sheet.on{visibility:visible}
 @media(min-width:700px){nav .nav-in{max-width:520px}.minibar{max-width:520px;margin:auto;left:0;right:0}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
@@ -1008,6 +1010,7 @@ html.travado .app,html.travado nav,html.travado .minibar,html.travado .sheet,htm
   <div class="balance">
     <div class="cap"><span id="capTxt">Saldo líquido hoje</span></div>
     <div class="val money" id="bal"><span class="sym">R$</span>0<span class="dec">,00</span></div>
+    <div class="saldo-bruto" title="Valor total das aplicações antes de IR e IOF"><span>Saldo bruto</span> <b class="money" id="saldoBruto">R$ 0,00</b></div>
     <div class="deltas">
       <button class="hideable dia-toque" id="pillDay" aria-haspopup="dialog">R$ 0,00 ontem</button>
       <span class="hideable" id="totRet">0,00% desde o início</span>
@@ -1793,6 +1796,7 @@ function render(){
 
   anima(document.getElementById('bal'), ultimo, T.liq, balHTML);
   ultimo = T.liq;
+  $('saldoBruto').textContent = fmt(T.bruto);
 
   renderDiario();
   const pd = document.getElementById('pillDay'), rendimentoOntem = resumoDiario(ontem());
