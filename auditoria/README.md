@@ -55,3 +55,9 @@ node conferencia-menu.mjs
 ```
 
 Os 130 testes passaram. O JavaScript financeiro, de persistência e de backup permanece idêntico ao da versão anterior; as alterações de comportamento se limitam à navegação.
+
+## Atalhos redondos e leitura inicial de três dias
+
+Após aprovação da prévia, os atalhos do saldo mantêm círculos de 48 px, sem contorno branco, com preenchimento suave e ícones finos. O menu inferior recebeu um pouco mais de transparência e mantém o comportamento de reduzir ao descer e expandir ao subir.
+
+A tela inicial apresenta os três últimos dias encerrados, incluindo fins de semana e feriados zerados. **Ver mais dias** abre o histórico completo; os registros anteriores continuam preservados. A conferência da prévia confirmou três linhas iniciais e cinco registros no histórico da carteira fictícia. Os cálculos financeiros e as funções de importar e exportar JSON não foram alterados.
