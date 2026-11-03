@@ -485,25 +485,6 @@ svg.plot{width:100%;height:auto;overflow:hidden}
 .total-muda{animation:pulsa .5s var(--mola)}
 @keyframes pulsa{50%{transform:scale(1.018)}}
 
-/* rendimento equivalente ao CDI */
-.cdi-card{display:grid;grid-template-columns:1fr auto;gap:14px;padding:18px 16px 14px;align-items:center}
-.cdi-main{min-width:0}
-.cdi-val{font-size:34px;font-weight:700;letter-spacing:-.05em;line-height:1;color:var(--up)}
-.cdi-val small{font-size:.5em;font-weight:500;margin-left:2px}
-.cdi-lbl{font-size:11.5px;color:var(--ink-3);margin-top:6px;line-height:1.4}
-.cdi-side{display:flex;flex-direction:column;gap:9px;text-align:right;flex:none;
-  border-left:1px solid var(--line);padding-left:14px}
-.cdi-l span{display:block;font-size:10.5px;color:var(--ink-3);margin-bottom:2px}
-.cdi-l b{font-size:14px;font-weight:600;letter-spacing:-.02em}
-.cdi-nota{grid-column:1/-1;font-size:11.5px;color:var(--ink-2);line-height:1.5;
-  border-top:1px solid var(--line);padding-top:11px;margin-top:2px}
-.cdi-nota b{color:var(--ink);font-weight:600}
-@media (max-width:370px){
-  .cdi-card{grid-template-columns:1fr}
-  .cdi-side{border-left:none;border-top:1px solid var(--line);padding-left:0;padding-top:11px;
-    flex-direction:row;justify-content:space-between;text-align:left}
-}
-
 /* ============ LISTA POR BANCO ============ */
 #posList[data-pronto] .grp{animation:none}
 #posList{overflow:visible}
@@ -771,7 +752,7 @@ html[data-nivel] .grp.open .grp-row{box-shadow:inset 3px 0 0 var(--marca)}
 .money,
 .hero .balance .val, .hero .balance .val .sym, .hero .balance .val .dec,
 .pill, #totRet,
-.cdi-val, .cdi-l b, .dc-v, .dc-s.money,
+.dc-v, .dc-s.money,
 .lg-v .pc, .lg-v em, .lg .pc,
 .grp-row .end b, .grp-row .end span, .grp-resumo b,
 .apl-data b, .apl-data i, .apl-mid em, .apl-end b, .apl-end span,
@@ -789,13 +770,12 @@ html[data-nivel] .grp.open .grp-row{box-shadow:inset 3px 0 0 var(--marca)}
 .apl-data b{letter-spacing:-.05em}
 
 /* números em Open Sans: dígitos de largura fixa e espaçamento natural */
-.money,.hero .balance .val,.pill,#totRet,.cdi-val,.cdi-l b,.dc-v,.dc-s.money,.lg-v .pc,.lg-v em,.lg .pc,
+.money,.hero .balance .val,.pill,#totRet,.dc-v,.dc-s.money,.lg-v .pc,.lg-v em,.lg .pc,
 .grp-row .end b,.grp-row .end span,.grp-resumo b,.apl-data b,.apl-data i,.apl-mid em,.apl-end b,.apl-end span,
 .row .end b,.row .end span,.chart-top .v,.tip b,.dl b,.di b,.preview b,.qtd,#mbVal,.summary b{
   font-variant-numeric:tabular-nums lining-nums!important;letter-spacing:-.005em!important}
 .hero .balance .val{font-size:clamp(34px,10vw,42px)!important;font-weight:700!important;letter-spacing:-.015em!important}
 .hero .balance .val .sym{font-size:.6em!important;font-weight:600!important;margin-right:7px!important}
-.cdi-val{font-weight:700!important;letter-spacing:-.02em!important}
 .dc-v{font-size:16px!important}
 
 /* ====== revisão ====== */
@@ -873,7 +853,7 @@ html[data-nivel] .rl b.t{color:var(--ht)}
 .apl-det .del{padding:10px!important;font-weight:600}
 
 /* =====================================================================
-   APORTES, RESGATES, VENCIMENTOS, SUGESTÕES, BLOQUEIO
+   APORTES, RESGATES, VENCIMENTOS, BLOQUEIO
    ===================================================================== */
 .sheet-sub{margin:-8px 0 16px;font-size:13px;color:var(--ink-2)}
 .f label em{font-style:normal;color:var(--ink-3);font-size:10.5px;margin-left:3px}
@@ -1062,21 +1042,6 @@ html.travado .app,html.travado nav,html.travado .minibar,html.travado .sheet,htm
       <p class="diario-rodape">Valores líquidos estimados, após IR e IOF sobre o ganho de cada dia. A retenção ocorre no resgate.</p>
     </div>
 
-
-    <div class="sec" id="secCDI" style="display:none">
-      <div class="sec-h"><h2>Rendimento equivalente</h2><span id="cdiHoje"></span></div>
-      <div class="card cdi-card">
-        <div class="cdi-main">
-          <div class="cdi-val money" id="cdiLiq">—</div>
-          <div class="cdi-lbl">do CDI, já descontado o imposto</div>
-        </div>
-        <div class="cdi-side">
-          <div class="cdi-l"><span>Bruto</span><b class="money" id="cdiBruto">—</b></div>
-          <div class="cdi-l"><span>Imposto médio</span><b class="money" id="cdiAliq">—</b></div>
-        </div>
-        <div class="cdi-nota" id="cdiNota"></div>
-      </div>
-    </div>
 
     <div class="sec" id="secVenc" style="display:none">
       <div class="sec-h"><h2>Próximos vencimentos</h2><span id="vencN"></span></div>
@@ -1800,21 +1765,6 @@ function calcular(){
             pctB: vencido(p, h) ? null : pctCDI(p, dia), pctL: vencido(p, h) ? null : pctCDILiq(p, dia)};
   });
 }
-/* Média ponderada pelo capital: cada real pesa igual, independente do banco. */
-function mediaCDI(dados){
-  let peso = 0, somaB = 0, somaL = 0;
-  dados.forEach(x => {
-    if(x.pctB === null) return;
-    peso  += x.bruto;
-    somaB += x.pctB * x.bruto;
-    somaL += x.pctL * x.bruto;
-  });
-  if(!peso) return null;
-  const bruto = somaB/peso, liq = somaL/peso;
-  /* quanto um CDB tributado teria que pagar para empatar com essa carteira */
-  const aliqMed = bruto > 0 ? 1 - liq/bruto : 0;
-  return {bruto, liq, aliqMed: aliqMed*100};
-}
 /* Faixas pelo total aplicado:
    até 50 mil azul-marinho · 50 a 100 mil cinza-claro · 100 a 150 mil cinza-escuro · 150 mil+ dourado-escuro */
 const NIVEIS = [
@@ -1856,7 +1806,6 @@ function render(){
   document.getElementById('sImp').textContent = '−' + fmt(T.imp);
 
   const mv = $('mbVal'); if(mv) mv.textContent = fmt(T.liq);
-  cartaoCDI(dados);
   cartaoVencimentos();
   listaPosicoes(dados);
   alocacao(dados);
@@ -2099,31 +2048,6 @@ function cartaoVencimentos(){
   }).join('');
 }
 const addDias = (ds, n) => iso(addD(D(ds), n));
-
-/* ---- quanto a carteira entrega do CDI ---- */
-function cartaoCDI(dados){
-  const sec = $('secCDI'), m = mediaCDI(dados);
-  if(!m || !dados.length){ sec.style.display = 'none'; return; }
-  sec.style.display = 'block';
-  $('cdiLiq').innerHTML = `${fmtC(m.liq)}<small>%</small>`;
-  $('cdiBruto').textContent = fmtC(m.bruto) + '%';
-  $('cdiAliq').textContent = fmtC(m.aliqMed) + '%';
-  $('cdiHoje').textContent = `CDI ${fmtPct(Math.max(0, SELIC_HOJE - 0.10))} a.a.`;
-
-  /* qual papel puxa para cima e qual puxa para baixo */
-  const val = dados.filter(x => x.pctL !== null).sort((a,b) => b.pctL - a.pctL);
-  if(val.length > 1){
-    const top = val[0], pior = val[val.length-1];
-    $('cdiNota').innerHTML =
-      `Melhor: <b>${top.p.banco}</b> ${top.p.tipo} a ${fmtC(top.pctL)}% líquido` +
-      ` · Pior: <b>${pior.p.banco}</b> ${pior.p.tipo} a ${fmtC(pior.pctL)}%`;
-  } else if(val.length === 1){
-    const u = val[0];
-    $('cdiNota').innerHTML = u.isento
-      ? `${u.p.tipo} isento: os ${fmtC(u.pctB)}% do CDI chegam inteiros até você.`
-      : `Com IR de ${fmtC(u.aliq).replace(',00','')}%, sobram ${fmtC(u.pctL)}% dos ${fmtC(u.pctB)}% contratados.`;
-  } else $('cdiNota').textContent = '';
-}
 
 /* ---- rosca de alocação ---- */
 let ALLOC_SEL = null;   // banco destacado na rosca
