@@ -915,22 +915,6 @@ html[data-nivel] .rl b.t{color:var(--ht)}
 .rchips button:active{transform:scale(.95)}
 #rPrev b.t{color:var(--tax)}
 #rPrev.erro{background:rgba(229,72,77,.07);border-color:rgba(229,72,77,.25);color:#A2302F}
-/* sugestões */
-.sug-card{padding:4px 0 0}
-.sug{padding:14px 16px 12px}
-.sug + .sug{border-top:1px solid var(--line)}
-.sug-top{display:flex;align-items:flex-start;gap:8px}
-.sug-rota{flex:1;display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:13px}
-.sug-rota b{font-weight:600}
-.sug-rota b span{font-weight:400;color:var(--ink-3);font-size:11.5px}
-.sug-rota svg{width:15px;height:15px;stroke:var(--ink-3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
-.sug-x{all:unset;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--ink-3);flex:none;margin:-3px -6px 0 0}
-.sug-x svg{width:13px;height:13px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round}
-.sug-num{margin-top:8px;display:flex;flex-direction:column;gap:2px}
-.sug-num b{font-size:20px;font-weight:700;color:var(--up)}
-.sug-num span{font-size:11.5px;color:var(--ink-2);line-height:1.4}
-.sug-num em{font-style:normal}
-.sug-nota{padding:10px 16px 13px;font-size:10.5px;color:var(--ink-3);line-height:1.45;border-top:1px solid var(--line);background:var(--surface-2)}
 /* vencimentos */
 .venc-card{padding:4px 0}
 .ve{display:flex;align-items:center;gap:12px;padding:11px 15px}
@@ -1071,10 +1055,10 @@ html.travado .app,html.travado nav,html.travado .minibar,html.travado .sheet,htm
       <p>A outra versão será baixada como backup antes da escolha ser aplicada.</p>
     </div>
     <div class="sec" id="secDiario">
-      <div class="sec-h"><h2>Rendimento diário</h2><span class="diario-subtitulo" id="diarioPeriodo">dias encerrados</span></div>
+      <div class="sec-h"><h2>Rendimento diário líquido</h2><span class="diario-subtitulo" id="diarioPeriodo">dias encerrados</span></div>
       <p class="diario-intro">O rendimento de cada dia aparece no dia seguinte.<br>Toque no valor para ver quanto rendeu em cada banco.</p>
       <div class="card"><div id="diarioList"></div><button class="diario-mais" id="diarioMais">Ver todo o histórico</button></div>
-      <p class="diario-rodape">Valores brutos, antes de IR e IOF. Estimativas são identificadas.</p>
+      <p class="diario-rodape">Valores líquidos estimados, após IR e IOF sobre o ganho de cada dia. A retenção ocorre no resgate.</p>
     </div>
 
 
@@ -1091,11 +1075,6 @@ html.travado .app,html.travado nav,html.travado .minibar,html.travado .sheet,htm
         </div>
         <div class="cdi-nota" id="cdiNota"></div>
       </div>
-    </div>
-
-    <div class="sec" id="secSug" style="display:none">
-      <div class="sec-h"><h2>Onde seu dinheiro renderia mais</h2><span>em 12 meses</span></div>
-      <div class="card sug-card" id="sugList"></div>
     </div>
 
     <div class="sec" id="secVenc" style="display:none">
@@ -1308,13 +1287,13 @@ html.travado .app,html.travado nav,html.travado .minibar,html.travado .sheet,htm
 <div class="sheet diario-sheet" id="sheetDia" role="dialog" aria-modal="true" aria-labelledby="diaTitulo">
   <div class="grab"></div><button class="fechar" aria-label="Fechar detalhes" data-fecha><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
   <h3 id="diaTitulo">Rendimento do dia</h3>
-  <div class="dia-destaque"><span>Total que rendeu no dia</span><b class="money hideable" id="diaTotal">R$ 0,00</b><span id="diaEstado"></span></div>
+  <div class="dia-destaque"><span>Total líquido que rendeu no dia</span><b class="money hideable" id="diaTotal">R$ 0,00</b><span id="diaEstado"></span></div>
   <div id="diaBancos"></div><p class="diario-rodape" id="diaNota"></p>
   <button class="cta ghost" id="diaVoltar">Ver histórico completo</button>
 </div>
 <div class="sheet diario-sheet" id="sheetHistorico" role="dialog" aria-modal="true" aria-labelledby="historicoTitulo">
   <div class="grab"></div><button class="fechar" aria-label="Fechar histórico" data-fecha><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
-  <h3 id="historicoTitulo">Histórico de rendimentos</h3><p class="diario-intro">Um registro por dia, com detalhes por banco. Valores brutos.</p>
+  <h3 id="historicoTitulo">Histórico de rendimentos</h3><p class="diario-intro">Um registro por dia, com o rendimento líquido por banco.</p>
   <div id="historicoList"></div><p class="diario-rodape" id="historicoContagem"></p><button class="diario-mais" id="historicoMais">Carregar mais 30 dias</button>
 </div>
 
@@ -1403,7 +1382,7 @@ function baseSelic(ds){
   return t;
 }
 const cdiEm = ds => Math.max(0, selicEm(ds) - 0.10);
-const diaria = anual => Math.floor((Math.pow(1 + anual/100, 1/252) - 1) * 1e8)/1e8;
+const diaria = anual => Math.round((Math.pow(1 + anual/100, 1/252) - 1) * 1e8)/1e8;
 function taxaAnual(p, ds){
   switch(p.index){
     case 'cdi':          return (Math.pow(1 + diaria(cdiEm(ds)) * p.taxa/100, 252) - 1)*100;
@@ -1414,26 +1393,27 @@ function taxaAnual(p, ds){
   }
   return 0;
 }
-function fatorDia(p, ds){
+function taxaDiaEfetiva(p, ds){
   if(p.tipo === 'POUP'){
     const s = selicEm(ds), am = s > 8.5 ? 0.5 : (s*0.70)/12;
-    return Math.pow(1 + am/100, 1/21);
+    return Math.pow(1 + am/100, 1/21)-1;
   }
   /* taxa efetivamente divulgada pelo Banco Central naquele dia */
   const rc = CDI_MAP[ds], rs = SEL_MAP[ds];
-  if(p.index === 'cdi'   && rc !== undefined) return 1 + rc/100 * p.taxa/100;
-  if(p.index === 'selic' && rs !== undefined) return 1 + rs/100 * p.taxa/100;
+  if(p.index === 'cdi'   && rc !== undefined) return rc/100 * p.taxa/100;
+  if(p.index === 'selic' && rs !== undefined) return rs/100 * p.taxa/100;
   if(p.index === 'selic_spread' && rs !== undefined)
-    return (1 + rs/100) * (1 + diaria(p.taxa));
+    return (1 + rs/100) * (1 + diaria(p.taxa))-1;
   /* sem dado do BC (dia futuro ou série indisponível): usa a curva projetada */
-  if(p.index === 'cdi')   return 1 + diaria(cdiEm(ds))   * p.taxa/100;
-  if(p.index === 'selic') return 1 + diaria(selicEm(ds)) * p.taxa/100;
-  return 1 + diaria(taxaAnual(p, ds));
+  if(p.index === 'cdi')   return diaria(cdiEm(ds)) * p.taxa/100;
+  if(p.index === 'selic') return diaria(selicEm(ds)) * p.taxa/100;
+  return diaria(taxaAnual(p, ds));
 }
+function fatorDia(p,ds){return 1+taxaDiaEfetiva(p,ds);}
 /* o BC só publica taxa em dia útil — a própria série define o calendário */
 function rende(d, ds){
-  /* só confia na série dentro do intervalo que ela realmente cobre */
-  if(CDI_DE && CDI_ATE && ds >= CDI_DE && ds <= CDI_ATE) return CDI_MAP[ds] !== undefined;
+  /* Sábados, domingos e feriados financeiros nunca recebem rendimento.
+     Uma lacuna em dia útil usa o modelo e recebe identificação de estimativa. */
   return util(d);
 }
 
@@ -1470,20 +1450,27 @@ function liquidar(p, bruto, dataRef){
    ============================================================ */
 const cacheB = new Map();
 /* valor bruto sem resgates (só crescimento), com parada no vencimento */
-function crescido(p, ds){
-  if(ds <= p.data) return p.valor;
-  const k = `${p.tipo}|${p.index}|${p.taxa}|${p.valor}|${p.data}|${p.venc||''}|${ds}|${SHIFT}|${CDI_VER}|${ANTECIPA?1:0}`;
+/* DI acumulado: data inicial inclusiva e vencimento exclusivo.
+   Referência: B3, Metodologia de Cálculo Acumulado de DI.
+   https://b3.com.br/main.jsp?lumA=1&lumII=2C9FBE63638CFE2501638D373B435E37&lumPageId=2C9FBE63638CFE2501638D3464C8577B */
+function crescido(p, ds, incluirDia = ANTECIPA){
+  if(ds < p.data) return p.valor;
+  const k = `${p.tipo}|${p.index}|${p.taxa}|${p.valor}|${p.data}|${p.venc||''}|${ds}|${SHIFT}|${CDI_VER}|${incluirDia?1:0}`;
   if(cacheB.has(k)) return cacheB.get(k);
-  /* ANTECIPA=false: igual ao extrato — o rendimento do dia útil D só entra em D+1.
-     ANTECIPA=true:  conta o próprio dia, usando a taxa projetada até o BC publicar. */
-  let fim = ANTECIPA ? D(ds) : addD(D(ds), -1);
-  /* no vencimento o papel para de render: rende até a véspera */
+  let fim = incluirDia ? D(ds) : addD(D(ds), -1);
   if(p.venc){ const lim = addD(D(p.venc), -1); if(fim > lim) fim = lim; }
-  let v = p.valor, d = D(p.data);
-  while(d < fim){ d = addD(d,1); const x = iso(d); if(rende(d, x)) v *= fatorDia(p, x); }
-  cacheB.set(k, v);
+  let v = p.valor;
+  for(let d = D(p.data); d <= fim; d = addD(d,1)){
+    const x = iso(d);
+    if(rende(d,x)) v *= fatorDia(p,x);
+  }
+  cacheB.set(k,v);
   return v;
 }
+/* Um resgate é registrado sobre o saldo já fechado, independentemente da
+   preferência de antecipar o rendimento de hoje na tela. */
+function brutoParaResgate(p, ds){ return crescido(p,ds,false) * mantido(p,ds); }
+
 function brutoEm(p, ds){ return crescido(p, ds) * mantido(p, ds); }
 const vencido  = (p, ds) => !!p.venc && ds >= p.venc;
 const encerrado = (p, ds) => mantido(p, ds) < 1e-9;
@@ -1802,12 +1789,12 @@ function pctCDILiq(p, ds){
 function calcular(){
   const h = hoje();
   const dia = ultimoUtil(h);                                  // dia útil que rendeu
-  const A = ANTECIPA ? dia  : iso(addD(D(dia), 1));           // saldo depois do crédito
-  const B = ANTECIPA ? iso(addD(D(dia),-1)) : dia;            // saldo antes
-  DIA_RENDE = dia; DIA_CREDITO = ANTECIPA ? dia : A;
+  DIA_RENDE = ontem(); DIA_CREDITO = h;
+  atualizarDiario();
+  const resumoOntem = resumoDiario(ontem());
   return carteira.filter(p => p.data<=h && !encerrado(p, h)).map(p => {
     const bruto = brutoEm(p, h);
-    const d1 = (p.data >= dia || vencido(p, dia)) ? 0 : crescido(p, A)*mantido(p, h) - crescido(p, B)*mantido(p, h);
+    const d1 = (resumoOntem.posicoes[p.id] ?? 0)/100;
     return {p, ...liquidar(p, bruto, h), delta: d1, aplic: principal(p, h),
             pctB: vencido(p, h) ? null : pctCDI(p, dia), pctL: vencido(p, h) ? null : pctCDILiq(p, dia)};
   });
@@ -1859,7 +1846,7 @@ function render(){
   renderDiario();
   const pd = document.getElementById('pillDay'), rendimentoOntem = resumoDiario(ontem());
   pd.className = 'hideable dia dia-toque ' + (rendimentoOntem.total > 0.004 ? 'up' : 'flat');
-  pd.textContent = assinado(rendimentoOntem.total) + ' ontem · bruto' + (rendimentoOntem.estimado ? ' · estimado' : '');
+  pd.textContent = assinado(rendimentoOntem.total) + ' ontem · líquido' + (rendimentoOntem.motivo?' · '+rendimentoOntem.motivo:rendimentoOntem.incompleto?' · a recalcular':rendimentoOntem.estimado?' · estimado':'');
   pd.title = 'Toque para ver o rendimento de ontem em cada banco';
   document.getElementById('totRet').textContent = T.aplic
     ? `${fmtC((T.liq/T.aplic-1)*100)}% desde o início` : 'sem aplicações';
@@ -1869,7 +1856,6 @@ function render(){
 
   const mv = $('mbVal'); if(mv) mv.textContent = fmt(T.liq);
   cartaoCDI(dados);
-  cartaoSugestoes(dados);
   cartaoVencimentos();
   listaPosicoes(dados);
   alocacao(dados);
@@ -1997,7 +1983,7 @@ function listaPosicoes(dados){
             <b class="money" style="color:var(--tax)">−${fmtC(a.iof)}</b></div>
           ${a.pctL !== null ? `<div class="dl"><span>Equivale a</span>
             <b class="money" style="color:var(--up)">${fmtC(a.pctL)}% do CDI líquido</b></div>` : ''}
-          <div class="dl"><span>Rendeu ${fmtDia(DIA_RENDE)}</span><b class="money">+${fmtC(a.delta)}</b></div>
+          <div class="dl"><span>Rendeu líquido ${fmtDia(DIA_RENDE)}</span><b class="money">+${fmtC(a.delta)}</b></div>
           ${p.venc ? `<div class="dl"><span>Vencimento</span><b>${dataCurta(p.venc)} · ${vencido(p,hj) ? 'vencida' : 'em ' + dias(p.venc) + ' dias'}</b></div>` : ''}
           ${p.car ? `<div class="dl"><span>Carência</span><b>${p.car > hj ? 'até ' + dataCurta(p.car) + ' · ' + dias(p.car) + ' dias' : 'liberada'}</b></div>` : ''}
           ${n === 1 ? `<div class="track"><i style="width:${pct}%"></i></div>
@@ -2082,60 +2068,6 @@ function listaPosicoes(dados){
       carteira = carteira.filter(x => x.id !== b.dataset.id);
       salvar(); render(); toast('Aporte removido');
     });
-  });
-}
-
-/* ---- sugestões de realocação ----
-   Compara, para os próximos 12 meses, quanto cada aplicação entrega do CDI depois do IR
-   com a melhor opção da carteira. Mover reinicia o IR, então o destino usa a alíquota
-   de uma aplicação nova mantida por 1 ano (17,5%). */
-let SUG_OCULTAS = new Set();
-try{ SUG_OCULTAS = new Set(JSON.parse(localStorage.getItem('sug-ocultas') || '[]')); }catch(e){}
-function cartaoSugestoes(dados){
-  const sec = $('secSug'); if(!sec) return;
-  const hj = hoje(), cdiA = Math.max(0, SELIC_HOJE - 0.10) / 100;
-  const porG = new Map();
-  dados.forEach(x => {
-    if(x.pctB === null) return;
-    const k = grupoDe(x.p);
-    const o = porG.get(k) || {gid:k, p:x.p, liq:0, pesoB:0, soma12:0, bloq:false};
-    const aliq12 = x.isento ? 0 : irAliq(x.dc + 365);
-    o.liq += x.liquido; o.pesoB += x.bruto; o.soma12 += x.pctB * (1 - aliq12/100) * x.bruto;
-    if((x.p.car && x.p.car > hj) || (x.p.venc && Math.round((D(x.p.venc)-D(hj))/864e5) < 60)) o.bloq = true;
-    porG.set(k, o);
-  });
-  const apls = [...porG.values()].map(o => ({...o, liq12: o.soma12 / o.pesoB}));
-  const destinos = apls.filter(o => !(o.p.venc && o.p.venc <= hj)).map(o => {
-    const isento = ISENTOS.includes(o.p.tipo);
-    const pctB = o.pesoB ? pctCDI(o.p, DIA_RENDE || hj) : null;
-    return {...o, novo12: pctB === null ? null : pctB * (1 - (isento ? 0 : 17.5) / 100)};
-  }).filter(o => o.novo12 !== null);
-  const sug = [];
-  apls.filter(o => !o.bloq && o.liq >= 500).forEach(o => {
-    const melhor = destinos.filter(d => d.gid !== o.gid).sort((a,b) => b.novo12 - a.novo12)[0];
-    if(!melhor) return;
-    const ganhoPP = melhor.novo12 - o.liq12;
-    const ganho = o.liq * cdiA * ganhoPP / 100;
-    const chave = o.gid + '>' + melhor.gid;
-    if(ganhoPP >= 3 && ganho >= 50 && !SUG_OCULTAS.has(chave)) sug.push({o, melhor, ganho, ganhoPP, chave});
-  });
-  sug.sort((a,b) => b.ganho - a.ganho);
-  if(!sug.length){ sec.style.display = 'none'; return; }
-  sec.style.display = 'block';
-  const nome = p => `${esc(p.banco)} <span>${p.tipo} ${rotIdx(p)}</span>`;
-  $('sugList').innerHTML = sug.slice(0,2).map(s => `
-    <div class="sug" data-k="${s.chave}">
-      <div class="sug-top">
-        <div class="sug-rota"><b>${nome(s.o.p)}</b><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg><b>${nome(s.melhor.p)}</b></div>
-        <button class="sug-x" data-k="${s.chave}" aria-label="Dispensar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
-      </div>
-      <div class="sug-num"><b class="money hideable">+${fmt(s.ganho)}</b><span>movendo <em class="money hideable">${fmt(s.o.liq)}</em> · de ${fmtC(s.o.liq12)}% para ${fmtC(s.melhor.novo12)}% do CDI líquido</span></div>
-    </div>`).join('') +
-    `<div class="sug-nota">Estimativa com o CDI de hoje. Ao mover, o IR recomeça em 22,5% e o destino pode ter limite de valor ou prazo — confira antes.</div>`;
-  $('sugList').querySelectorAll('.sug-x').forEach(b => b.onclick = () => {
-    SUG_OCULTAS.add(b.dataset.k);
-    try{ localStorage.setItem('sug-ocultas', JSON.stringify([...SUG_OCULTAS])); }catch(e){}
-    cartaoSugestoes(calcular());
   });
 }
 
@@ -2338,7 +2270,8 @@ function graficoHist(dados){
   const dias = [];
   for(let d = D(de); d <= D(h); d = addD(d,1)) dias.push(iso(d));
   const passo = Math.max(1, Math.ceil(dias.length/70));
-  const eixo = dias.filter((_,i)=> i % passo === 0 || i === dias.length-1);
+  const eixo = dias.filter((_,i)=> (i % passo === 0 || i === dias.length-1) && (modoHist!=='diario' || !resumoDiario(dias[i]).incompleto));
+  if(!eixo.length){svg.innerHTML='<text x="12" y="100" fill="#5B6478" font-size="12">Histórico líquido indisponível para estes registros</text>';$('histVal').textContent='—';$('legHist').innerHTML='';return;}
 
   const bancos = [...new Set(carteira.map(p=>p.banco))];
   const cam = bancos.map(b => ({b, c:cor(b),
@@ -2464,9 +2397,10 @@ function cabecalhoHist(i, fim){
   $('histVal').textContent = (modoHist==='diario'||modoHist!=='saldo' ? (foco>=0?'+':'') : '') + fmt(foco);
   $('histSub').textContent = fim
     ? ({rend:'rendimento acumulado no período', saldo:'saldo total hoje',
-        banco:'rendimento por banco', diario:'rendimento bruto de '+fmtDia(c.eixo[i])})[modoHist]
+        banco:'rendimento por banco', diario:'rendimento líquido de '+fmtDia(c.eixo[i])})[modoHist]
     : `${fmtDia(c.eixo[i])} · saldo ${fmt(c.tot[i])}`;
   const p = $('histPill');
+  p.hidden = modoHist==='diario';
   p.className = 'pill ' + (pc >= 0 ? 'up' : 'flat');
   p.textContent = `${pc>=0?'+':''}${fmtC(pc)}%`;
 }
@@ -2474,7 +2408,7 @@ function legendaHist(i){
   const c = histCtx; if(!c) return;
   if(modoHist==='diario'){
     const r=resumoDiario(c.eixo[i]);
-    $('legHist').innerHTML=r.bancos.map(b=>`<div class="lg"><i style="background:${cor(b.banco)}"></i><span class="nm">${esc(b.banco)}</span><span class="pc money hideable">${assinado(b.centavos/100)}</span></div>`).join('')+`<div class="lg"><span class="nm">Total bruto do dia</span><span class="pc money hideable">${assinado(r.total)}</span></div>`;
+    $('legHist').innerHTML=r.bancos.map(b=>`<div class="lg"><i style="background:${cor(b.banco)}"></i><span class="nm">${esc(b.banco)}</span><span class="pc money hideable">${assinado(b.centavos/100)}</span></div>`).join('')+`<div class="lg"><span class="nm">Total líquido do dia</span><span class="pc money hideable">${assinado(r.total)}</span></div>`;
     return;
   }
   const rows = c.cam.map(x =>
@@ -2900,7 +2834,7 @@ $('btnSave').onclick = () => {
    ============================================================ */
 function disponivelResg(gid, ds){
   return aportesDo(gid).filter(p => p.data <= ds)
-    .reduce((a,p) => a + brutoEm(p, ds), 0);
+    .reduce((a,p) => a + brutoParaResgate(p, ds), 0);
 }
 /* simula (ou aplica) o resgate de um valor bruto; devolve o que sai de cada aporte */
 function planoResgate(gid, ds, valor, aplicar){
@@ -2909,7 +2843,7 @@ function planoResgate(gid, ds, valor, aplicar){
   for(const p of aportesDo(gid)){
     if(resta <= 0.004) break;
     if(p.data > ds) continue;
-    const B = brutoEm(p, ds);
+    const B = brutoParaResgate(p, ds);
     if(B <= 0.004) continue;
     const tira = Math.min(resta, B), f = tira / B;
     const r = liquidar(p, B, ds);
@@ -2936,7 +2870,7 @@ function prevResg(){
   const ds = $('rData').value || hoje(), gid = GRUPO_ALVO;
   if(!gid) return;
   const disp = disponivelResg(gid, ds);
-  $('rDisp').innerHTML = `Disponível em ${fmtDia(ds)}: <b class="money hideable">${fmt(disp)}</b> bruto`;
+  $('rDisp').innerHTML = `Saldo fechado para resgate em ${fmtDia(ds)}: <b class="money hideable">${fmt(disp)}</b> bruto`;
   const v = parseFloat($('rValor').value);
   const el = $('rPrev');
   if(!(v > 0)){ el.textContent = 'Informe o valor para ver quanto cai na conta.'; el.classList.remove('erro'); return; }
@@ -3398,10 +3332,40 @@ $('salvarPremissas').onclick=()=>{
 let DIARIO = {}, DIARIO_FINGERPRINT = '', DIARIO_LIMITE = 30;
 let DIA_DETALHE = null;
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const assinado = v => (v > 0 ? '+' : v < 0 ? '−' : '') + fmt(Math.abs(v));
+const assinado = v => v===null ? '—' : (v > 0 ? '+' : v < 0 ? '−' : '') + fmt(Math.abs(v));
 const dataCompleta = ds => D(ds).toLocaleDateString('pt-BR', {day:'2-digit',month:'long',year:'numeric',timeZone:'UTC'});
 const ontem = () => iso(addD(D(hoje()), -1));
-const centavos = v => Math.round((v + Number.EPSILON) * 100);
+const centavos=v=>Math.sign(v)*Math.round((Math.abs(v)+Math.max(1e-9,Math.abs(v)*Number.EPSILON*2))*100);
+
+function motivoDiaSemRendimento(ds){
+  const d=D(ds), y=d.getUTCFullYear(), w=d.getUTCDay();
+  const nomes={'01-01':'Confraternização Universal','04-21':'Tiradentes','05-01':'Dia do Trabalho',
+    '09-07':'Independência do Brasil','10-12':'Nossa Senhora Aparecida','11-02':'Finados',
+    '11-15':'Proclamação da República','11-20':'Consciência Negra','12-25':'Natal'};
+  let feriado=nomes[ds.slice(5)]||'';
+  if(!feriado){
+    const p=pascoa(y);
+    for(const [n,nome] of [[-48,'Carnaval'],[-47,'Carnaval'],[-2,'Sexta-feira da Paixão'],[60,'Corpus Christi']]){
+      if(ds===iso(addD(p,n))){feriado=nome;break;}
+    }
+  }
+  if(w===0||w===6) return {motivo:'Final de semana',feriado};
+  if(feriado) return {motivo:'Feriado',feriado};
+  return null;
+}
+
+/* Provisão sobre o ganho novo do dia, usando o prazo na data em que ele
+   aparece (D+1). Não reavalia impostos sobre ganhos de dias anteriores:
+   uma redução de alíquota não cria rendimento no fim de semana.
+   IR incide depois do IOF. IN RFB 1.585/2015, art. 46. */
+function tributarGanhoDiario(p, ganho, ds){
+  const credito=iso(addD(D(ds),1));
+  const dc=Math.round((D(credito)-D(p.data))/864e5);
+  const isento=ISENTOS.includes(p.tipo);
+  const iof=!isento && ganho>0 && dc>=1 && dc<30 ? ganho*IOF[dc-1]/100 : 0;
+  const ir=!isento && ganho>0 ? (ganho-iof)*irAliq(dc)/100 : 0;
+  return {bruto:ganho,iof,ir,liquido:ganho-iof-ir};
+}
 
 function validarDiario(raw){
   const saida = {};
@@ -3413,6 +3377,13 @@ function validarDiario(raw){
       if(!/^[\w-]{1,90}$/.test(id) || !x || !Number.isSafeInteger(x.centavos) || Math.abs(x.centavos) > 1e15) continue;
       if(typeof x.banco !== 'string' || x.banco.length > 80) continue;
       itens[id] = {banco:x.banco, centavos:x.centavos, estimado:!!x.estimado};
+      if(Number.isFinite(x.inicio) && Number.isFinite(x.fim)
+        && Math.abs(x.inicio)<1e15 && Math.abs(x.fim)<1e15){
+        itens[id].inicio=x.inicio; itens[id].fim=x.fim;
+      }
+      for(const k of ['liquidoInicio','liquidoFim','ir','iof']){
+        if(Number.isFinite(x[k]) && Math.abs(x[k])<1e15) itens[id][k]=x[k];
+      }
     }
     saida[ds] = {itens};
   }
@@ -3421,7 +3392,7 @@ function validarDiario(raw){
 
 function atualizarDiario(){
   const fim = ontem();
-  const chave = JSON.stringify([fim, carteira, CDI_VER, IPCA_PROJ, SELIC_HOJE]);
+  const chave = JSON.stringify(['liquido-v1',fim,carteira,CDI_VER,IPCA_PROJ,SELIC_HOJE]);
   if(chave === DIARIO_FINGERPRINT) return;
   DIARIO_FINGERPRINT = chave;
   /* Reprocessa cada aplicação uma vez; aportes e saques não viram rendimento.
@@ -3429,21 +3400,28 @@ function atualizarDiario(){
   for(const p of carteira){
     if(p.data > fim) continue;
     for(const dia of Object.values(DIARIO)) delete dia.itens[p.id];
-    let saldo = p.valor, baseEstimada = false;
-    for(let d = addD(D(p.data),1); d <= D(fim); d = addD(d,1)){
+    let saldo=p.valor, acumulado=0, acumuladoLiquido=0, baseEstimada=false;
+    for(let d = D(p.data); d <= D(fim); d = addD(d,1)){
       const ds = iso(d);
       const aberto = !p.venc || ds < p.venc;
-      const temRendimento = aberto && rende(d,ds);
-      const fator = temRendimento ? fatorDia(p, ds) : 1;
+      const temRendimento = aberto && !motivoDiaSemRendimento(ds) && rende(d,ds);
+      const taxaDia=temRendimento?taxaDiaEfetiva(p,ds):0;
+      const fator=1+taxaDia;
       const semSerie = p.index === 'cdi' ? CDI_MAP[ds] === undefined
         : ['selic','selic_spread'].includes(p.index) ? SEL_MAP[ds] === undefined : false;
       const modelo = ['POUP'].includes(p.tipo) || p.index === 'ipca';
       const estimado = temRendimento && (baseEstimada || modelo || semSerie);
-      const ganho = saldo * (fator - 1) * mantido(p, ds);
+      const ganho=saldo*taxaDia*mantido(p,ds);
+      const inicio = acumulado;
+      acumulado += ganho;
+      const liquidoInicio=acumuladoLiquido;
+      const impostos=tributarGanhoDiario(p,ganho,ds);
+      acumuladoLiquido+=impostos.liquido;
       saldo *= fator;
       if(temRendimento && (modelo || semSerie)) baseEstimada = true;
       const dia = DIARIO[ds] || (DIARIO[ds] = {itens:{}});
-      dia.itens[p.id] = {banco:p.banco, centavos:centavos(ganho), estimado};
+      dia.itens[p.id]={banco:p.banco,centavos:centavos(ganho),inicio,fim:acumulado,
+        liquidoInicio,liquidoFim:acumuladoLiquido,ir:impostos.ir,iof:impostos.iof,estimado};
     }
   }
   if(!DIARIO[fim]) DIARIO[fim] = {itens:{}};
@@ -3451,21 +3429,55 @@ function atualizarDiario(){
 
 function resumoDiario(ds){
   const dia = DIARIO[ds] || {itens:{}};
-  const mapa = new Map();
-  for(const x of Object.values(dia.itens)){
-    const b = mapa.get(x.banco) || {banco:x.banco, centavos:0, estimado:false};
-    b.centavos += x.centavos; b.estimado ||= x.estimado;
+  const mapa=new Map(), fechado=motivoDiaSemRendimento(ds), posicoes={};
+  for(const [id,x] of Object.entries(dia.itens)){
+    const b=mapa.get(x.banco)||{banco:x.banco,inicio:0,fim:0,liquidoInicio:0,liquidoFim:0,
+      centavos:0,estimado:false,incompleto:false,itens:[]};
+    if(Number.isFinite(x.inicio) && Number.isFinite(x.fim)){
+      b.inicio += x.inicio; b.fim += x.fim;
+    }else{
+      b.fim += x.centavos/100; // Compatibilidade com os históricos anteriores.
+    }
+    let li=0,lf=0;
+    if(Number.isFinite(x.liquidoInicio)&&Number.isFinite(x.liquidoFim)){
+      li=x.liquidoInicio;lf=x.liquidoFim;
+    }else if((Number.isFinite(x.inicio)&&Number.isFinite(x.fim)?Math.abs(x.fim-x.inicio):Math.abs(x.centavos))>1e-12){
+      b.incompleto=true; // Nunca apresentar um registro bruto antigo como líquido.
+    }
+    b.liquidoInicio+=li;b.liquidoFim+=lf;
+    b.itens.push({id,valor:fechado?0:lf-li});
+    b.estimado ||= x.estimado;
     mapa.set(x.banco, b);
   }
-  const bancos = [...mapa.values()].sort((a,b)=>b.centavos-a.centavos);
-  const total = bancos.reduce((s,x)=>s+x.centavos,0);
-  return {ds, bancos, total:total/100, estimado:bancos.some(b=>b.estimado)};
+  // Arredonda o acumulado do banco, depois calcula a diferença do dia.
+  // Assim a soma dos dias concilia com o acumulado sem perder microganhos.
+  const bancos=[...mapa.values()].map(b=>{
+    b.brutoCentavos=fechado?0:centavos(b.fim)-centavos(b.inicio);
+    b.centavos=fechado?0:b.incompleto?null:centavos(b.liquidoFim)-centavos(b.liquidoInicio);
+    if(b.centavos!==null){
+      const partes=b.itens.map(x=>({...x,c:Math.floor(x.valor*100+1e-9)}));
+      let resto=b.centavos-partes.reduce((s,x)=>s+x.c,0);
+      partes.sort((a,b)=>(b.valor*100-b.c)-(a.valor*100-a.c)||a.id.localeCompare(b.id));
+      for(let i=0;i<resto;i++) partes[i%partes.length].c++;
+      for(const x of partes) posicoes[x.id]=x.c;
+    }
+    delete b.itens;return b;
+  }).sort((a,b)=>(b.centavos??0)-(a.centavos??0));
+  const incompleto=!fechado&&bancos.some(b=>b.incompleto);
+  const total=incompleto?null:bancos.reduce((s,x)=>s+x.centavos,0)/100;
+  const totalBruto=bancos.reduce((s,x)=>s+x.brutoCentavos,0)/100;
+  return {ds,bancos,total,totalBruto,posicoes,incompleto,
+    motivo:fechado?.motivo||'',feriado:fechado?.feriado||'',estimado:!fechado&&bancos.some(b=>b.estimado)};
+}
+
+function estadoRendimento(r){
+  return r.motivo||(r.incompleto?'A recalcular':r.estimado?'Líquido estimado':!r.total?'Sem rendimento':'Líquido');
 }
 
 function linhaDiario(ds){
   const r = resumoDiario(ds);
   const rotulo = ds === ontem() ? 'Ontem' : D(ds).toLocaleDateString('pt-BR',{weekday:'short',timeZone:'UTC'}).replace('.','');
-  const estado = r.estimado ? 'Estimado' : !r.total ? 'Sem rendimento' : 'Calculado';
+  const estado=estadoRendimento(r);
   return `<button class="diario-row" data-dia="${ds}" aria-label="Ver rendimento de ${esc(dataCompleta(ds))}">
     <span class="diario-data"><b>${esc(rotulo)}</b><span>${esc(dataCompleta(ds))}</span></span>
     <span class="diario-num"><b class="money hideable ${r.total<0?'negativo':''}">${assinado(r.total)}</b><span>${estado} <span aria-hidden="true">›</span></span></span>
@@ -3498,12 +3510,16 @@ function preencherDetalheDia(ds){
   const r = resumoDiario(ds);
   $('diaTitulo').textContent = dataCompleta(ds);
   $('diaTotal').textContent = assinado(r.total);
-  $('diaEstado').textContent = r.estimado ? 'Valor estimado · taxa ou base ainda estimada' : r.total ? 'Rendimento bruto calculado' : 'Sem rendimento neste dia';
+  $('diaEstado').textContent=r.motivo?`${r.motivo}${r.feriado?' · '+r.feriado:''} · sem rendimento`
+    :r.incompleto?'Líquido indisponível para parte dos registros antigos'
+    :r.estimado?'Líquido estimado · taxa ou base ainda estimada':'Líquido após IR e IOF provisionados';
   $('diaBancos').innerHTML = r.bancos.length ? r.bancos.map(b=>`
     <div class="diario-banco"><span class="diario-av" style="background:${cor(b.banco)}">${esc(sigla(b.banco))}</span>
-      <span class="diario-banco-nome"><b>${esc(b.banco)}</b><span>${b.estimado?'Estimado':'Calculado'}</span></span>
-      <b class="money hideable">${assinado(b.centavos/100)}</b></div>`).join('') : '<p class="diario-vazio">Nenhuma aplicação com rendimento registrado neste dia.</p>';
-  $('diaNota').textContent = 'Valores brutos, antes de IR e IOF. Aportes e resgates não são somados como rendimento. Dias sem rendimento ficam registrados com R$ 0,00. Valores estimados são revistos quando as taxas ficam disponíveis.';
+      <span class="diario-banco-nome"><b>${esc(b.banco)}</b><span>${esc(r.motivo|| (b.incompleto?'A recalcular':b.estimado?'Líquido estimado':'Líquido'))}</span></span>
+      <b class="money hideable">${assinado(b.centavos===null?null:b.centavos/100)}</b></div>`).join('') : '<p class="diario-vazio">Nenhuma aplicação com rendimento registrado neste dia.</p>';
+  $('diaNota').textContent=r.incompleto
+    ?'Este registro contém uma aplicação removida em uma versão antiga, sem os dados necessários para calcular os impostos. Restaure um backup com essa aplicação para recalcular o líquido.'
+    :'Líquido estimado após IR e IOF sobre o ganho deste dia, considerando o prazo de cada aporte no dia seguinte. A retenção ocorre no resgate. Mudanças de imposto sobre ganhos antigos podem alterar o saldo, mas não são rendimento novo do dia. Aportes e resgates não contam como rendimento. Poupança, IPCA e Tesouro usam modelos aproximados.';
 }
 function abrirDetalheDia(ds){
   fecharTudo(); preencherDetalheDia(ds);
