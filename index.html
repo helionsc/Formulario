@@ -2,12 +2,12 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#161B27">
 <title>Investimentos</title>
-<link rel="icon" type="image/svg+xml" href="./favicon.svg">
-<link rel="mask-icon" href="./favicon.svg" color="#0A0B10">
-<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20128%20128%22%3E%3Crect%20width%3D%22128%22%20height%3D%22128%22%20rx%3D%2228%22%20fill%3D%22%2314213D%22%2F%3E%3Cg%20fill%3D%22white%22%20transform%3D%22translate%288%2015%29%22%3E%3Crect%20x%3D%226%22%20y%3D%2218%22%20width%3D%2215%22%20height%3D%2264%22%2F%3E%3Crect%20x%3D%2220.6%22%20y%3D%2241%22%20width%3D%2220.8%22%20height%3D%2215%22%2F%3E%3Cpath%20d%3D%22M41%2082%20V18%20h15%20L92%2060.24%20V18%20h15%20v64%20h-15%20L56%2039.76%20V82%20z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
+
+
 <link rel="manifest" href="./manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" id="metaStatus">
@@ -958,6 +958,46 @@ html.travado .app,html.travado nav,html.travado .minibar,html.travado .sheet,htm
 #lockBtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 #lockBtn:active{transform:scale(.97)}
 #lockSair{all:unset;margin-top:14px;font-size:12.5px;color:var(--hi2,rgba(255,255,255,.7));text-decoration:underline;cursor:pointer}
+/* Diário e detalhes por banco */
+.dia-toque{appearance:none;border:0;background:transparent;padding:4px 0;color:inherit;font:inherit;cursor:pointer;text-align:left}
+.dia-toque::after{content:' ›';opacity:.65}
+.dia-toque:focus-visible,.diario-row:focus-visible{outline:2px solid var(--up);outline-offset:3px}
+.diario-intro{margin:0 2px 12px;color:var(--ink-2);font-size:12px;line-height:1.6}
+.diario-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;border:0;padding:16px;background:var(--card);font:inherit;color:var(--ink);text-align:left;cursor:pointer}
+.diario-row+.diario-row{border-top:1px solid var(--line)}
+.diario-row:active{background:var(--surface-2)}
+.diario-data,.diario-num{display:flex;flex-direction:column;gap:4px;min-width:0}
+.diario-data b{font-size:13px;text-transform:capitalize;font-weight:600}
+.diario-data>span{font-size:11px;color:var(--ink-2)}
+.diario-num{text-align:right;flex-shrink:0}
+.diario-num>b{font-size:17px;color:var(--up);font-weight:600}
+.diario-num>b.negativo{color:var(--down)}
+.diario-num>span{font-size:10.5px;color:var(--ink-2)}
+.diario-mais{display:block;width:100%;padding:14px;border:0;border-top:1px solid var(--line);background:var(--surface-2);font:inherit;font-size:12px;font-weight:600;color:var(--ink);cursor:pointer}
+[hidden]{display:none!important}
+.diario-sheet{touch-action:pan-y;max-height:88dvh;padding-bottom:calc(env(safe-area-inset-bottom) + 24px)}
+.diario-sheet .diario-row{padding-left:0;padding-right:0}
+.dia-destaque{padding:16px 0 22px;border-bottom:1px solid var(--line)}
+.dia-destaque>span{display:block;font-size:12px;color:var(--ink-2)}
+.dia-destaque>b{display:block;margin:8px 0;font-size:34px;letter-spacing:-.045em;color:var(--up)}
+.diario-banco{display:flex;align-items:center;gap:12px;padding:18px 0;border-bottom:1px solid var(--line)}
+.diario-av{width:36px;height:36px;flex:none;border-radius:50%;display:grid;place-items:center;color:white;font-size:12px;font-weight:600}
+.diario-banco-nome{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.diario-banco-nome b{font-size:13px;overflow-wrap:anywhere}
+.diario-banco-nome>span{font-size:10.5px;color:var(--ink-2)}
+.diario-banco>.money{font-size:14px;flex:none}
+.diario-rodape,.diario-vazio{font-size:11.5px;color:var(--ink-2);line-height:1.6;margin:16px 0}
+.sync-aviso{border:1px solid #e5c78e;padding:16px;background:#fff9ec;border-radius:18px;margin-bottom:20px;color:#66451a}
+.sync-aviso>b{font-size:14px}.sync-aviso p{font-size:12px;line-height:1.6;margin:8px 0 12px}
+.sync-acoes{display:flex;gap:8px;flex-wrap:wrap}.sync-acoes button{flex:1;border:1px solid #e5c78e;border-radius:10px;padding:10px;background:#fff;font:inherit;font-size:12px;cursor:pointer}
+.premissas{padding:16px 0;border-top:1px solid var(--line);margin-top:12px}
+.premissas h4{font-size:14px;margin:0 0 8px}.premissas p{font-size:11px;color:var(--ink-2);line-height:1.6;margin:0 0 12px}
+.premissas .cta{margin-top:0}
+.sec-h .diario-subtitulo{color:var(--ink-2);font-size:11px}
+.sheet:not(.on){visibility:hidden}.sheet.on{visibility:visible}
+@media(min-width:700px){nav .nav-in{max-width:520px}.minibar{max-width:520px;margin:auto;left:0;right:0}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
 </style>
 
 
@@ -1004,7 +1044,7 @@ html.travado .app,html.travado nav,html.travado .minibar,html.travado .sheet,htm
     <div class="cap"><span id="capTxt">Saldo líquido hoje</span></div>
     <div class="val money" id="bal"><span class="sym">R$</span>0<span class="dec">,00</span></div>
     <div class="deltas">
-      <span class="hideable" id="pillDay">R$ 0,00 hoje</span>
+      <button class="hideable dia-toque" id="pillDay" aria-haspopup="dialog">R$ 0,00 ontem</button>
       <span class="hideable" id="totRet">0,00% desde o início</span>
     </div>
   </div>
@@ -1024,6 +1064,19 @@ html.travado .app,html.travado nav,html.travado .minibar,html.travado .sheet,htm
 
   <!-- ===== CARTEIRA ===== -->
   <section class="view on" id="v-wallet">
+    <div class="sync-aviso" id="avisoSync" role="status" hidden>
+      <b>Existem alterações nos dois aparelhos</b>
+      <p id="syncResumo"></p>
+      <div class="sync-acoes"><button id="syncLocal">Usar deste aparelho</button><button id="syncRemoto">Usar da nuvem</button></div>
+      <p>A outra versão será baixada como backup antes da escolha ser aplicada.</p>
+    </div>
+    <div class="sec" id="secDiario">
+      <div class="sec-h"><h2>Rendimento diário</h2><span class="diario-subtitulo" id="diarioPeriodo">dias encerrados</span></div>
+      <p class="diario-intro">O rendimento de cada dia aparece no dia seguinte.<br>Toque no valor para ver quanto rendeu em cada banco.</p>
+      <div class="card"><div id="diarioList"></div><button class="diario-mais" id="diarioMais">Ver todo o histórico</button></div>
+      <p class="diario-rodape">Valores brutos, antes de IR e IOF. Estimativas são identificadas.</p>
+    </div>
+
 
     <div class="sec" id="secCDI" style="display:none">
       <div class="sec-h"><h2>Rendimento equivalente</h2><span id="cdiHoje"></span></div>
@@ -1237,12 +1290,34 @@ html.travado .app,html.travado nav,html.travado .minibar,html.travado .sheet,htm
       <span>Pede Face ID ao abrir o app e ao voltar depois de 1 minuto fora. Protege a tela contra olhares; os dados continuam no aparelho e na nuvem.</span></div>
     <div class="sw" id="swLock"><i></i></div>
   </div>
+  <div class="premissas">
+    <h4>Premissas da projeção</h4><p id="premissaFonte"></p>
+    <div class="f2"><div class="f"><label for="pSelic">Selic em 12 meses (% a.a.)</label><input type="number" id="pSelic" min="0" max="60" step="0.01" inputmode="decimal" placeholder="Manter a Selic atual"></div>
+    <div class="f"><label for="pIpca">IPCA do cenário (% a.a.)</label><input type="number" id="pIpca" min="0" max="50" step="0.01" inputmode="decimal"></div></div>
+    <button class="cta ghost" id="salvarPremissas">Salvar premissas</button>
+  </div>
+
   <button class="cta ghost" id="dSync">Atualizar taxas agora</button>
   <button class="cta ghost" id="dLink">Copiar link para outro aparelho</button>
   <button class="cta ghost" id="dExp">Baixar backup (.json)</button>
   <button class="cta ghost" id="dImp">Restaurar de um arquivo</button>
+  <button class="cta ghost" id="dRec">Baixar cópia anterior</button>
+  <p class="diario-rodape">O link da carteira permite acessar os dados em outro aparelho. Compartilhe apenas com quem pode ver sua carteira. O Face ID protege a tela deste aparelho.</p>
   <button class="cta danger" id="dWipe">Apagar tudo</button>
 </div>
+<div class="sheet diario-sheet" id="sheetDia" role="dialog" aria-modal="true" aria-labelledby="diaTitulo">
+  <div class="grab"></div><button class="fechar" aria-label="Fechar detalhes" data-fecha><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  <h3 id="diaTitulo">Rendimento do dia</h3>
+  <div class="dia-destaque"><span>Total que rendeu no dia</span><b class="money hideable" id="diaTotal">R$ 0,00</b><span id="diaEstado"></span></div>
+  <div id="diaBancos"></div><p class="diario-rodape" id="diaNota"></p>
+  <button class="cta ghost" id="diaVoltar">Ver histórico completo</button>
+</div>
+<div class="sheet diario-sheet" id="sheetHistorico" role="dialog" aria-modal="true" aria-labelledby="historicoTitulo">
+  <div class="grab"></div><button class="fechar" aria-label="Fechar histórico" data-fecha><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  <h3 id="historicoTitulo">Histórico de rendimentos</h3><p class="diario-intro">Um registro por dia, com detalhes por banco. Valores brutos.</p>
+  <div id="historicoList"></div><p class="diario-rodape" id="historicoContagem"></p><button class="diario-mais" id="historicoMais">Carregar mais 30 dias</button>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1277,7 +1352,7 @@ const SELIC_PROJ = [
   {d:'2027-12-31', t:12.00},{d:'2028-12-31', t:10.50},{d:'2030-12-31', t:10.00}
 ];
 let SHIFT = 0;
-let IPCA_PROJ = 5.02, SELIC_HOJE = 14.00, FONTE_TAXA = 'Copom · 05/08/2026';
+let IPCA_PROJ = 5.02, SELIC_HOJE = 14.00, FONTE_TAXA = 'Taxa inicial do arquivo · atualize as taxas';
 const IOF = [96,93,90,86,83,80,76,73,70,66,63,60,56,53,50,46,43,40,36,33,30,26,23,20,16,13,10,6,3];
 
 /* ============================================================
@@ -1418,11 +1493,12 @@ const grupoDe  = p => p.g || p.id;
    6. ESTADO
    ============================================================ */
 let carteira = [], filtro = 'all', janela = 30, meses = 12, oculto = false;
-let ANTECIPA = true;   // true = mostra o dia corrente já rendendo (estimado)
+let ANTECIPA = false;  // saldo do dia anterior; o diário sempre usa dias encerrados
 const KEY = 'carteira-rf-v1';
 let SALVANDO_OK = true;
 const store = {
   async get(k){
+    try{ const v = localStorage.getItem(k); if(v) return v; }catch(e){}
     try{ if(window.storage && window.storage.get){
       const r = await window.storage.get(k); if(r && r.value) return r.value; } }catch(e){}
     try{ const v = localStorage.getItem(k); if(v) return v; }catch(e){}
@@ -1437,52 +1513,6 @@ const store = {
     return ok;
   }
 };
-async function carregar(){
-  try{
-    const raw = await store.get(KEY);
-    if(raw){
-      const s = JSON.parse(raw);
-      carteira = (s.carteira || []).map((p,i) => ({id: p.id || 'p'+i+'_'+Date.now(), ...p}));
-      if(s.selic){ SELIC_HOJE = s.selic; FONTE_TAXA = s.fonte || FONTE_TAXA; }
-      if(s.oculto) oculto = true;
-      if(s.antecipa === false) ANTECIPA = false;
-    }
-  }catch(e){}
-}
-async function salvar(){
-  const ok = await store.set(KEY, JSON.stringify({
-    carteira, selic: SELIC_HOJE, fonte: FONTE_TAXA, oculto, antecipa: ANTECIPA, ts: hoje()
-  }));
-  empurrarNuvem().then(() => { statusTaxas(); });   /* nuvem em segundo plano */
-  if(!ok && SALVANDO_OK){
-    SALVANDO_OK = false;
-    toast('Não consegui salvar neste navegador — use Exportar');
-  }
-  return ok;
-}
-/* backup manual em arquivo */
-function exportar(){
-  const blob = new Blob([JSON.stringify({carteira, v:1}, null, 2)], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `carteira-${hoje()}.json`;
-  a.click(); URL.revokeObjectURL(a.href);
-  toast('Backup gerado');
-}
-function importar(file){
-  const fr = new FileReader();
-  fr.onload = () => {
-    try{
-      const s = JSON.parse(fr.result);
-      if(!Array.isArray(s.carteira)) throw 0;
-      carteira = s.carteira.map((p,i)=>({id: p.id || 'imp'+i+'_'+Date.now(), ...p}));
-      cacheB.clear(); salvar(); render(); toast(`${carteira.length} aplicações restauradas`);
-      sincronizar(true);
-    }catch(e){ toast('Arquivo inválido'); }
-  };
-  fr.readAsText(file);
-}
-
 /* ============================================================
    6b. NUVEM (Supabase) — carteira salva sozinha, em todo aparelho
    ============================================================ */
@@ -1514,7 +1544,10 @@ async function idCarteira(){
 
 async function api(caminho, opts = {}){
   const id = await idCarteira();
-  const r = await fetch(SB_URL + '/rest/v1/' + caminho, {
+  const ctrl = new AbortController(), timer = setTimeout(()=>ctrl.abort(),12000);
+  let r;
+  try{ r = await fetch(SB_URL + '/rest/v1/' + caminho, {
+    signal: ctrl.signal,
     ...opts,
     headers: {
       apikey: SB_KEY,
@@ -1524,12 +1557,14 @@ async function api(caminho, opts = {}){
       ...(opts.headers || {})
     }
   });
+  }finally{ clearTimeout(timer); }
   if(!r.ok) throw new Error(caminho.split('?')[0] + ': ' + r.status + ' ' + (await r.text()).slice(0,120));
-  return r.status === 204 ? null : r.json();
+  if(r.status===204) return null;
+  const raw=await r.text();return raw?JSON.parse(raw):null;
 }
 
 const paraNuvem = p => ({
-  id: eUUID(p.id) ? p.id : novoId(),
+  id: p.id,
   carteira_id: CARTEIRA_ID, banco: p.banco, tipo: p.tipo,
   indexador: p.index, taxa: p.taxa, valor: p.valor, data: p.data
 });
@@ -1549,68 +1584,6 @@ function extrasDe(lista){
     if(tem) m[p.id] = e;
   });
   return m;
-}
-
-/* baixa a carteira da nuvem; devolve true se conseguiu */
-async function puxarNuvem(){
-  try{
-    const linhas = await api('posicoes?select=*&order=data.asc');
-    /* nuvem vazia + carteira no aparelho = primeira sincronização:
-       sobe o que existe aqui em vez de apagar (migração da versão anterior) */
-    if(!linhas.length && carteira.length){
-      NUVEM_OK = true;
-      await empurrarNuvem();
-      NUVEM_MSG = 'sincronizado';
-      return true;
-    }
-    let extras = {};
-    try{
-      const c = await api('carteiras?select=prefs');
-      extras = (c && c[0] && c[0].prefs && c[0].prefs.extras) || {};
-    }catch(e){}
-    const locais = new Map(carteira.map(p => [p.id, p]));
-    carteira = linhas.map(r => {
-      const p = daNuvem(r);
-      const e = extras[p.id] || {};
-      /* se a nuvem ainda não tem os extras (aparelho antigo), mantém os locais */
-      const l = locais.get(p.id) || {};
-      EXTRAS.forEach(k => { const v = e[k] !== undefined ? e[k] : l[k]; if(v !== undefined) p[k] = v; });
-      return p;
-    });
-    NUVEM_OK = true; NUVEM_MSG = 'sincronizado';
-    try{ localStorage.setItem(KEY, JSON.stringify({carteira, selic:SELIC_HOJE, fonte:FONTE_TAXA, oculto, antecipa:ANTECIPA, ts:hoje()})); }catch(e){}
-    return true;
-  }catch(e){
-    NUVEM_OK = false; NUVEM_MSG = 'offline — dados locais';
-    return false;
-  }
-}
-/* envia a carteira inteira (usado após adicionar, remover ou importar) */
-async function empurrarNuvem(){
-  try{
-    const id = await idCarteira();
-    /* primeiro fixa os ids definitivos, porque os extras são indexados por eles */
-    const linhas = carteira.map(paraNuvem);
-    carteira.forEach((p,i) => p.id = linhas[i].id);
-    await api('carteiras', {
-      method:'POST',
-      headers:{Prefer:'resolution=merge-duplicates'},
-      body: JSON.stringify({id, prefs:{oculto, antecipa:ANTECIPA, extras: extrasDe(carteira)}, visto_em:new Date().toISOString()})
-    });
-    const atuais = await api('posicoes?select=id');
-    const manter = new Set(linhas.map(l => l.id));
-    const sobrando = atuais.filter(a => !manter.has(a.id)).map(a => a.id);
-    if(sobrando.length)
-      await api(`posicoes?id=in.(${sobrando.join(',')})`, {method:'DELETE'});
-    if(linhas.length)
-      await api('posicoes', {method:'POST', headers:{Prefer:'resolution=merge-duplicates'},
-                             body: JSON.stringify(linhas)});
-    NUVEM_OK = true; NUVEM_MSG = 'sincronizado';
-    return true;
-  }catch(e){
-    NUVEM_OK = false; NUVEM_MSG = 'salvo aqui, nuvem indisponível';
-    return false;
-  }
 }
 
 /* cache de taxas compartilhado entre aparelhos */
@@ -1673,7 +1646,7 @@ async function cacheTaxas(){
     CDI_ATE = s.ate || ''; CDI_DE = s.de || Object.keys(CDI_MAP).sort()[0] || '';
     ULTIMA_SYNC = s.sync || null;
     if(s.selicMeta) SELIC_HOJE = s.selicMeta;
-    if(s.ipca) IPCA_PROJ = s.ipca;
+    IPCA_PROJ = PREMISSAS.ipca;
     CDI_VER++;
     return Object.keys(CDI_MAP).length > 0;
   }catch(e){ return false; }
@@ -1704,8 +1677,7 @@ async function sincronizar(silencioso){
       if(t.meta) SELIC_HOJE = t.meta;
       ok = true;
     }
-    NUVEM_OK = true;
-  }catch(e){ NUVEM_OK = false; }
+  }catch(e){ /* taxas locais continuam disponíveis */ }
 
   /* 2. Banco Central, para pegar o que a nuvem ainda não tem */
   const ks0 = Object.keys(CDI_MAP).sort();
@@ -1721,7 +1693,7 @@ async function sincronizar(silencioso){
       try{
         const meta = await sgs(432, iso(addD(D(h), -25)), h);
         const u = Object.keys(meta).sort().pop();
-        if(u && meta[u] > 0 && meta[u] < 60) SELIC_HOJE = meta[u];
+        if(u && meta[u] > 0 && meta[u] < 60){ SELIC_HOJE = meta[u]; FONTE_TAXA = 'Banco Central · '+u; }
       }catch(e){}
       if(viaBC) subirTaxas(cdi, sel, SELIC_HOJE).catch(()=>{});  /* alimenta a nuvem */
     }catch(e){ /* silencioso: a nuvem já cobre esse caso */ }
@@ -1732,9 +1704,10 @@ async function sincronizar(silencioso){
 
   ONLINE = ok;
   if(ok){ ULTIMA_SYNC = new Date().toISOString(); await gravarTaxas(); }
-  SELIC_PROJ[0] = {d: h, t: SELIC_HOJE};
+  atualizarCurva();
   if(b) b.classList.remove('spin');
   statusTaxas(); render();
+  await persistirLocal();
   if(!silencioso) toast(ok
     ? `Selic ${fmtPct(SELIC_HOJE)} · ${ks.length} dias de CDI${viaBC?' · Banco Central':' · nuvem'}`
     : 'Sem conexão — usando as taxas salvas no aparelho');
@@ -1832,7 +1805,7 @@ function calcular(){
   const A = ANTECIPA ? dia  : iso(addD(D(dia), 1));           // saldo depois do crédito
   const B = ANTECIPA ? iso(addD(D(dia),-1)) : dia;            // saldo antes
   DIA_RENDE = dia; DIA_CREDITO = ANTECIPA ? dia : A;
-  return carteira.filter(p => !encerrado(p, h)).map(p => {
+  return carteira.filter(p => p.data<=h && !encerrado(p, h)).map(p => {
     const bruto = brutoEm(p, h);
     const d1 = (p.data >= dia || vencido(p, dia)) ? 0 : crescido(p, A)*mantido(p, h) - crescido(p, B)*mantido(p, h);
     return {p, ...liquidar(p, bruto, h), delta: d1, aplic: principal(p, h),
@@ -1883,14 +1856,11 @@ function render(){
   anima(document.getElementById('bal'), ultimo, T.liq, balHTML);
   ultimo = T.liq;
 
-  const pd = document.getElementById('pillDay');
-  const eHoje = DIA_RENDE === hoje();
-  pd.className = 'hideable dia ' + (T.delta > 0.004 ? 'up' : 'flat');
-  pd.textContent = (T.delta > 0.004 ? '+ ' : '') + fmt(T.delta)
-    + (eHoje ? ' hoje' : ` · ${fmtDia(DIA_RENDE)}`);
-  pd.title = ANTECIPA && eHoje
-    ? 'estimado — o Banco Central publica a taxa de hoje amanhã'
-    : 'último rendimento creditado';
+  renderDiario();
+  const pd = document.getElementById('pillDay'), rendimentoOntem = resumoDiario(ontem());
+  pd.className = 'hideable dia dia-toque ' + (rendimentoOntem.total > 0.004 ? 'up' : 'flat');
+  pd.textContent = assinado(rendimentoOntem.total) + ' ontem · bruto' + (rendimentoOntem.estimado ? ' · estimado' : '');
+  pd.title = 'Toque para ver o rendimento de ontem em cada banco';
   document.getElementById('totRet').textContent = T.aplic
     ? `${fmtC((T.liq/T.aplic-1)*100)}% desde o início` : 'sem aplicações';
   document.getElementById('sAplic').textContent = fmt(T.aplic);
@@ -2046,10 +2016,10 @@ function listaPosicoes(dados){
       </div>`;
     }).join('');
 
-    return `<div class="grp ${aberto?'open':''}" data-banco="${g.banco}" style="--c:${c};animation-delay:${gi*55}ms">
+    return `<div class="grp ${aberto?'open':''}" data-banco="${esc(g.banco)}" style="--c:${c};animation-delay:${gi*55}ms">
       <div class="grp-row">
         <div class="av" style="background:${c}">${sigla(g.banco)}${qtd>1?`<em class="qtd">${qtd}</em>`:''}</div>
-        <div class="mid"><b>${g.banco}</b><span>${sub}</span></div>
+        <div class="mid"><b>${esc(g.banco)}</b><span>${sub}</span></div>
         <div class="end">
           <b class="money">${fmtC(g.liq)}</b>
           <span class="money">+${fmtC(g.rend)}</span>
@@ -2099,6 +2069,7 @@ function listaPosicoes(dados){
     confirma(b, 'Remover', () => {
       const p = carteira.find(x => x.id === b.dataset.id);
       const gid = b.dataset.g;
+      guardarRecuperacao('Antes de remover uma aplicação');
       carteira = carteira.filter(x => grupoDe(x) !== gid);
       APL_ABERTA = null;
       salvar(); render(); toast(`${p ? p.tipo + ' do ' + p.banco : 'Aplicação'} removido`);
@@ -2107,6 +2078,7 @@ function listaPosicoes(dados){
   el.querySelectorAll('.ap-x').forEach(b => b.onclick = e => {
     e.stopPropagation();
     confirma(b, '', () => {
+      guardarRecuperacao('Antes de remover um aporte');
       carteira = carteira.filter(x => x.id !== b.dataset.id);
       salvar(); render(); toast('Aporte removido');
     });
@@ -2150,7 +2122,7 @@ function cartaoSugestoes(dados){
   sug.sort((a,b) => b.ganho - a.ganho);
   if(!sug.length){ sec.style.display = 'none'; return; }
   sec.style.display = 'block';
-  const nome = p => `${p.banco} <span>${p.tipo} ${rotIdx(p)}</span>`;
+  const nome = p => `${esc(p.banco)} <span>${p.tipo} ${rotIdx(p)}</span>`;
   $('sugList').innerHTML = sug.slice(0,2).map(s => `
     <div class="sug" data-k="${s.chave}">
       <div class="sug-top">
@@ -2285,9 +2257,9 @@ function alocacao(dados){
 
   document.getElementById('allocN').textContent = `${arr.length} instituições`;
   document.getElementById('allocLegend').innerHTML = fatias.map(x =>
-    `<button class="lg${ALLOC_SEL===x.b?' on':''}${ALLOC_SEL&&ALLOC_SEL!==x.b?' apag':''}" data-b="${x.b}">
+    `<button class="lg${ALLOC_SEL===x.b?' on':''}${ALLOC_SEL&&ALLOC_SEL!==x.b?' apag':''}" data-b="${esc(x.b)}">
        <i style="background:${x.c}"></i>
-       <span class="nm">${x.b}</span>
+       <span class="nm">${esc(x.b)}</span>
        <span class="lg-v"><b class="pc">${fmtC(x.pct)}%</b><em class="money hideable">${fmtC(x.v)}</em></span>
      </button>`).join('');
 
@@ -2354,12 +2326,12 @@ let histCtx = null;
 function graficoHist(dados){
   const svg = $('svgHist'), tip = $('tipHist');
   const H = 200, W = medir(svg, H);
-  if(!dados.length){
+  if(!carteira.length && !(modoHist==='diario' && Object.keys(DIARIO).length)){
     svg.innerHTML = `<text x="${W/2}" y="${H/2}" fill="#98A0B2" font-size="12.5" text-anchor="middle" font-family="Inter,-apple-system,Segoe UI,sans-serif">Sem dados ainda</text>`;
     $('legHist').innerHTML = ''; $('histVal').textContent = fmt(0); return;
   }
-  const h = hoje();
-  const ini = carteira.reduce((a,p)=> p.data < a ? p.data : a, h);
+  const h = modoHist==='diario' ? ontem() : hoje();
+  const ini = modoHist==='diario' ? (Object.keys(DIARIO).sort()[0]||h) : carteira.reduce((a,p)=> p.data < a ? p.data : a, h);
   let de = janela ? iso(addD(D(h), -janela)) : ini;
   if(de < ini) de = ini;
 
@@ -2381,7 +2353,7 @@ function graficoHist(dados){
   const ganho = tot.map((v,i)=> v - aplic[i]);
   /* rendimento do dia em valor BRUTO, a mesma base do "+R$ X hoje" do topo */
   const brT   = eixo.map(ds => carteira.filter(p=>p.data<=ds).reduce((a,p)=>a+brutoEm(p,ds),0));
-  const diario= brT.map((v,i)=> i ? (aplic[i]-aplic[i-1] ? 0 : v - brT[i-1]) : 0);
+  const diario= eixo.map(ds=>resumoDiario(ds).total);
   /* referência: o mesmo dinheiro, nas mesmas datas, num CDB a 100% do CDI (com IR) */
   const refP = p => ({...p, tipo:'CDB', index:'cdi', taxa:100});
   const bench = eixo.map(ds => carteira.filter(p=>p.data<=ds)
@@ -2492,7 +2464,7 @@ function cabecalhoHist(i, fim){
   $('histVal').textContent = (modoHist==='diario'||modoHist!=='saldo' ? (foco>=0?'+':'') : '') + fmt(foco);
   $('histSub').textContent = fim
     ? ({rend:'rendimento acumulado no período', saldo:'saldo total hoje',
-        banco:'rendimento por banco', diario:'rendimento de hoje'})[modoHist]
+        banco:'rendimento por banco', diario:'rendimento bruto de '+fmtDia(c.eixo[i])})[modoHist]
     : `${fmtDia(c.eixo[i])} · saldo ${fmt(c.tot[i])}`;
   const p = $('histPill');
   p.className = 'pill ' + (pc >= 0 ? 'up' : 'flat');
@@ -2500,8 +2472,13 @@ function cabecalhoHist(i, fim){
 }
 function legendaHist(i){
   const c = histCtx; if(!c) return;
+  if(modoHist==='diario'){
+    const r=resumoDiario(c.eixo[i]);
+    $('legHist').innerHTML=r.bancos.map(b=>`<div class="lg"><i style="background:${cor(b.banco)}"></i><span class="nm">${esc(b.banco)}</span><span class="pc money hideable">${assinado(b.centavos/100)}</span></div>`).join('')+`<div class="lg"><span class="nm">Total bruto do dia</span><span class="pc money hideable">${assinado(r.total)}</span></div>`;
+    return;
+  }
   const rows = c.cam.map(x =>
-    `<div class="lg"><i style="background:${x.c}"></i><span class="nm">${x.b}</span>
+    `<div class="lg"><i style="background:${x.c}"></i><span class="nm">${esc(x.b)}</span>
      <span class="pc" style="color:var(--up);margin-right:10px">+${fmtC(x.ganho[i])}</span>
      <span class="pc money hideable">${fmtC(x.liq[i])}</span></div>`).join('');
   $('legHist').innerHTML = rows +
@@ -2540,7 +2517,7 @@ function graficoFut(dados){
   const H = 200, W = medir(svg, H);
   if(!dados.length){
     svg.innerHTML = `<text x="${W/2}" y="${H/2}" fill="#98A0B2" font-size="12.5" text-anchor="middle" font-family="Inter,-apple-system,Segoe UI,sans-serif">Adicione uma aplicação</text>`;
-    nota.innerHTML = `Selic hoje em <b>${fmtPct(SELIC_HOJE)}</b>. O mercado projeta 13,75% no fim de 2026 e 12% em 2027.`;
+    nota.textContent = notaPremissas();
     $('legFut').innerHTML = ''; return;
   }
   const base = pontosFut(0);
@@ -2610,8 +2587,9 @@ function graficoFut(dados){
   const fim = base[base.length-1];
   nota.innerHTML = modoFut === 'cen'
     ? `A faixa cobre a Selic <b>1 ponto acima</b> e <b>1 ponto abaixo</b> da projeção. Entre os extremos há <b>${fmt(alta[alta.length-1].liq - baixa[baixa.length-1].liq)}</b> de diferença em ${fmtMes(fim.ds)}.`
-    : `Selic caindo de <b>${fmtPct(SELIC_HOJE)}</b> para <b>${fmtPct(fim.selic)}</b> em ${fmtMes(fim.ds)}, pela mediana do Focus. A tracejada é o bruto, a área laranja é o imposto e as linhas verticais marcam a queda da alíquota de IR.`;
+    : `Cenário de Selic de <b>${fmtPct(SELIC_HOJE)}</b> para <b>${fmtPct(fim.selic)}</b> em ${fmtMes(fim.ds)}. A tracejada é o bruto, a área laranja é o imposto e as linhas verticais marcam a queda da alíquota de IR.`;
 
+  nota.append(document.createTextNode(' '+notaPremissas()));
   interagir(svg, tip, base.length, PLx, PR, W, i => {
     const fx = svg.querySelector('#fx'), fd = svg.querySelector('#fd');
     fx.setAttribute('x1',X(i)); fx.setAttribute('x2',X(i)); fx.setAttribute('opacity','1');
@@ -2789,10 +2767,10 @@ let EDITANDO = null;   // aporte que originou a edição
 let MODO = 'nova';    // nova · editar · aporte · aporte-edit
 let GRUPO_ALVO = null;
 const aportesDo = gid => carteira.filter(p => grupoDe(p) === gid).sort((a,b) => a.data < b.data ? -1 : 1);
-const descProduto = p => `${p.banco} · ${p.tipo} ${rotIdx(p)}`;
+const descProduto = p => `${esc(p.banco)} · ${p.tipo} ${rotIdx(p)}`;
 function fecharTudo(){
   EDITANDO = null; MODO = 'nova'; GRUPO_ALVO = null;
-  ['sheet','sheetDados','sheetResg'].forEach(i => { const e = $(i); if(e) e.classList.remove('on'); });
+  ['sheet','sheetDados','sheetResg','sheetDia','sheetHistorico'].forEach(i => { const e = $(i); if(e) e.classList.remove('on'); });
   $('scrim').classList.remove('on');
 }
 function mostrarForm(modo, titulo, sub, cta){
@@ -2882,10 +2860,13 @@ $('btnSave').onclick = () => {
   const precisaAporte = MODO !== 'editar';
   const precisaProduto = !MODO.startsWith('aporte');
   if(precisaAporte && (!(valor > 0) || !data)){ toast('Confira o valor e a data'); return; }
+  if(precisaAporte && (!dataValida(data)||data>hoje()||!Number.isFinite(valor)||valor>1e12)){toast('Confira a data e o valor');return;}
+  if(car && (!dataValida(car)||car<data||(venc&&car>venc))){toast('Confira o prazo de carência');return;}
+  if(venc && !dataValida(venc)){toast('Confira o vencimento');return;}
+  if(precisaProduto && (!Number.isFinite(taxa)||taxa>10000)){toast('Confira a taxa');return;}
   if(precisaProduto && !(taxa >= 0)){ toast('Confira a taxa'); return; }
   if(venc && data && venc <= data && precisaAporte){ toast('O vencimento precisa ser depois da aplicação'); return; }
   const produto = { banco: $('fBanco').value, tipo: $('fTipo').value, index: $('fIndex').value, taxa, venc, car };
-  const novoId = () => 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
   let msg = '', maisAntiga = data;
 
   if(MODO === 'editar' || MODO === 'editar1'){
@@ -2974,6 +2955,8 @@ document.querySelectorAll('.rchips button').forEach(b => b.onclick = () => {
 });
 $('btnResg').onclick = () => {
   const gid = GRUPO_ALVO, ds = $('rData').value, v = parseFloat($('rValor').value);
+  if(!dataValida(ds)||ds>hoje()){toast('O resgate precisa ter uma data até hoje');return;}
+  if(aportesDo(gid).some(p=>(p.resg||[]).some(r=>r.data>ds))){toast('Remova os resgates posteriores antes de inserir um anterior');return;}
   if(!gid || !ds || !(v > 0)){ toast('Confira o valor e a data'); return; }
   const disp = disponivelResg(gid, ds);
   if(v > disp + 0.005){ toast('O valor passa do disponível'); return; }
@@ -3107,6 +3090,9 @@ function abrirDados(){
      <div class="di"><span>Última sincronização</span><b>${ULTIMA_SYNC ? new Date(ULTIMA_SYNC).toLocaleString('pt-BR') : '—'}</b></div>
      <div class="di"><span>Nuvem</span><b style="color:${NUVEM_OK?'var(--up)':'var(--tax)'}">${NUVEM_OK ? 'sincronizado' : NUVEM_MSG}</b></div>
      <div class="di"><span>Código da carteira</span><b style="font-family:'Open Sans',monospace;font-size:11px">${(CARTEIRA_ID||'').slice(0,13)}…</b></div>`;
+  $('pSelic').value = PREMISSAS.selic12 ?? '';
+  $('pIpca').value = IPCA_PROJ;
+  $('premissaFonte').textContent = notaPremissas();
   $('swAnt').classList.toggle('on', ANTECIPA);
   $('swLock').classList.toggle('on', !!credLock());
   fecharTudo(); $('scrim').classList.add('on'); $('sheetDados').classList.add('on');
@@ -3119,7 +3105,7 @@ $('swAnt').onclick = () => {
   cacheB.clear(); salvar(); render(); abrirDados();
   toast(ANTECIPA ? 'Contando o dia de hoje (estimado)' : 'Igual ao extrato do banco');
 };
-$('dSync').onclick = async () => { await sincronizar(false); abrirDados(); };
+$('dSync').onclick = async () => { await puxarNuvem(); await sincronizar(false); abrirDados(); };
 $('dLink').onclick = async () => {
   const url = location.origin + location.pathname + '#c=' + await idCarteira();
   try{ await navigator.clipboard.writeText(url); toast('Link copiado — abra nele no outro aparelho'); }
@@ -3131,7 +3117,7 @@ $('dWipe').onclick = () => {
   if(!carteira.length){ toast('Não há nada para apagar'); return; }
   $('dWipe').textContent === 'Apagar tudo'
     ? ($('dWipe').textContent = 'Toque de novo para confirmar')
-    : (carteira = [], salvar(), empurrarNuvem(), render(), fecharDados(),
+    : (guardarRecuperacao('Antes de apagar a carteira'), carteira = [], DIARIO = {}, SYNC.replaceHistory = true, DIARIO_FINGERPRINT = '', render(), salvar(), fecharDados(),
        $('dWipe').textContent = 'Apagar tudo', toast('Carteira apagada'));
 };
 $('fileBk').onchange = e => { if(e.target.files[0]) importar(e.target.files[0]); e.target.value=''; fecharDados(); };
@@ -3161,12 +3147,384 @@ $('segFut').onclick = e => {
   e.target.classList.add('on'); meses = +e.target.dataset.m; graficoFut(calcular());
 };
 
+/* Estado v2: IDs estáveis, cópia de recuperação e gravação local prioritária. */
+let SYNC = {dirty:false, revision:null, generation:0};
+let PREMISSAS = {selic12:null, ipca:5.02, atualizado:null};
+let CONFLITO = null, NUVEM_FILA = Promise.resolve(), STORE_FILA = Promise.resolve();
+let APP_PRONTO = false;
+const dataValida = s => typeof s==='string' && /^\d{4}-\d{2}-\d{2}$/.test(s)
+  && s>='2000-01-01' && s<='2100-12-31' && Number.isFinite(D(s).getTime()) && iso(D(s))===s;
+const clonar = x=>JSON.parse(JSON.stringify(x));
+const tiposValidos = ['CDB','RDB','LCI','LCA','LC','TESOURO','CRI','DEB','POUP'];
+const indicesValidos = ['cdi','selic','selic_spread','pre','ipca'];
+
+function validarCarteira(lista){
+  if(!Array.isArray(lista) || lista.length>10000) throw new Error('Carteira inválida');
+  const ids = new Set();
+  return lista.map(p=>{
+    if(!p || typeof p.banco!=='string' || !p.banco.trim() || p.banco.length>80
+      || /[<>"'`\x00-\x1f]/.test(p.banco) || !tiposValidos.includes(p.tipo)
+      || !indicesValidos.includes(p.index) || !Number.isFinite(+p.valor) || +p.valor<=0 || +p.valor>1e12
+      || !Number.isFinite(+p.taxa) || +p.taxa<0 || +p.taxa>10000
+      || !dataValida(p.data) || p.data>hoje()) throw new Error('Confira os dados da aplicação');
+    const q={id:eUUID(p.id)?p.id:novoId(),banco:p.banco.trim(),tipo:p.tipo,index:p.index,taxa:+p.taxa,valor:+p.valor,data:p.data};
+    if(ids.has(q.id)) throw new Error('Aplicações com identificador repetido');
+    ids.add(q.id);
+    for(const k of ['venc','car']){
+      if(p[k]){if(!dataValida(p[k]) || p[k]<p.data) throw new Error('Prazo inválido'); q[k]=p[k];}
+    }
+    if(q.car && q.venc && q.car>q.venc) throw new Error('Carência posterior ao vencimento');
+    if(p.g){if(typeof p.g!=='string'|| !/^[\w-]{1,90}$/.test(p.g)) throw new Error('Grupo inválido'); q.g=p.g;}
+    if(p.resg){
+      if(!Array.isArray(p.resg)) throw new Error('Resgates inválidos');
+      q.resg=p.resg.map(r=>{
+        if(!dataValida(r.data)||r.data<p.data||r.data>hoje()||!Number.isFinite(+r.f)||+r.f<=0||+r.f>1
+          ||!Number.isFinite(+r.bruto)||+r.bruto<0||!Number.isFinite(+r.ir)||+r.ir<0) throw new Error('Resgate inválido');
+        return {data:r.data,f:+r.f,bruto:+r.bruto,ir:+r.ir};
+      }).sort((a,b)=>a.data.localeCompare(b.data));
+    }
+    return q;
+  });
+}
+
+function estadoLocal(){
+  return {v:2,carteira,diario:DIARIO,sync:SYNC,premissas:PREMISSAS,
+    selic:SELIC_HOJE,fonte:FONTE_TAXA,oculto,antecipa:ANTECIPA,ts:hoje()};
+}
+function persistirLocal(){
+  const raw=JSON.stringify(estadoLocal());
+  STORE_FILA=STORE_FILA.catch(()=>{}).then(()=>store.set(KEY,raw));
+  return STORE_FILA;
+}
+function guardarRecuperacao(motivo){
+  try{localStorage.setItem('carteira-recuperacao-v2',JSON.stringify({motivo,criadoEm:new Date().toISOString(),...estadoLocal()}));}catch(e){}
+}
+function baixarJSON(obj,nome){
+  const url=URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}));
+  const a=document.createElement('a');a.href=url;a.download=nome;a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+async function carregar(){
+  let raw=null;
+  try{
+    raw=await store.get(KEY); if(!raw) return;
+    const s=JSON.parse(raw);
+    carteira=validarCarteira(s.carteira||[]);
+    DIARIO=validarDiario(s.diario);
+    if(s.v===2 && s.sync) SYNC={dirty:!!s.sync.dirty,revision:s.sync.revision||null,generation:+s.sync.generation||0,replaceHistory:!!s.sync.replaceHistory};
+    else SYNC.dirty=carteira.length>0; // Migração nunca descarta dados locais sem comparar.
+    if(s.selic>0&&s.selic<60){SELIC_HOJE=+s.selic;FONTE_TAXA=String(s.fonte||FONTE_TAXA);}
+    oculto=!!s.oculto;
+    ANTECIPA=s.v===2 && s.antecipa===true;
+    if(s.premissas) aplicarPremissas(s.premissas);
+  }catch(e){
+    if(raw) try{localStorage.setItem('carteira-dados-invalidos-v2',raw);}catch(erro){}
+    toast('Não foi possível ler a carteira. Uma cópia foi preservada para recuperação.');
+  }
+  atualizarCurva();
+}
+async function salvar(){
+  SYNC.dirty=true; SYNC.generation++;
+  NUVEM_OK=false; NUVEM_MSG='salvo neste aparelho — envio pendente'; statusTaxas();
+  const ok=await persistirLocal();
+  if(APP_PRONTO) empurrarNuvem().then(statusTaxas);
+  if(!ok && SALVANDO_OK){SALVANDO_OK=false;toast('Não consegui salvar neste navegador — baixe um backup');}
+  return ok;
+}
+function exportar(){
+  baixarJSON({...estadoLocal(),sync:undefined},`carteira-${hoje()}.json`);
+  toast('Backup com histórico gerado');
+}
+function importar(file){
+  if(file.size>20000000){toast('O arquivo é muito grande');return;}
+  const fr=new FileReader();
+  fr.onload=()=>{
+    try{
+      const s=JSON.parse(fr.result), lista=validarCarteira(s.carteira);
+      const diario=validarDiario(s.diario);
+      guardarRecuperacao('Antes de restaurar um backup');
+      carteira=lista; DIARIO=diario; DIARIO_FINGERPRINT='';
+      SYNC.replaceHistory=true;
+      if(s.premissas) aplicarPremissas(s.premissas);
+      cacheB.clear(); render(); salvar(); sincronizar(true);
+      toast(`${carteira.length} aplicações restauradas com histórico`);
+    }catch(e){toast('Backup inválido: '+e.message);}
+  };
+  fr.readAsText(file);
+}
+
+function aplicarPremissas(p){
+  const sel=p.selic12===null||p.selic12===''?null:+p.selic12;
+  if((sel!==null&&(!Number.isFinite(sel)||sel<0||sel>60))||!Number.isFinite(+p.ipca)||+p.ipca<0||+p.ipca>50) throw new Error('Premissas inválidas');
+  PREMISSAS={selic12:sel,ipca:+p.ipca,atualizado:dataValida(p.atualizado)?p.atualizado:null};
+  IPCA_PROJ=PREMISSAS.ipca; atualizarCurva();
+}
+function atualizarCurva(){
+  const h=hoje(), d=D(h);d.setUTCFullYear(d.getUTCFullYear()+1);
+  SELIC_PROJ.splice(0,SELIC_PROJ.length,{d:h,t:SELIC_HOJE},{d:iso(d),t:PREMISSAS.selic12??SELIC_HOJE});
+  cacheB.clear();
+}
+function notaPremissas(){
+  return `Cenário ${PREMISSAS.atualizado?'manual, revisado em '+dataCompleta(PREMISSAS.atualizado):'inicial, ainda não revisado'}. IPCA de ${fmtPct(IPCA_PROJ)} a.a.; Selic em 12 meses de ${fmtPct(PREMISSAS.selic12??SELIC_HOJE)}. Hipóteses editáveis em Dados e backup.`;
+}
+
+/* O snapshot completo em prefs é a unidade atômica de sincronização.
+   A revisão é comparada no PATCH: dois aparelhos não sobrescrevem um ao outro. */
+function enfileirarNuvem(fn){
+  const tarefa=NUVEM_FILA.catch(()=>{}).then(fn);
+  NUVEM_FILA=tarefa; return tarefa;
+}
+function caminhoCarteira(id){return 'carteiras?id=eq.'+encodeURIComponent(id);}
+async function lerRemoto(){
+  const id=await idCarteira();
+  const rows=await api(caminhoCarteira(id)+'&select=id,prefs');
+  if(!Array.isArray(rows)||rows.some(r=>r.id!==id)) throw new Error('Resposta de outra carteira recusada');
+  const row=rows[0], prefs=row?.prefs||{};
+  if(prefs.snapshot===2){
+    return {existe:true,revision:prefs.revision||null,carteira:validarCarteira(prefs.carteira||[]),
+      diario:validarDiario(prefs.diario),prefs};
+  }
+  const linhas=await api('posicoes?carteira_id=eq.'+encodeURIComponent(id)+'&select=*&order=data.asc');
+  if(!Array.isArray(linhas)||linhas.some(r=>r.carteira_id!==id)) throw new Error('Resposta de outra carteira recusada');
+  const lista=linhas.map(r=>({...daNuvem(r),...(prefs.extras?.[r.id]||{})}));
+  return {existe:!!row,revision:null,carteira:validarCarteira(lista),diario:{},prefs};
+}
+/* Ignora os IDs apenas na comparação da migração da primeira versão. */
+function conteudoCarteira(lista){
+  return JSON.stringify(lista.map(p=>JSON.stringify([p.banco,p.tipo,p.index,p.taxa,p.valor,p.data,p.venc||'',p.car||'',p.resg||[]])).sort());
+}
+function mesclarDiarios(a,b){
+  const saida=clonar(a);
+  for(const [ds,dia] of Object.entries(b)) saida[ds]={itens:{...(saida[ds]?.itens||{}),...dia.itens}};
+  return saida;
+}
+function mostrarConflito(remoto){
+  CONFLITO=remoto;NUVEM_OK=false;NUVEM_MSG='conflito — alterações locais preservadas';
+  guardarRecuperacao('Conflito entre aparelhos');
+  $('avisoSync').hidden=false;
+  $('syncResumo').textContent=`Neste aparelho: ${carteira.length} aplicações. Na nuvem: ${remoto.carteira.length}. As duas versões foram preservadas. Escolha qual carteira usar para continuar sincronizando.`;
+  statusTaxas();
+}
+async function gravarNuvemInterno(remoto){
+  if(CONFLITO || !SYNC.dirty) return !CONFLITO;
+  try{
+    const atual=remoto||await lerRemoto();
+    if(atual.revision!==SYNC.revision && conteudoCarteira(atual.carteira)!==conteudoCarteira(carteira)){
+      mostrarConflito(atual);return false;
+    }
+    if(!SYNC.revision && !atual.revision && atual.carteira.length
+      && conteudoCarteira(atual.carteira)!==conteudoCarteira(carteira)
+      && SYNC.acceptedLegacy!==conteudoCarteira(atual.carteira)){
+      mostrarConflito(atual);return false;
+    }
+    const id=await idCarteira(), generation=SYNC.generation, revision=novoId();
+    const snapshot=clonar(carteira);
+    if(!SYNC.replaceHistory) DIARIO=mesclarDiarios(atual.diario,DIARIO);
+    const prefs={...atual.prefs,snapshot:2,revision,carteira:snapshot,diario:DIARIO,
+      oculto,antecipa:ANTECIPA,premissas:PREMISSAS,extras:extrasDe(snapshot)};
+    const body=JSON.stringify({id,prefs,visto_em:new Date().toISOString()});
+    let result;
+    if(atual.existe){
+      const filtro=atual.revision?'eq.'+encodeURIComponent(atual.revision):'is.null';
+      result=await api(caminhoCarteira(id)+'&prefs->>revision='+filtro,
+        {method:'PATCH',headers:{Prefer:'return=representation'},body});
+    }else{
+      result=await api('carteiras',{method:'POST',headers:{Prefer:'resolution=ignore-duplicates,return=representation'},body});
+    }
+    if(!Array.isArray(result)||result.length!==1){mostrarConflito(await lerRemoto());return false;}
+    SYNC.revision=revision;SYNC.dirty=SYNC.generation!==generation;
+    if(!SYNC.dirty) SYNC.replaceHistory=false;
+    NUVEM_OK=true;NUVEM_MSG=SYNC.dirty?'alterações aguardando envio':'sincronizado';
+    await persistirLocal();
+    /* Compatibilidade com a tabela da versão antiga, sempre filtrada por carteira. */
+    try{
+      const antigas=await api('posicoes?carteira_id=eq.'+encodeURIComponent(id)+'&select=id,carteira_id');
+      if(!Array.isArray(antigas)||antigas.some(p=>p.carteira_id!==id)) throw new Error('Carteira inválida');
+      const manter=new Set(snapshot.map(p=>p.id));
+      if(snapshot.length) await api('posicoes',{method:'POST',headers:{Prefer:'resolution=merge-duplicates'},body:JSON.stringify(snapshot.map(paraNuvem))});
+      const apagar=antigas.filter(p=>!manter.has(p.id)).map(p=>p.id);
+      if(apagar.length) await api('posicoes?carteira_id=eq.'+encodeURIComponent(id)+'&id=in.('+apagar.join(',')+')',{method:'DELETE'});
+    }catch(e){/* O snapshot confirmado continua íntegro; uma versão antiga pode demorar a refletir a mudança. */}
+    if(SYNC.dirty) return gravarNuvemInterno();
+    return true;
+  }catch(e){NUVEM_OK=false;NUVEM_MSG='salvo neste aparelho — envio pendente';return false;}
+}
+function empurrarNuvem(){return enfileirarNuvem(()=>gravarNuvemInterno());}
+function puxarNuvem(){
+  return enfileirarNuvem(async()=>{
+    if(CONFLITO) return false;
+    try{
+      const generation=SYNC.generation, remoto=await lerRemoto();
+      if(SYNC.dirty || generation!==SYNC.generation) return gravarNuvemInterno(remoto);
+      guardarRecuperacao('Antes de atualizar pela nuvem');
+      carteira=remoto.carteira;
+      DIARIO=remoto.prefs.snapshot===2?remoto.diario:mesclarDiarios(DIARIO,remoto.diario);DIARIO_FINGERPRINT='';
+      if(remoto.prefs.premissas) aplicarPremissas(remoto.prefs.premissas);
+      SYNC.revision=remoto.revision;
+      NUVEM_OK=true;NUVEM_MSG='sincronizado';
+      render();await persistirLocal();return true;
+    }catch(e){NUVEM_OK=false;NUVEM_MSG=SYNC.dirty?'salvo neste aparelho — envio pendente':'offline — dados locais';return false;}
+  });
+}
+$('syncLocal').onclick=async()=>{
+  if(!CONFLITO) return;
+  const remoto=CONFLITO;
+  baixarJSON({v:2,carteira:remoto.carteira,diario:remoto.diario},`copia-nuvem-${hoje()}.json`);
+  SYNC.revision=remoto.revision;SYNC.acceptedLegacy=conteudoCarteira(remoto.carteira);CONFLITO=null;$('avisoSync').hidden=true;
+  await salvar();await empurrarNuvem();statusTaxas();
+};
+$('syncRemoto').onclick=async()=>{
+  if(!CONFLITO) return;
+  guardarRecuperacao('Antes de escolher a carteira da nuvem');
+  baixarJSON({...estadoLocal(),sync:undefined},`copia-aparelho-${hoje()}.json`);
+  carteira=CONFLITO.carteira;DIARIO=CONFLITO.diario;DIARIO_FINGERPRINT='';
+  SYNC.revision=CONFLITO.revision;SYNC.dirty=false;SYNC.generation++;
+  if(CONFLITO.prefs.premissas) aplicarPremissas(CONFLITO.prefs.premissas);
+  CONFLITO=null;$('avisoSync').hidden=true;NUVEM_OK=true;NUVEM_MSG='sincronizado';
+  render();await persistirLocal();statusTaxas();
+};
+$('dRec').onclick=()=>{
+  try{const s=JSON.parse(localStorage.getItem('carteira-recuperacao-v2'));if(!s) throw 0;
+    baixarJSON(s,`carteira-recuperacao-${hoje()}.json`);
+  }catch(e){toast('Nenhuma cópia anterior disponível');}
+};
+$('salvarPremissas').onclick=()=>{
+  try{aplicarPremissas({selic12:$('pSelic').value,ipca:$('pIpca').value,atualizado:hoje()});
+    cacheB.clear();DIARIO_FINGERPRINT='';render();salvar();abrirDados();toast('Premissas atualizadas');
+  }catch(e){toast('Confira as taxas informadas');}
+};
+
+/* Histórico por competência: um dia fechado só aparece no dia seguinte. */
+let DIARIO = {}, DIARIO_FINGERPRINT = '', DIARIO_LIMITE = 30;
+let DIA_DETALHE = null;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const assinado = v => (v > 0 ? '+' : v < 0 ? '−' : '') + fmt(Math.abs(v));
+const dataCompleta = ds => D(ds).toLocaleDateString('pt-BR', {day:'2-digit',month:'long',year:'numeric',timeZone:'UTC'});
+const ontem = () => iso(addD(D(hoje()), -1));
+const centavos = v => Math.round((v + Number.EPSILON) * 100);
+
+function validarDiario(raw){
+  const saida = {};
+  if(!raw || typeof raw !== 'object' || Array.isArray(raw)) return saida;
+  for(const [ds, dia] of Object.entries(raw)){
+    if(!dataValida(ds) || ds >= hoje() || !dia || typeof dia.itens !== 'object') continue;
+    const itens = {};
+    for(const [id, x] of Object.entries(dia.itens || {})){
+      if(!/^[\w-]{1,90}$/.test(id) || !x || !Number.isSafeInteger(x.centavos) || Math.abs(x.centavos) > 1e15) continue;
+      if(typeof x.banco !== 'string' || x.banco.length > 80) continue;
+      itens[id] = {banco:x.banco, centavos:x.centavos, estimado:!!x.estimado};
+    }
+    saida[ds] = {itens};
+  }
+  return saida;
+}
+
+function atualizarDiario(){
+  const fim = ontem();
+  const chave = JSON.stringify([fim, carteira, CDI_VER, IPCA_PROJ, SELIC_HOJE]);
+  if(chave === DIARIO_FINGERPRINT) return;
+  DIARIO_FINGERPRINT = chave;
+  /* Reprocessa cada aplicação uma vez; aportes e saques não viram rendimento.
+     Dias já registrados de aplicações removidas continuam no arquivo histórico. */
+  for(const p of carteira){
+    if(p.data > fim) continue;
+    for(const dia of Object.values(DIARIO)) delete dia.itens[p.id];
+    let saldo = p.valor, baseEstimada = false;
+    for(let d = addD(D(p.data),1); d <= D(fim); d = addD(d,1)){
+      const ds = iso(d);
+      const aberto = !p.venc || ds < p.venc;
+      const temRendimento = aberto && rende(d,ds);
+      const fator = temRendimento ? fatorDia(p, ds) : 1;
+      const semSerie = p.index === 'cdi' ? CDI_MAP[ds] === undefined
+        : ['selic','selic_spread'].includes(p.index) ? SEL_MAP[ds] === undefined : false;
+      const modelo = ['POUP'].includes(p.tipo) || p.index === 'ipca';
+      const estimado = temRendimento && (baseEstimada || modelo || semSerie);
+      const ganho = saldo * (fator - 1) * mantido(p, ds);
+      saldo *= fator;
+      if(temRendimento && (modelo || semSerie)) baseEstimada = true;
+      const dia = DIARIO[ds] || (DIARIO[ds] = {itens:{}});
+      dia.itens[p.id] = {banco:p.banco, centavos:centavos(ganho), estimado};
+    }
+  }
+  if(!DIARIO[fim]) DIARIO[fim] = {itens:{}};
+}
+
+function resumoDiario(ds){
+  const dia = DIARIO[ds] || {itens:{}};
+  const mapa = new Map();
+  for(const x of Object.values(dia.itens)){
+    const b = mapa.get(x.banco) || {banco:x.banco, centavos:0, estimado:false};
+    b.centavos += x.centavos; b.estimado ||= x.estimado;
+    mapa.set(x.banco, b);
+  }
+  const bancos = [...mapa.values()].sort((a,b)=>b.centavos-a.centavos);
+  const total = bancos.reduce((s,x)=>s+x.centavos,0);
+  return {ds, bancos, total:total/100, estimado:bancos.some(b=>b.estimado)};
+}
+
+function linhaDiario(ds){
+  const r = resumoDiario(ds);
+  const rotulo = ds === ontem() ? 'Ontem' : D(ds).toLocaleDateString('pt-BR',{weekday:'short',timeZone:'UTC'}).replace('.','');
+  const estado = r.estimado ? 'Estimado' : !r.total ? 'Sem rendimento' : 'Calculado';
+  return `<button class="diario-row" data-dia="${ds}" aria-label="Ver rendimento de ${esc(dataCompleta(ds))}">
+    <span class="diario-data"><b>${esc(rotulo)}</b><span>${esc(dataCompleta(ds))}</span></span>
+    <span class="diario-num"><b class="money hideable ${r.total<0?'negativo':''}">${assinado(r.total)}</b><span>${estado} <span aria-hidden="true">›</span></span></span>
+  </button>`;
+}
+
+function renderDiario(){
+  atualizarDiario();
+  const dias = Object.keys(DIARIO).filter(ds=>ds<hoje()).sort().reverse();
+  $('diarioList').innerHTML = dias.slice(0,7).map(linhaDiario).join('');
+  $('diarioPeriodo').textContent = 'dias encerrados';
+  $('diarioMais').hidden = dias.length <= 7;
+  if($('sheetHistorico').classList.contains('on')) preencherHistorico();
+  if(DIA_DETALHE && $('sheetDia').classList.contains('on')) preencherDetalheDia(DIA_DETALHE);
+}
+
+function preencherHistorico(){
+  const dias = Object.keys(DIARIO).filter(ds=>ds<hoje()).sort().reverse();
+  $('historicoList').innerHTML = dias.slice(0,DIARIO_LIMITE).map(linhaDiario).join('');
+  $('historicoContagem').textContent = `${Math.min(dias.length,DIARIO_LIMITE)} de ${dias.length} dias`;
+  $('historicoMais').hidden = DIARIO_LIMITE >= dias.length;
+}
+function abrirHistorico(){
+  fecharTudo(); DIARIO_LIMITE=30; preencherHistorico();
+  $('sheetHistorico').classList.add('on'); $('scrim').classList.add('on');
+  $('sheetHistorico').querySelector('[data-fecha]').focus({preventScroll:true});
+}
+function preencherDetalheDia(ds){
+  DIA_DETALHE = ds;
+  const r = resumoDiario(ds);
+  $('diaTitulo').textContent = dataCompleta(ds);
+  $('diaTotal').textContent = assinado(r.total);
+  $('diaEstado').textContent = r.estimado ? 'Valor estimado · taxa ou base ainda estimada' : r.total ? 'Rendimento bruto calculado' : 'Sem rendimento neste dia';
+  $('diaBancos').innerHTML = r.bancos.length ? r.bancos.map(b=>`
+    <div class="diario-banco"><span class="diario-av" style="background:${cor(b.banco)}">${esc(sigla(b.banco))}</span>
+      <span class="diario-banco-nome"><b>${esc(b.banco)}</b><span>${b.estimado?'Estimado':'Calculado'}</span></span>
+      <b class="money hideable">${assinado(b.centavos/100)}</b></div>`).join('') : '<p class="diario-vazio">Nenhuma aplicação com rendimento registrado neste dia.</p>';
+  $('diaNota').textContent = 'Valores brutos, antes de IR e IOF. Aportes e resgates não são somados como rendimento. Dias sem rendimento ficam registrados com R$ 0,00. Valores estimados são revistos quando as taxas ficam disponíveis.';
+}
+function abrirDetalheDia(ds){
+  fecharTudo(); preencherDetalheDia(ds);
+  $('sheetDia').classList.add('on'); $('scrim').classList.add('on');
+  $('sheetDia').querySelector('[data-fecha]').focus({preventScroll:true});
+}
+document.addEventListener('click', e=>{
+  const alvo=e.target.closest('[data-dia]');
+  if(alvo) abrirDetalheDia(alvo.dataset.dia);
+});
+$('pillDay').onclick = ()=>abrirDetalheDia(ontem());
+$('diarioMais').onclick = abrirHistorico;
+$('historicoMais').onclick = ()=>{DIARIO_LIMITE+=30; preencherHistorico();};
+$('diaVoltar').onclick = abrirHistorico;
+
 /* ============================================================
    14. BOOT
    ============================================================ */
 (async () => {
   await carregar();                   // 1. último estado salvo no aparelho
-  await cacheTaxas();
+  await cacheTaxas(); atualizarCurva();
   if(oculto){ document.body.classList.add('hide'); }
   $('navSelic').textContent = fmtPct(SELIC_HOJE);
   statusTaxas();
@@ -3174,15 +3532,18 @@ $('segFut').onclick = e => {
   requestAnimationFrame(() => { moveInd(); moveMind('modeHist'); moveMind('modeFut'); });
   arrastavel($('sheet'), fecharTudo);
   arrastavel($('sheetDados'), fecharTudo);
+  // Os painéis de histórico rolam normalmente no celular.
   addEventListener('resize', () => { moveInd(); moveMind('modeHist'); moveMind('modeFut'); });
-  await puxarNuvem();                 // 3. carteira da nuvem manda
+  await puxarNuvem();                 // 3. compara revisões; preserva edições offline
+  APP_PRONTO = true;
   render();
   await sincronizar(true);            // 4. taxas do dia
+  await persistirLocal();
 
   /* mantém sempre em dia */
   let dia = hoje(), ultima = Date.now();
   setInterval(() => {
-    if(hoje() !== dia){ dia = hoje(); cacheB.clear(); sincronizar(true); }
+    if(hoje() !== dia){ dia = hoje(); cacheB.clear(); atualizarCurva(); render(); salvar(); sincronizar(true); }
   }, 30000);
   document.addEventListener('visibilitychange', () => {
     if(document.hidden) return;
@@ -3190,7 +3551,7 @@ $('segFut').onclick = e => {
     if(virou || velho){ dia = hoje(); ultima = Date.now(); cacheB.clear(); sincronizar(true); }
     else { puxarNuvem().then(render); }
   });
-  addEventListener('online', () => sincronizar(true));
+  addEventListener('online', () => { puxarNuvem().then(()=>{render();statusTaxas();}); sincronizar(true); });
 })();
 </script>
 </body>
