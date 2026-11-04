@@ -5,7 +5,8 @@
     }
   },
   "rewrites": [
-    { "source": "/conta", "destination": "/api/finace-conta?finace_route=" },
+    { "source": "/conta", "destination": "/api/finace-conta" },
+    { "source": "/conta/", "destination": "/api/finace-conta" },
     { "source": "/conta/:finace_route*", "destination": "/api/finace-conta?finace_route=:finace_route*" }
   ]
 }

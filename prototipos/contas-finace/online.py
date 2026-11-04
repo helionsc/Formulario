@@ -51,7 +51,14 @@ def online_auth():
 
 class OnlineHandler(Handler):
     """Reusa o formato JSON e a validação do servidor da prévia."""
-    def handle_request(self):
+    def do_GET(self):
+        self.serve_online()
+
+    do_POST = do_GET
+    do_PATCH = do_GET
+    do_DELETE = do_GET
+
+    def serve_online(self):
         self.cookies_to_set = []
         try:
             host = self.headers.get("Host", "")
@@ -62,7 +69,9 @@ class OnlineHandler(Handler):
             self.origin = "https://" + host
             request = urlsplit(self.path)
             query = parse_qs(request.query, keep_blank_values=True)
-            if request.path.startswith(PREFIX):
+            if request.path == PREFIX.rstrip("/"):
+                path = ""
+            elif request.path.startswith(PREFIX):
                 path = request.path[len(PREFIX):]
             elif request.path == "/api/finace-conta":
                 path = query.pop("finace_route", [""])[0]

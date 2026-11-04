@@ -21,7 +21,12 @@ class OnlineTest(unittest.TestCase):
         auth.call.return_value = {"id": owner, "email": email}
         cloud = Mock()
         cloud.snapshot.return_value = initial_wallet()
-        with http.server.ThreadingHTTPServer(("127.0.0.1", 0), OnlineHandler) as server, \
+        # A Vercel reserva handle_request; o despacho deve usar outro nome.
+        class VercelHandler(OnlineHandler):
+            def handle_request(self):
+                raise AssertionError("Não chame o despachante da plataforma")
+
+        with http.server.ThreadingHTTPServer(("127.0.0.1", 0), VercelHandler) as server, \
                 patch.dict(os.environ, {"FINACE_ONLINE_HOSTS": host, "VERCEL_ENV": "preview"}), \
                 patch("online.online_auth", return_value=auth), patch("online.CloudWallet", return_value=cloud):
             thread = threading.Thread(target=server.serve_forever, kwargs={"poll_interval": .01}, daemon=True)
@@ -37,6 +42,8 @@ class OnlineTest(unittest.TestCase):
                     return output
 
                 verify = "/conta/api/auth/verify"
+                self.assertEqual(call("GET", "/conta")[0], 200)
+                self.assertEqual(call("GET", "/api/finace-conta?finace_route=api/config")[0], 200)
                 status, headers, result = call("POST", verify, {"challenge": email, "code": "123456"})
                 self.assertEqual(status, 200)
                 self.assertNotIn("test-refresh", result)
