@@ -1030,6 +1030,142 @@ html[data-nivel] .hero .acoes button:focus-visible span{outline:2px solid var(--
 .diario-row{padding-top:13px;padding-bottom:13px}
 .diario-intro{font-size:11px;line-height:1.5;margin-bottom:10px}
 
+/* Superfícies mais suaves e números com a fonte do aparelho. */
+:root{
+  --bg:#F0F2F6;
+  --surface-2:#F1F4F8;
+  --r:26px;
+  --r-sm:16px;
+  --up:#087B56;
+  --tax:#8C5B0E;
+  --shadow:0 10px 28px -21px #24334d40;
+  --numeros:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+}
+.money,.hero .balance .val,.hero .balance .val .sym,.hero .balance .val .dec,
+.pill,#pillDay,#totRet,.dc-v,.dc-s.money,.lg-v .pc,.lg-v em,.lg .pc,
+.grp-row .end b,.grp-row .end span,.grp-resumo b,.apl-data b,.apl-data i,
+.apl-mid em,.apl-end b,.apl-end span,.row .end b,.row .end span,
+.chart-top .v,.tip b,.dl b,.di b,.preview b,.qtd,#mbVal,.summary b{
+  font-family:var(--numeros)!important;
+  font-variant-numeric:tabular-nums lining-nums!important;
+}
+body::before{background:var(--bg)}
+html[data-nivel] .hero{
+  border-radius:0 0 34px 34px!important;
+  box-shadow:0 12px 24px -17px #12213b66!important;
+}
+.topbar{padding-bottom:12px!important}
+.topbar .marca{gap:8px}
+.topbar h1{font-family:var(--numeros)!important;font-weight:630!important;font-size:17px!important}
+.topbar .icons{align-items:center;gap:5px}
+.topbar .icon-btn{width:42px;height:44px;flex:none;border:0;background:transparent}
+.topbar #btnPerfil{
+  width:44px;height:44px;padding:0;overflow:hidden;
+  background:var(--hpf);border-radius:50%;
+}
+#btnPerfil img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+#btnPerfil:focus-visible,.perfil-dialog button:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+html[data-nivel] .hero .balance{
+  padding:18px 16px 15px!important;
+  margin:1px 0 10px;
+  border-radius:27px;
+  background:color-mix(in srgb,var(--hi) 7%,transparent);
+}
+html[data-nivel="n2"] .hero .balance{background:rgba(255,255,255,.48)}
+.hero .balance .cap{font-size:12px;font-weight:550;margin:0 0 9px}
+.hero .balance .val{
+  font-size:clamp(33px,10.4vw,44px)!important;
+  font-weight:670!important;letter-spacing:-.044em!important;
+}
+.hero .balance .val .sym{font-size:.54em!important;opacity:.78;letter-spacing:-.02em!important}
+.hero .balance .val .dec{font-size:.79em!important;letter-spacing:-.035em!important}
+.hero .balance .saldo-bruto{margin-top:9px}
+.saldo-referencia{color:var(--hi2);font-size:10.5px;line-height:1.45;margin:6px 0 0}
+.hero .balance .deltas{margin-top:10px}
+.hero .balance #pillDay{border-radius:999px;padding:7px 0;font-size:10.5px;line-height:1.25}
+html[data-nivel] .hero #totRet{font-size:11px!important;line-height:1.25}
+html[data-nivel] .hero .resumo{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  align-items:stretch;gap:6px!important;padding:0!important;margin:0 0 6px;
+}
+.hero .resumo .rl{
+  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+  min-height:51px;gap:4px;padding:8px 9px;
+  border-radius:15px;background:color-mix(in srgb,var(--hi) 6%,transparent);
+}
+.hero .resumo .rl span{font-size:10px;line-height:1.15;color:var(--hi2)}
+html[data-nivel] .hero .resumo .rl b{font-size:clamp(10px,3.1vw,13px)!important;font-weight:650!important;white-space:nowrap}
+.hero .acoes{margin-top:5px}
+.hero .taxst{margin-top:8px;font-size:9.5px}
+.sec{margin-top:24px}
+.sec-h{gap:8px;margin:0 2px 10px}
+.sec-h h2{font-size:17px;font-weight:640;letter-spacing:-.035em}
+.card{border:1px solid #e6eaf0}
+.diario-row{padding:12px 15px;min-height:56px}
+.diario-row+.diario-row{border-color:#edf0f4}
+.diario-num b{font-weight:650}
+#posList{display:grid;gap:10px;border:0;background:transparent;box-shadow:none}
+.grp{border-radius:25px;background:var(--card);overflow:hidden;box-shadow:var(--shadow)}
+.grp+.grp{border-top:0}
+.grp-row{min-height:74px;padding:13px 14px 16px}
+.grp-bar{height:2px;border-radius:999px}
+.grp-bar i{border-radius:inherit}
+.grp.open .grp-bar{opacity:1}
+html[data-nivel] .grp.open .grp-row{box-shadow:none;background:var(--card)}
+.grp-row .end b,.apl-end b{font-weight:670}
+.grp-row .end span,.apl-end span{font-size:11px;white-space:nowrap}
+.grp-body{margin:0 6px 6px;border:0;border-radius:21px;background:var(--surface-2);padding:3px 9px 11px}
+.grp-resumo{gap:5px;padding:8px 0}
+.grp-resumo div{min-width:0;border:0;border-radius:14px;padding:8px 5px}
+.grp-resumo span{color:var(--ink-2);line-height:1.2}
+.grp-lista{border-radius:18px;border:0}
+.apl-row{gap:9px;padding:12px 9px}
+.apl-data{width:36px;border:0;border-radius:11px;background:#edf1f7}
+.apl-mid b{font-size:12.5px}
+.ganho-bruto-info{padding:4px 3px 9px;color:var(--ink-2);font-size:11px}
+.ganho-bruto-info b{color:var(--ink);font-weight:620}
+
+/* O ícone mantém seu nome acessível mesmo sem legenda visual. */
+nav .tab.on,nav.compacta .tab{justify-content:center;gap:0}
+nav .tab.on .tab-label{display:none}
+nav .nav-ind{
+  background:transparent;border:0;box-shadow:none;
+  display:grid;place-items:center;pointer-events:none;
+}
+nav .nav-ind::before{
+  content:"";width:44px;height:44px;max-width:calc(100% - 3px);
+  border-radius:50%;background:#E0E8F3;
+  box-shadow:inset 0 1px 1px #fff9;
+}
+@media(prefers-contrast:more){nav .nav-ind::before{outline:1px solid #7A8598}}
+
+.perfil-dialog{
+  position:fixed;inset:auto 0 max(12px,env(safe-area-inset-bottom));
+  width:min(440px,calc(100% - 24px));max-height:calc(100dvh - 36px);
+  margin:0 auto;padding:23px;border:0;border-radius:28px;
+  background:#fff;color:#19243a;box-shadow:0 16px 64px #13213d35;
+}
+.perfil-dialog::backdrop{background:#15223b64;backdrop-filter:blur(5px)}
+.perfil-dialog h2{font-size:21px;font-weight:640;letter-spacing:-.03em;margin:0 0 8px}
+.perfil-dialog p{font-size:13px;line-height:1.5;color:#546176;margin:0 0 14px}
+.perfil-dialog .perfil-demo{
+  width:70px;height:70px;border-radius:50%;margin-bottom:15px;
+  display:grid;place-items:center;background:#E6EDF7;color:#304A70;overflow:hidden;
+}
+.perfil-demo img{width:100%;height:100%;object-fit:cover}
+.perfil-demo svg{width:29px;height:29px;fill:none;stroke:currentColor;stroke-width:1.65}
+.perfil-dialog .cta{margin:8px 0 0;min-height:44px}
+.perfil-dialog [hidden],#btnPerfil [hidden]{display:none!important}
+#perfilAviso:empty{display:none}
+@media(max-width:360px){
+  .topbar h1{font-size:15px!important}
+  .topbar .marca{gap:6px}
+  .topbar .icons{gap:2px}
+  .hero .resumo .rl{padding-inline:6px}
+  .grp-resumo span{font-size:9px}
+  .apl-mid b{font-size:11.5px}
+}
+
 </style>
 
 
@@ -1069,12 +1205,16 @@ html[data-nivel] .hero .acoes button:focus-visible span{outline:2px solid var(--
       <button class="icon-btn" id="btnSync" aria-label="Atualizar taxas">
         <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
       </button>
+      <button class="icon-btn" id="btnPerfil" type="button" aria-label="Foto do perfil" aria-haspopup="dialog" aria-controls="perfilDialog">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20v-1.2c0-3 2.8-5 6.5-5s6.5 2 6.5 5V20"/></svg><img id="perfilAvatar" alt="" hidden>
+      </button>
     </div>
   </div>
   <div class="balance">
     <div class="cap"><span id="capTxt">Saldo líquido hoje</span></div>
     <div class="val money" id="bal"><span class="sym">R$</span>0<span class="dec">,00</span></div>
     <div class="saldo-bruto" title="Valor total das aplicações antes de IR e IOF"><span>Saldo bruto</span> <b class="money" id="saldoBruto">R$ 0,00</b></div>
+    <p class="saldo-referencia" id="saldoReferencia" hidden></p>
     <div class="deltas">
       <button class="hideable dia-toque" id="pillDay" aria-haspopup="dialog">R$ 0,00 ontem</button>
       <span class="hideable" id="totRet">0,00% desde o início</span>
@@ -1082,8 +1222,8 @@ html[data-nivel] .hero .acoes button:focus-visible span{outline:2px solid var(--
   </div>
   <div class="resumo">
     <div class="rl"><span>Aplicado</span><b class="money" id="sAplic">R$ 0,00</b></div>
-    <div class="rl"><span>Rendimento</span><b class="money g" id="sRend">+R$ 0,00</b></div>
-    <div class="rl"><span>IR + IOF</span><b class="money t" id="sImp">−R$ 0,00</b></div>
+    <div class="rl"><span>Ganho líquido</span><b class="money g" id="sRend">+R$ 0,00</b></div>
+    <div class="rl" title="Estimativa dos impostos no resgate"><span>IR + IOF</span><b class="money t" id="sImp">−R$ 0,00</b></div>
   </div>
   <div class="acoes">
     <button data-acao="novo"><span><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>Aplicar</button>
@@ -1301,7 +1441,7 @@ html[data-nivel] .hero .acoes button:focus-visible span{outline:2px solid var(--
   <div class="opt" id="optAnt">
     <div class="opt-t"><b>Contar o dia de hoje</b>
       <span>Ligado, o rendimento de hoje já aparece hoje, com taxa estimada.
-      Desligado, o saldo fica igual ao extrato do banco — o rendimento de hoje entra amanhã.</span></div>
+      Desligado, o saldo considera os dias encerrados. O banco pode atualizar o extrato em outro horário.</span></div>
     <div class="sw" id="swAnt"><i></i></div>
   </div>
   <div class="opt" id="optLock" style="display:none">
@@ -1335,6 +1475,16 @@ html[data-nivel] .hero .acoes button:focus-visible span{outline:2px solid var(--
   <div id="historicoList"></div><p class="diario-rodape" id="historicoContagem"></p><button class="diario-mais" id="historicoMais">Carregar mais 30 dias</button>
 </div>
 
+<dialog class="perfil-dialog" id="perfilDialog" aria-labelledby="perfilTitulo">
+  <div class="perfil-demo" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20v-1.2c0-3 2.8-5 6.5-5s6.5 2 6.5 5V20"/></svg><img id="perfilFotoMaior" alt="" hidden></div>
+  <h2 id="perfilTitulo">Foto do perfil</h2>
+  <p>Escolha a imagem que aparece no topo do Finace. Ela fica neste aparelho.</p>
+  <input type="file" id="perfilArquivo" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" aria-label="Arquivo de foto do perfil" hidden>
+  <p id="perfilAviso" role="status" aria-live="polite"></p>
+  <button class="cta" type="button" id="perfilEscolher">Escolher foto</button>
+  <button class="cta ghost" type="button" id="perfilRemover" hidden>Remover foto</button>
+  <form method="dialog"><button class="cta ghost" autofocus>Concluir</button></form>
+</dialog>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1866,6 +2016,13 @@ function render(){
   anima(document.getElementById('bal'), ultimo, T.liq, balHTML);
   ultimo = T.liq;
   $('saldoBruto').textContent = fmt(T.bruto);
+  const referencia = ultimoUtil(hoje());
+  const diaEstimado = dados.some(({p}) => DIARIO[referencia]?.itens[p.id]?.estimado);
+  const dataSaldo = $('saldoReferencia');
+  dataSaldo.hidden = !dados.length;
+  dataSaldo.textContent = ANTECIPA && referencia === hoje()
+    ? 'Inclui estimativa de hoje'
+    : `Juros até ${fmtDia(referencia)}${diaEstimado ? ' · com estimativas' : ''}`;
 
   renderDiario();
   const pd = document.getElementById('pillDay'), rendimentoOntem = resumoDiario(ontem());
@@ -1875,7 +2032,7 @@ function render(){
   document.getElementById('totRet').textContent = T.aplic
     ? `${fmtC((T.liq/T.aplic-1)*100)}% desde o início` : 'sem aplicações';
   document.getElementById('sAplic').textContent = fmt(T.aplic);
-  document.getElementById('sRend').textContent = '+' + fmt(T.bruto - T.aplic);
+  document.getElementById('sRend').textContent = assinado(T.liq - T.aplic);
   document.getElementById('sImp').textContent = '−' + fmt(T.imp);
 
   const mv = $('mbVal'); if(mv) mv.textContent = fmt(T.liq);
@@ -1996,10 +2153,11 @@ function listaPosicoes(dados){
           <div class="apl-mid"><b>${p.tipo} · ${rotIdx(p)}</b>
             <span>${sub}</span>${venc||car ? `<span class="tags">${venc}${car}</span>` : ''}</div>
           <div class="apl-end"><b class="money">${fmtC(a.liq)}</b>
-            <span class="money">+${fmtC(a.rend)}</span></div>
+            <span class="money" aria-label="Ganho líquido ${fmt(a.liq-a.aplic)}">${assinado(a.liq-a.aplic)} líq.</span></div>
         </div>
         <div class="fold"><div class="fold-in"><div class="apl-det">
-          <div class="dl"><span>Valor bruto</span><b class="money">${fmtC(a.bruto)}</b></div>
+          <div class="dl"><span>Saldo bruto</span><b class="money">${fmtC(a.bruto)}</b></div>
+          <div class="dl"><span>Ganho bruto</span><b class="money">${assinado(a.rend)}</b></div>
           <div class="dl"><span>IR ${x.isento ? '· isento' : n > 1 ? '· por aporte' : '· ' + fmtC(x.aliq).replace(',00','') + '%'}</span>
             <b class="money" style="color:var(--tax)">−${fmtC(a.ir)}</b></div>
           <div class="dl"><span>IOF ${x.isento?'· não incide':(n===1 && x.dc<30?'· zera em '+(30-x.dc)+'d': a.iof>0.004 ? '· aportes recentes' : '· zerado')}</span>
@@ -2031,7 +2189,7 @@ function listaPosicoes(dados){
         <div class="mid"><b>${esc(g.banco)}</b><span>${sub}</span></div>
         <div class="end">
           <b class="money">${fmtC(g.liq)}</b>
-          <span class="money">+${fmtC(g.rend)}</span>
+          <span class="money" aria-label="Ganho líquido ${fmt(g.liq-g.aplic)}">${assinado(g.liq-g.aplic)} líq.</span>
         </div>
         <svg class="chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>
         <div class="grp-bar"><i style="width:${(g.liq/total*100).toFixed(2)}%"></i></div>
@@ -2039,9 +2197,10 @@ function listaPosicoes(dados){
       <div class="fold"><div class="fold-in"><div class="grp-body">
         <div class="grp-resumo">
           <div><span>Aplicado</span><b class="money">${fmtC(g.aplic)}</b></div>
-          <div><span>Rendimento</span><b class="money" style="color:var(--up)">+${fmtC(g.rend)}</b></div>
+          <div><span>Ganho líquido</span><b class="money" style="color:var(--up)">${assinado(g.liq-g.aplic)}</b></div>
           <div><span>IR + IOF</span><b class="money" style="color:var(--tax)">−${fmtC(g.imp)}</b></div>
         </div>
+        <div class="ganho-bruto-info">Ganho bruto <b class="money">${fmt(g.rend)}</b></div>
         <div class="grp-lista">${itens}</div>
       </div></div></div>
     </div>`;
@@ -3081,7 +3240,7 @@ $('swAnt').onclick = () => {
   ANTECIPA = !ANTECIPA;
   $('swAnt').classList.toggle('on', ANTECIPA);
   cacheB.clear(); salvar(); render(); abrirDados();
-  toast(ANTECIPA ? 'Contando o dia de hoje (estimado)' : 'Igual ao extrato do banco');
+  toast(ANTECIPA ? 'Contando o dia de hoje (estimado)' : 'Considerando apenas dias encerrados');
 };
 $('dSync').onclick = async () => { await puxarNuvem(); await sincronizar(false); abrirDados(); };
 $('dLink').onclick = async () => {
@@ -3580,11 +3739,108 @@ $('diarioMais').onclick = abrirHistorico;
 $('historicoMais').onclick = ()=>{DIARIO_LIMITE+=30; preencherHistorico();};
 $('diaVoltar').onclick = abrirHistorico;
 
+/* Foto local, separada das posições, do backup e da sincronização. */
+const perfilDialog = $('perfilDialog');
+let chaveFotoPerfil = '';
+
+function exibirFotoPerfil(foto){
+  for(const id of ['perfilAvatar','perfilFotoMaior']){
+    const imagem = $(id);
+    imagem.hidden = !foto;
+    imagem.previousElementSibling.toggleAttribute('hidden',!!foto);
+    if(foto) imagem.src = foto;
+    else imagem.removeAttribute('src');
+  }
+  $('perfilRemover').hidden = !foto;
+}
+
+async function carregarFotoPerfil(){
+  try{
+    chaveFotoPerfil = 'finace-foto-perfil-v1:' + await idCarteira();
+    const foto = localStorage.getItem(chaveFotoPerfil);
+    const valida = foto && foto.length < 400000 && /^data:image\/jpeg;base64,[a-z0-9+/=]+$/i.test(foto);
+    exibirFotoPerfil(valida ? foto : '');
+  }catch{
+    exibirFotoPerfil('');
+  }
+}
+
+async function prepararFotoPerfil(arquivo){
+  const formatos = ['image/jpeg','image/png','image/webp','image/heic','image/heif'];
+  if(!formatos.includes(arquivo.type) || !arquivo.size || arquivo.size > 12000000){
+    throw new Error('Escolha uma foto JPEG, PNG, WebP ou HEIC com até 12 MB.');
+  }
+
+  const url = URL.createObjectURL(arquivo);
+  try{
+    const foto = new Image();
+    await new Promise((resolve,reject) => {
+      foto.onload = resolve;
+      foto.onerror = () => reject(new Error('Não consegui abrir a foto. Tente um JPEG ou PNG.'));
+      foto.src = url;
+    });
+    const largura = foto.naturalWidth;
+    const altura = foto.naturalHeight;
+    const lado = Math.min(largura,altura);
+    if(!lado || largura * altura > 36000000){
+      throw new Error('Escolha uma foto menor, de até 36 megapixels.');
+    }
+
+    const tela = document.createElement('canvas');
+    tela.width = tela.height = 256;
+    const ctx = tela.getContext('2d');
+    if(!ctx) throw new Error('Não consegui preparar a foto neste aparelho.');
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0,0,256,256);
+    ctx.drawImage(foto,(largura-lado)/2,(altura-lado)/2,lado,lado,0,0,256,256);
+    return tela.toDataURL('image/jpeg',.84);
+  }finally{
+    URL.revokeObjectURL(url);
+  }
+}
+
+$('btnPerfil').onclick = () => {
+  fecharTudo();
+  $('perfilAviso').textContent = '';
+  perfilDialog.showModal();
+};
+$('perfilEscolher').onclick = () => $('perfilArquivo').click();
+$('perfilArquivo').onchange = async e => {
+  const arquivo = e.target.files[0];
+  e.target.value = '';
+  if(!arquivo) return;
+  const escolher = $('perfilEscolher');
+  const remover = $('perfilRemover');
+  escolher.disabled = remover.disabled = true;
+  try{
+    const foto = await prepararFotoPerfil(arquivo);
+    if(!chaveFotoPerfil) throw new Error('Não consegui salvar a foto neste aparelho.');
+    localStorage.setItem(chaveFotoPerfil,foto);
+    exibirFotoPerfil(foto);
+    $('perfilAviso').textContent = 'Foto salva neste aparelho.';
+  }catch(erro){
+    $('perfilAviso').textContent = erro.name === 'QuotaExceededError'
+      ? 'O armazenamento está cheio. A foto anterior foi preservada.' : erro.message;
+  }finally{
+    escolher.disabled = remover.disabled = false;
+  }
+};
+$('perfilRemover').onclick = () => {
+  try{
+    if(chaveFotoPerfil) localStorage.removeItem(chaveFotoPerfil);
+    exibirFotoPerfil('');
+    $('perfilAviso').textContent = 'Foto removida deste aparelho.';
+  }catch{
+    $('perfilAviso').textContent = 'Não consegui remover a foto neste aparelho.';
+  }
+};
+
 /* ============================================================
    14. BOOT
    ============================================================ */
 (async () => {
   await carregar();                   // 1. último estado salvo no aparelho
+  await carregarFotoPerfil();
   await cacheTaxas(); atualizarCurva();
   if(oculto){ document.body.classList.add('hide'); }
   $('navSelic').textContent = fmtPct(SELIC_HOJE);
