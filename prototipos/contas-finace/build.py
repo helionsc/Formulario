@@ -1,11 +1,15 @@
 """Gera a cópia isolada sem modificar o index publicado."""
 import hashlib
+import argparse
 import json
 import re
 import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--hosted", action="store_true", help="Gera a carteira web com taxas oficiais.")
+hosted = parser.parse_args().hosted
 PROJECT = ROOT.parent.parent
 ASSETS = PROJECT / "github-formulario"
 RELEASE = PROJECT / "previas" / "finace-formas-20261104"
@@ -48,13 +52,18 @@ async function api(caminho, opts={}){
 ''' + html[end:]
 start = html.index("/* cache de taxas compartilhado")
 end = html.index("/* ============================================================\n   7.", start)
-html = html[:start] + html[end:]
+if hosted:
+    html = html[:start] + "async function taxasDaNuvem(){return {n:0};}\nasync function subirTaxas(){}\n" + html[end:]
+else:
+    html = html[:start] + html[end:]
 start = html.index("async function sgs(")
 end = html.index("async function cacheTaxas()", start)
-html = html[:start] + html[end:]
+if not hosted:
+    html = html[:start] + html[end:]
 start = html.index("async function sincronizar(silencioso)")
 end = html.index("function statusTaxas()", start)
-html = html[:start] + '''async function sincronizar(silencioso){
+if not hosted:
+    html = html[:start] + '''async function sincronizar(silencioso){
   const desde=carteira.length?carteira.reduce((d,p)=>p.data<d?p.data:d,hoje()):iso(addD(D(hoje()),-120));
   for(let d=D(desde);iso(d)<hoje();d=addD(d,1))if(util(d)){CDI_MAP[iso(d)]=.05;SEL_MAP[iso(d)]=.0504;}
   const ks=Object.keys(CDI_MAP).sort();CDI_DE=ks[0]||'';CDI_ATE=ks.at(-1)||'';
@@ -64,13 +73,15 @@ html = html[:start] + '''async function sincronizar(silencioso){
   if(!silencioso)toast('Prévia local: taxas fictícias; nenhum banco foi consultado');return true;
 }
 ''' + html[end:]
-html = html.replace("'Salvo na nuvem'", "'Salvo no servidor de teste'")
-html = html.replace('CDI do Banco Central</span>', 'Taxas fictícias da prévia</span>')
+if not hosted:
+    html = html.replace("'Salvo na nuvem'", "'Salvo no servidor de teste'")
+    html = html.replace('CDI do Banco Central</span>', 'Taxas fictícias da prévia</span>')
 html = html.replace("$('dLink').onclick = async () => {\n  const url = location.origin + location.pathname + '#c=' + await idCarteira();\n  try{ await navigator.clipboard.writeText(url); toast('Link copiado — abra nele no outro aparelho'); }\n  catch(e){ prompt('Abra este link no outro aparelho:', url); }\n};", "$('dLink').onclick = () => parent.postMessage({type:'proto:account'},location.origin);")
 html = html.replace('Copiar link para outro aparelho', 'Conta e acesso em outro aparelho')
 html = html.replace('O link da carteira permite acessar os dados em outro aparelho. Compartilhe apenas com quem pode ver sua carteira. O Face ID protege a tela deste aparelho.', 'Para usar em outro aparelho, entre na mesma conta. Para compartilhar a carteira, envie um convite em Conta. Nesta prévia, os dados ficam somente neste computador.')
 html = html.replace('<h3>Dados e backup</h3>', '<h3>Dados e backup</h3><p class="diario-intro">Importe um JSON do app anterior para testar a migração nesta conta. O arquivo original permanece no seu aparelho.</p>')
-html = html.replace('CDI até ${CDI_ATE', 'Taxa fictícia até ${CDI_ATE')
+if not hosted:
+    html = html.replace('CDI até ${CDI_ATE', 'Taxa fictícia até ${CDI_ATE')
 # O snapshot completo é a fonte de dados da prévia. Não escreve na tabela antiga.
 start = html.index('    /* Compatibilidade com a tabela da versão antiga')
 end = html.index('    if(SYNC.dirty)', start)
@@ -152,7 +163,19 @@ html = html.replace('/* ========================================================
 html = html.replace('  /* mantém sempre em dia */', "  parent.postMessage({type:'proto:ready'},location.origin);\n\n  /* mantém sempre em dia */", 1)
 assert 'supabase.co' not in html and 'SB_KEY' not in html
 assert not re.search(r'fetch\([^\n]*https?:', html)
-(WEB / 'app.html').write_text(html)
+if hosted:
+    html = html.replace("fetch('/api/", "fetch('/conta/api/")
+    html = html.replace('<b>PRÉVIA LOCAL</b><br>Dados e taxas fictícios', '<b>FINACE</b><br>Carteira pessoal')
+    html = html.replace('<button id="protoOffline" aria-pressed="false">Simular offline</button>', '')
+    html = html.replace("$('protoOffline').onclick=", "if($('protoOffline'))$('protoOffline').onclick=")
+    html = html.replace('Nesta prévia, os dados ficam somente neste computador.', 'As aplicações ficam vinculadas à sua conta.')
+    html = html.replace(' Para compartilhar a carteira, envie um convite em Conta.', '')
+    html = html.replace('nesta conta de teste', 'nesta conta').replace('desta carteira de teste', 'desta carteira')
+    html = html.replace('para testar a migração nesta conta', 'para transferir suas aplicações para esta conta')
+    html = html.replace('finace-teste:', 'finace-conta:')
+    (WEB / 'app-online.html').write_text(html)
+else:
+    (WEB / 'app.html').write_text(html)
 for asset in ['favicon.svg', 'apple-touch-icon.png']:
     shutil.copyfile(ASSETS / asset, WEB / asset)
 backup = ASSETS / 'backup-teste-ficticio.json'
@@ -165,4 +188,4 @@ if backup.is_file():
     'github_modificado': False,
     'supabase_conectado': False,
 }, indent=2) + '\n')
-print('Cópia isolada gerada em', WEB / 'app.html')
+print('Carteira gerada em', WEB / ('app-online.html' if hosted else 'app.html'))

@@ -37,9 +37,13 @@ function configureAccess(){
   document.querySelector('.testing-card').hidden=!demo();
   $('accessPrivacy').firstChild.textContent=demo()?'Esta demonstração usa contas .test e guarda dados neste computador. ':'A confirmação do e-mail usa o Supabase. As aplicações desta prévia ficam neste computador; use valores fictícios. ';
   if(config.cloud_wallet){
-    $('accessPrivacy').firstChild.textContent='Sua carteira de teste é salva no Supabase e fica vinculada ao seu e-mail. Use valores fictícios. ';
+    $('accessPrivacy').firstChild.textContent=config.production_wallet
+      ? 'A carteira é salva no Supabase e fica vinculada à sua conta. '
+      : 'Sua carteira de teste é salva no Supabase e fica vinculada ao seu e-mail. Use valores fictícios. ';
     $('sharingHelp').closest('.card').hidden=true;
-    $('accountEmail').nextElementSibling.textContent='Entre com o mesmo e-mail em outro navegador da prévia para recuperar a carteira de teste.';
+    $('accountEmail').nextElementSibling.textContent=config.online_wallet
+      ? 'Entre com o mesmo e-mail em outro aparelho para recuperar a sua carteira.'
+      : 'Entre com o mesmo e-mail em outro navegador da prévia para recuperar a carteira de teste.';
   }
   $('inviteEmail').value=demo()?'bruno@finace.test':'';
   $('inviteEmail').placeholder=demo()?'pessoa@finace.test':'pessoa@email.com';
@@ -226,7 +230,7 @@ async function verifyCurrentSession(){
     else if(!next.wallets.some(w=>w.id===wallet)){resetFrame();session=next;wallet=next.wallets[0]?.id;await renderAccount();screen('account');message('accountMessage','O acesso à carteira compartilhada foi removido.');}
   }catch(error){if(error.status===401){clearCache();loginScreen('Sua sessão terminou. Entre novamente.');}}
 }
-setInterval(verifyCurrentSession,15000);
+setInterval(()=>{if(!config.online_wallet)verifyCurrentSession();},15000);
 setInterval(updateResend,1000);
 document.addEventListener('visibilitychange',verifyCurrentSession);
 addEventListener('pageshow',verifyCurrentSession);

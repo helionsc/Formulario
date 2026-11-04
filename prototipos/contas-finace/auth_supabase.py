@@ -100,6 +100,8 @@ class SupabaseAuth:
                 raise AuthError(503, "O envio não foi liberado para este endereço. Confira a configuração de e-mail do Supabase.")
             if path == "/token?grant_type=refresh_token" and e.code in [400, 401, 403, 422]:
                 raise AuthError(401, "Sua sessão terminou. Entre novamente.")
+            if path == "/user" and e.code in [401, 403]:
+                raise AuthError(401, "Sua sessão terminou. Entre novamente.")
             raise AuthError(503, "O serviço de autenticação não conseguiu concluir a solicitação. Tente novamente.")
         except (urllib.error.URLError, TimeoutError, OSError, ValueError):
             raise AuthError(503, "Não foi possível conectar ao serviço de autenticação. Tente novamente.")
