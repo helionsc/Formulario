@@ -1,0 +1,165 @@
+{
+  "v": 2,
+  "carteira": [
+    {
+      "id": "31e16345-3471-4c62-8231-4a717b8d885c",
+      "banco": "Itaú Unibanco",
+      "tipo": "CDB",
+      "index": "cdi",
+      "taxa": 102,
+      "valor": 10000,
+      "data": "2026-10-30"
+    },
+    {
+      "id": "1f34039a-557f-4f34-a1da-943ef98f195f",
+      "banco": "Banco Inter",
+      "tipo": "LCI",
+      "index": "cdi",
+      "taxa": 95,
+      "valor": 8000,
+      "data": "2026-10-30"
+    }
+  ],
+  "diario": {
+    "2026-10-30": {
+      "itens": {
+        "31e16345-3471-4c62-8231-4a717b8d885c": {
+          "banco": "Itaú Unibanco",
+          "centavos": 510,
+          "inicio": 0,
+          "fim": 5.1000000000000005,
+          "liquidoInicio": 0,
+          "liquidoFim": 0.1581000000000005,
+          "ir": 0.04590000000000014,
+          "iof": 4.896,
+          "estimado": false
+        },
+        "1f34039a-557f-4f34-a1da-943ef98f195f": {
+          "banco": "Banco Inter",
+          "centavos": 380,
+          "inicio": 0,
+          "fim": 3.8,
+          "liquidoInicio": 0,
+          "liquidoFim": 3.8,
+          "ir": 0,
+          "iof": 0,
+          "estimado": false
+        }
+      }
+    },
+    "2026-10-31": {
+      "itens": {
+        "31e16345-3471-4c62-8231-4a717b8d885c": {
+          "banco": "Itaú Unibanco",
+          "centavos": 0,
+          "inicio": 5.1000000000000005,
+          "fim": 5.1000000000000005,
+          "liquidoInicio": 0.1581000000000005,
+          "liquidoFim": 0.1581000000000005,
+          "ir": 0,
+          "iof": 0,
+          "estimado": false
+        },
+        "1f34039a-557f-4f34-a1da-943ef98f195f": {
+          "banco": "Banco Inter",
+          "centavos": 0,
+          "inicio": 3.8,
+          "fim": 3.8,
+          "liquidoInicio": 3.8,
+          "liquidoFim": 3.8,
+          "ir": 0,
+          "iof": 0,
+          "estimado": false
+        }
+      }
+    },
+    "2026-11-01": {
+      "itens": {
+        "31e16345-3471-4c62-8231-4a717b8d885c": {
+          "banco": "Itaú Unibanco",
+          "centavos": 0,
+          "inicio": 5.1000000000000005,
+          "fim": 5.1000000000000005,
+          "liquidoInicio": 0.1581000000000005,
+          "liquidoFim": 0.1581000000000005,
+          "ir": 0,
+          "iof": 0,
+          "estimado": false
+        },
+        "1f34039a-557f-4f34-a1da-943ef98f195f": {
+          "banco": "Banco Inter",
+          "centavos": 0,
+          "inicio": 3.8,
+          "fim": 3.8,
+          "liquidoInicio": 3.8,
+          "liquidoFim": 3.8,
+          "ir": 0,
+          "iof": 0,
+          "estimado": false
+        }
+      }
+    },
+    "2026-11-02": {
+      "itens": {
+        "31e16345-3471-4c62-8231-4a717b8d885c": {
+          "banco": "Itaú Unibanco",
+          "centavos": 0,
+          "inicio": 5.1000000000000005,
+          "fim": 5.1000000000000005,
+          "liquidoInicio": 0.1581000000000005,
+          "liquidoFim": 0.1581000000000005,
+          "ir": 0,
+          "iof": 0,
+          "estimado": false
+        },
+        "1f34039a-557f-4f34-a1da-943ef98f195f": {
+          "banco": "Banco Inter",
+          "centavos": 0,
+          "inicio": 3.8,
+          "fim": 3.8,
+          "liquidoInicio": 3.8,
+          "liquidoFim": 3.8,
+          "ir": 0,
+          "iof": 0,
+          "estimado": false
+        }
+      }
+    },
+    "2026-11-03": {
+      "itens": {
+        "31e16345-3471-4c62-8231-4a717b8d885c": {
+          "banco": "Itaú Unibanco",
+          "centavos": 510,
+          "inicio": 5.1000000000000005,
+          "fim": 10.202601000000001,
+          "liquidoInicio": 0.1581000000000005,
+          "liquidoFim": 0.8303676817500008,
+          "ir": 0.19517448825000008,
+          "iof": 4.2351588300000005,
+          "estimado": false
+        },
+        "1f34039a-557f-4f34-a1da-943ef98f195f": {
+          "banco": "Banco Inter",
+          "centavos": 380,
+          "inicio": 3.8,
+          "fim": 7.601805,
+          "liquidoInicio": 3.8,
+          "liquidoFim": 7.601805,
+          "ir": 0,
+          "iof": 0,
+          "estimado": false
+        }
+      }
+    }
+  },
+  "premissas": {
+    "selic12": null,
+    "ipca": 5.02,
+    "atualizado": null
+  },
+  "selic": 14.25,
+  "fonte": "Taxa inicial do arquivo · atualize as taxas",
+  "oculto": false,
+  "antecipa": false,
+  "ts": "2026-11-04"
+}

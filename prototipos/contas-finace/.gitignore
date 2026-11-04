@@ -1,0 +1,7 @@
+dados-locais/
+__pycache__/
+web/app.html
+.env.local
+origem.json
+web/apple-touch-icon.png
+web/favicon.svg

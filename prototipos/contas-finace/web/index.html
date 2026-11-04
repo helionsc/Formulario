@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#eef1f7">
+  <title>Finace · prévia de contas</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/conta.css">
+  <script src="/conta.js" defer></script>
+</head>
+<body>
+<main id="login" class="login" hidden>
+  <section class="welcome" aria-labelledby="welcomeTitle">
+    <div class="brand"><img src="/favicon.svg" alt="" width="42" height="42"><span>Finace</span><span class="tag">PRÉVIA LOCAL</span></div>
+    <div class="intro"><span class="eyebrow">Seu dinheiro. Seu ritmo.</span><h1 id="welcomeTitle">Tudo o que você constrói,<br>em um só lugar.</h1><p>Acompanhe seus investimentos e continue de onde parou, com uma conta só sua.</p></div>
+    <div class="sample" aria-label="Ilustração com valores fictícios">
+      <span>Saldo líquido · exemplo</span><strong>R$ 18.142<span>,38</span></strong><small>Saldo bruto R$ 18.183,20</small>
+      <div class="sample-gain"><i></i> +R$ 6,98 no último dia útil</div>
+      <svg viewBox="0 0 320 80" aria-hidden="true"><path d="M0 72C25 72 23 56 50 58S85 38 115 42S153 30 178 31S220 12 245 16S280 3 320 4"/></svg>
+      <div class="sample-foot"><span>Seus dados separados</span><span>Acesso em outro aparelho</span></div>
+    </div>
+  </section>
+  <section class="access card" aria-labelledby="accessTitle">
+    <span class="step" id="stepLabel">01 / SUA CONTA</span>
+    <h2 id="accessTitle">Entre no seu ritmo.</h2><p id="accessSubtitle">Entre ou crie sua conta confirmando seu e-mail.</p>
+    <form id="emailForm">
+      <label for="email" id="emailLabel">Seu e-mail</label><input type="email" id="email" autocomplete="email" placeholder="seu@email.com" required maxlength="180" aria-describedby="emailHelp">
+      <small id="emailHelp">Enviaremos um código para confirmar que este e-mail é seu.</small>
+      <button class="primary" type="submit">Enviar código <span aria-hidden="true">→</span></button>
+    </form>
+    <form id="codeForm" hidden>
+      <label for="code">Código de confirmação</label><input id="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" placeholder="000000" required class="code">
+      <p id="codeDelivery" class="privacy-note">Confira sua caixa de entrada e a pasta de spam. Digite o código recebido em até 5 minutos.</p>
+      <div class="demo-code" id="demoCodeBox" hidden><span>Caixa de entrada simulada</span><b id="shownCode"></b><button type="button" id="fillCode" class="text-button">Usar código de teste</button><small>Expira em 5 minutos e funciona uma única vez. Na versão final, chega por e-mail.</small></div>
+      <button type="submit" class="primary">Entrar na carteira <span aria-hidden="true">→</span></button>
+      <div class="form-links"><button type="button" id="resend" class="text-button">Novo código</button><button type="button" id="changeEmail" class="text-button">Trocar e-mail</button></div>
+    </form>
+    <p class="message" id="loginMessage" role="status" aria-live="polite"></p>
+    <div class="test-accounts" id="testAccounts" hidden><span>Comece com uma conta fictícia</span><div><button data-email="ana@finace.test">Ana <small>R$ 18 mil aplicados</small></button><button data-email="bruno@finace.test">Bruno <small>R$ 6 mil aplicados</small></button></div><button class="text-button" id="emptyAccount">Criar uma conta de teste vazia</button></div>
+    <p class="privacy-note" id="accessPrivacy">A confirmação do e-mail usa o Supabase. As aplicações desta prévia ficam neste computador; use valores fictícios. <a href="/privacidade.html" target="_blank" rel="noopener">Como funciona</a></p>
+  </section>
+</main>
+
+<main id="account" class="account" hidden>
+  <header class="account-top"><div class="brand"><img src="/favicon.svg" alt="" width="36" height="36"><span>Finace</span></div><button id="backToApp" class="pill">Voltar à carteira <span aria-hidden="true">↗</span></button></header>
+  <div class="account-title"><span class="eyebrow">CONTA E DADOS</span><h1>Sua conta.<br>Do seu jeito.</h1><p>Um acesso para seus aparelhos. Você decide com quem compartilhar.</p><span class="tag">AMBIENTE DE TESTE · SEM CONEXÃO COM O APP PUBLICADO</span></div>
+  <p class="message" id="accountMessage" role="status" aria-live="polite"></p>
+  <div class="account-grid">
+    <section class="card identity"><div class="section-top"><div class="avatar" id="avatar">A</div><span class="small-tag">SESSÃO DE TESTE</span></div><h2 id="accountEmail"></h2><p>Para entrar em outro aparelho na versão final, basta confirmar este mesmo e-mail.</p><button class="secondary" id="logout">Sair desta conta</button></section>
+    <section class="card"><div class="section-label"><span class="section-icon">◉</span><h2>Suas carteiras</h2></div><p>Os dados de cada conta ficam separados. Uma carteira compartilhada aparece somente após aceitar o convite.</p><div id="walletList" class="rows"></div><div id="incomingInvites" class="rows"></div></section>
+    <section class="card"><div class="section-label"><span class="section-icon">↗</span><h2>Compartilhar com alguém</h2></div><p id="sharingHelp">Convide uma conta de teste para acompanhar e editar a carteira selecionada. Você pode remover o acesso depois.</p><form id="inviteForm"><label for="inviteEmail">E-mail de quem vai participar</label><input id="inviteEmail" type="email" value="bruno@finace.test" placeholder="pessoa@finace.test" required maxlength="180"><button class="secondary" type="submit">Criar convite de teste</button></form><div id="sharingList" class="rows"></div></section>
+    <section class="card"><div class="section-label"><span class="section-icon">↓</span><h2>Seus dados acompanham você</h2></div><p>O JSON do app anterior continua funcionando. Revise a importação antes de substituir os dados desta carteira de teste.</p><div class="two-buttons"><button class="secondary" id="openImport">Importar JSON</button><button class="secondary" id="exportBackup">Exportar JSON</button></div><a class="text-link" href="/exemplo-backup.json" download="finace-exemplo-ficticio.json">Baixar um JSON fictício para testar ↗</a><div class="divider"></div><h3>Recuperar uma versão</h3><p>O servidor de teste preserva até 20 versões anteriores. Na produção, também serão necessários backups independentes do banco.</p><div id="versionList" class="rows"></div></section>
+    <section class="card privacy-card"><div class="section-label"><span class="section-icon">◇</span><h2>Privacidade e controle</h2></div><p>Consulte onde os dados desta prévia ficam e o que será necessário antes da publicação.</p><a class="text-link" href="/privacidade.html" target="_blank" rel="noopener">Ler sobre os dados da prévia ↗</a><button id="openDelete" class="danger-link">Excluir conta de teste e seus dados</button></section>
+    <section class="card testing-card"><span class="small-tag">EXPERIMENTE</span><h2>Um teste em poucos passos.</h2><ol><li>Entre como Ana e confira sua carteira.</li><li>Convide Bruno. Saia e entre como ele.</li><li>Aceite o convite e abra a carteira compartilhada.</li><li>Entre como Ana e remova o acesso de Bruno.</li></ol><p>Na carteira, use “Simular offline” para testar uma edição e depois “Reconectar”.</p></section>
+  </div>
+  <footer>Prévia local · e-mails e taxas simulados · <a href="/privacidade.html" target="_blank" rel="noopener">Detalhes do teste</a></footer>
+</main>
+
+<section id="appContainer" hidden><iframe id="appFrame" title="Carteira de investimentos de teste" referrerpolicy="no-referrer"></iframe></section>
+<div id="loading" class="loading" role="status">Preparando sua prévia…</div>
+
+<dialog id="deleteDialog" aria-labelledby="deleteTitle"><form id="deleteForm"><span class="small-tag">CONTROLE DOS SEUS DADOS</span><h2 id="deleteTitle">Excluir conta de teste?</h2><p>Apaga esta conta, suas carteiras próprias, versões anteriores e convites. Participações em carteiras de outras pessoas são removidas; essas carteiras continuam com seus proprietários.</p><p><b>Esta ação afeta somente os dados fictícios da prévia.</b></p><button type="button" id="requestDeleteCode" class="secondary">Confirmar minha identidade</button><div id="deleteVerification" hidden><label for="deleteCode">Código de confirmação</label><input id="deleteCode" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" placeholder="000000"><small id="deleteDemoCode"></small><button type="button" id="verifyDeleteCode" class="secondary">Validar código</button></div><div id="deleteConfirmation" hidden><label for="deleteText">Digite EXCLUIR para confirmar</label><input id="deleteText" autocomplete="off"><button class="danger" type="submit">Excluir conta de teste</button></div><p class="message" id="deleteMessage" role="status"></p><button type="button" id="cancelDelete" class="text-button">Manter minha conta</button></form></dialog>
+<dialog id="restoreDialog" aria-labelledby="restoreTitle"><form method="dialog"><h2 id="restoreTitle">Restaurar esta versão?</h2><p>Os dados da carteira selecionada serão substituídos. O estado atual também será preservado como uma versão anterior.</p><button value="restore" class="primary">Restaurar versão</button><button value="cancel" class="secondary" autofocus>Cancelar</button></form></dialog>
+</body>
+</html>
