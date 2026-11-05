@@ -1176,6 +1176,8 @@ nav .nav-ind::before{
 dialog.proto-modal{border:0;border-radius:28px;padding:26px;width:calc(100% - 32px);max-width:420px;color:var(--ink);box-shadow:0 24px 80px #14213d33}
 dialog.proto-modal::backdrop{background:#14213d66;backdrop-filter:blur(8px)}
 .proto-modal p{font-size:13px;line-height:1.6;color:var(--ink-2);margin:14px 0}.proto-modal h3{font-size:21px}.proto-modal button{width:100%;margin-top:10px}
+.apl-end .resg-atalho{display:inline-block;margin-top:4px;min-height:34px;padding:0 10px;border:1px solid var(--line-2);border-radius:999px;background:var(--surface-2);color:var(--ink);font:inherit;font-size:11px;font-weight:600;cursor:pointer}
+.apl-end .resg-atalho:focus-visible{outline:2px solid var(--marca);outline-offset:2px}
 </style>
 
 
@@ -1422,8 +1424,9 @@ dialog.proto-modal::backdrop{background:#14213d66;backdrop-filter:blur(8px)}
 <div class="sheet arrasta" id="sheetResg" role="dialog" aria-label="Resgatar">
   <div class="grab"></div>
   <button class="fechar" aria-label="Fechar" data-fecha><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
-  <h3>Resgatar</h3>
+  <h3>Registrar resgate</h3>
   <p class="sheet-sub" id="rSub"></p>
+  <p class="diario-intro">Registre uma retirada que você já fez no banco.</p>
   <div class="disp" id="rDisp"></div>
   <div class="f2">
     <div class="f"><label for="rValor">Valor a resgatar (bruto)</label>
@@ -1432,7 +1435,7 @@ dialog.proto-modal::backdrop{background:#14213d66;backdrop-filter:blur(8px)}
       <input type="date" id="rData"></div>
   </div>
   <div class="rchips"><button data-p="0.25">25%</button><button data-p="0.5">50%</button><button data-p="1">Tudo</button></div>
-  <div class="preview" id="rPrev">Informe o valor para ver quanto cai na conta.</div>
+  <div class="preview" id="rPrev">Informe o valor para ver a estimativa líquida.</div>
   <button class="cta" id="btnResg">Registrar resgate</button>
 </div>
 
@@ -2127,7 +2130,8 @@ function listaPosicoes(dados){
           <div class="apl-mid"><b>${p.tipo} · ${rotIdx(p)}</b>
             <span>${sub}</span>${venc||car ? `<span class="tags">${venc}${car}</span>` : ''}</div>
           <div class="apl-end"><b class="money">${fmtC(a.liq)}</b>
-            <span class="money" aria-label="Ganho líquido ${fmt(a.liq-a.aplic)}">${assinado(a.liq-a.aplic)} líq.</span></div>
+            <span class="money" aria-label="Ganho líquido ${fmt(a.liq-a.aplic)}">${assinado(a.liq-a.aplic)} líq.</span>
+            <button type="button" class="resg resg-atalho" data-g="${a.gid}" aria-label="Resgatar ${esc(descProduto(p))}">Resgatar</button></div>
         </div>
         <div class="fold"><div class="fold-in"><div class="apl-det">
           <div class="dl"><span>Saldo bruto</span><b class="money">${fmtC(a.bruto)}</b></div>
@@ -3049,11 +3053,11 @@ function prevResg(){
   $('rDisp').innerHTML = `Saldo fechado para resgate em ${fmtDia(ds)}: <b class="money hideable">${fmt(disp)}</b> bruto`;
   const v = parseFloat($('rValor').value);
   const el = $('rPrev');
-  if(!(v > 0)){ el.textContent = 'Informe o valor para ver quanto cai na conta.'; el.classList.remove('erro'); return; }
+  if(!(v > 0)){ el.textContent = 'Informe o valor para ver a estimativa líquida.'; el.classList.remove('erro'); return; }
   if(v > disp + 0.005){ el.textContent = `O valor passa do disponível (${fmt(disp)}).`; el.classList.add('erro'); return; }
   el.classList.remove('erro');
   const r = planoResgate(gid, ds, v, false);
-  el.innerHTML = `Cai na conta: <b>${fmt(r.liquido)}</b> · IR + IOF retidos <b class="t">${fmt(r.imp)}</b>` +
+  el.innerHTML = `Líquido estimado: <b>${fmt(r.liquido)}</b> · IR + IOF estimados <b class="t">${fmt(r.imp)}</b>` +
     (r.itens.length > 1 ? ` · sai de ${r.itens.length} aportes, do mais antigo para o mais novo` : '');
 }
 ['rValor','rData'].forEach(i => $(i).addEventListener('input', prevResg));
@@ -3074,7 +3078,8 @@ $('btnResg').onclick = () => {
   const valor = (disp - v) < 0.01 ? disp : v;
   const r = planoResgate(gid, ds, valor, true);
   cacheB.clear(); fecharTudo(); render();
-  salvar().then(() => toast(`Resgate de ${fmt(r.bruto)} registrado · ${fmt(r.liquido)} na conta`));
+  salvar().then(ok => toast(ok ? `Resgate de ${fmt(r.bruto)} registrado`
+    : 'Não consegui salvar o resgate neste aparelho. Baixe um backup em Dados.'));
 };
 
 /* ============================================================

@@ -80,6 +80,21 @@ html = html.replace("$('dLink').onclick = async () => {\n  const url = location.
 html = html.replace('Copiar link para outro aparelho', 'Conta e acesso em outro aparelho')
 html = html.replace('O link da carteira permite acessar os dados em outro aparelho. Compartilhe apenas com quem pode ver sua carteira. O Face ID protege a tela deste aparelho.', 'Para usar em outro aparelho, entre na mesma conta. Para compartilhar a carteira, envie um convite em Conta. Nesta prévia, os dados ficam somente neste computador.')
 html = html.replace('<h3>Dados e backup</h3>', '<h3>Dados e backup</h3><p class="diario-intro">Importe um JSON do app anterior para testar a migração nesta conta. O arquivo original permanece no seu aparelho.</p>')
+html = html.replace(
+    '${assinado(a.liq-a.aplic)} líq.</span></div>',
+    '''${assinado(a.liq-a.aplic)} líq.</span>
+            <button type="button" class="resg resg-atalho" data-g="${a.gid}" aria-label="Resgatar ${esc(descProduto(p))}">Resgatar</button></div>''',
+    1,
+)
+html = html.replace('<h3>Resgatar</h3>\n  <p class="sheet-sub" id="rSub"></p>',
+    '<h3>Registrar resgate</h3>\n  <p class="sheet-sub" id="rSub"></p>\n'
+    '  <p class="diario-intro">Registre uma retirada que você já fez no banco.</p>', 1)
+html = html.replace('Informe o valor para ver quanto cai na conta.', 'Informe o valor para ver a estimativa líquida.')
+html = html.replace('Cai na conta: <b>${fmt(r.liquido)}</b> · IR + IOF retidos',
+    'Líquido estimado: <b>${fmt(r.liquido)}</b> · IR + IOF estimados', 1)
+html = html.replace('salvar().then(() => toast(`Resgate de ${fmt(r.bruto)} registrado · ${fmt(r.liquido)} na conta`));',
+    '''salvar().then(ok => toast(ok ? `Resgate de ${fmt(r.bruto)} registrado`
+    : 'Não consegui salvar o resgate neste aparelho. Baixe um backup em Dados.'));''', 1)
 if not hosted:
     html = html.replace('CDI até ${CDI_ATE', 'Taxa fictícia até ${CDI_ATE')
 # O snapshot completo é a fonte de dados da prévia. Não escreve na tabela antiga.
@@ -133,6 +148,8 @@ style = '''
 dialog.proto-modal{border:0;border-radius:28px;padding:26px;width:calc(100% - 32px);max-width:420px;color:var(--ink);box-shadow:0 24px 80px #14213d33}
 dialog.proto-modal::backdrop{background:#14213d66;backdrop-filter:blur(8px)}
 .proto-modal p{font-size:13px;line-height:1.6;color:var(--ink-2);margin:14px 0}.proto-modal h3{font-size:21px}.proto-modal button{width:100%;margin-top:10px}
+.apl-end .resg-atalho{display:inline-block;margin-top:4px;min-height:34px;padding:0 10px;border:1px solid var(--line-2);border-radius:999px;background:var(--surface-2);color:var(--ink);font:inherit;font-size:11px;font-weight:600;cursor:pointer}
+.apl-end .resg-atalho:focus-visible{outline:2px solid var(--marca);outline-offset:2px}
 '''
 html = html.replace('</style>', style + '</style>', 1)
 banner = '''<div class="proto-banner"><span><b>PRÉVIA LOCAL</b><br>Dados e taxas fictícios</span><div class="proto-toolbar"><button id="protoOffline" aria-pressed="false">Simular offline</button><button id="protoConta">Conta</button></div></div>'''
