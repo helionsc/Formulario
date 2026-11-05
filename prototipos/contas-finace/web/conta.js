@@ -47,6 +47,11 @@ function configureAccess(){
   }
   $('inviteEmail').value=demo()?'bruno@finace.test':'';
   $('inviteEmail').placeholder=demo()?'pessoa@finace.test':'pessoa@email.com';
+  $('openDemo').hidden=!demo();
+  $('deleteScope').textContent=demo()
+    ? 'Esta prévia apaga somente a conta fictícia e os dados de teste neste computador.'
+    : 'A exclusão remove sua identidade, a carteira vinculada e as versões anteriores do serviço.';
+  $('previewMode').textContent=demo()?'PRÉVIA LOCAL · DADOS FICTÍCIOS':'CONTA FINACE';
 }
 function screen(name){
   for(const id of ['login','account','appContainer','loading'])$(id).hidden=id!==name;
@@ -172,6 +177,12 @@ $('emptyAccount').onclick=()=>{
   loginScreen();$('email').value='nova-'+crypto.randomUUID().slice(0,6)+'@finace.test';$('email').focus();
   message('loginMessage','Este e-mail fictício vai criar uma carteira vazia. Você poderá importar um JSON depois de entrar.');
 };
+$('openDemo').onclick=()=>action($('openDemo'),'loginMessage',async()=>{
+  const email='ana@finace.test';
+  const result=await api('/api/auth/request',{method:'POST',body:{email}});
+  await api('/api/auth/verify',{method:'POST',body:{challenge:result.challenge,code:result.demo_code}});
+  clearCache();await refreshSession();channel?.postMessage({type:'changed'});showApp();
+});
 $('backToApp').onclick=()=>showApp();
 $('openImport').onclick=()=>showApp('proto:import');
 $('exportBackup').onclick=()=>showApp('proto:backup');
@@ -189,18 +200,24 @@ $('openDelete').onclick=()=>action($('openDelete'),'accountMessage',async()=>{
 });
 $('requestDeleteCode').onclick=()=>action($('requestDeleteCode'),'deleteMessage',async()=>{
   const result=await api('/api/auth/request',{method:'POST',body:{email:session.user.email,purpose:'delete'}});
-  deleteChallenge=result.challenge;$('deleteDemoCode').textContent='Código da caixa de entrada simulada: '+result.demo_code;
+  deleteChallenge=result.challenge;$('deleteCode').value='';
+  $('deleteDemoCode').textContent=demo()&&result.simulated
+    ? 'Código de teste: '+result.demo_code
+    : 'Digite o código enviado ao e-mail da sua conta. A confirmação vale por 5 minutos.';
   $('deleteVerification').hidden=false;$('deleteCode').focus();
 });
 $('verifyDeleteCode').onclick=()=>action($('verifyDeleteCode'),'deleteMessage',async()=>{
-  await api('/api/auth/verify',{method:'POST',body:{challenge:deleteChallenge,code:$('deleteCode').value}});
+  await api('/api/auth/verify',{method:'POST',body:{challenge:deleteChallenge,code:$('deleteCode').value,purpose:'delete'}});
+  $('deleteCode').value='';$('deleteDemoCode').textContent='';
   $('deleteVerification').hidden=true;$('requestDeleteCode').hidden=true;$('deleteConfirmation').hidden=false;$('deleteText').focus();
 });
 $('deleteForm').onsubmit=e=>{e.preventDefault();action(e.submitter,'deleteMessage',async()=>{
   await requireSaved();await api('/api/account/delete',{method:'POST',body:{confirmation:$('deleteText').value}});
-  $('deleteDialog').close();clearCache();channel?.postMessage({type:'changed'});loginScreen('Conta de teste e dados associados excluídos deste servidor local.');
+  $('deleteDialog').close();clearCache();channel?.postMessage({type:'changed'});
+  loginScreen(demo()?'Conta fictícia e dados associados excluídos desta prévia.':'Sua conta e os dados vinculados foram excluídos.');
 });};
 $('cancelDelete').onclick=()=>$('deleteDialog').close();
+$('exportBeforeDelete').onclick=()=>{$('deleteDialog').close();showApp('proto:backup');};
 addEventListener('message',async e=>{
   if(e.origin!==location.origin||e.source!==$('appFrame').contentWindow)return;
   if(e.data?.type==='proto:ready'){

@@ -197,14 +197,15 @@ class Handler(BaseHTTPRequestHandler):
             raise Error(403, "Reabra a página para confirmar sua sessão.")
         return row
 
-    def issue_session(self, db, user, now, tokens=None):
+    def issue_session(self, db, user, now, tokens=None, verified_deletion=False):
         token, csrf = secrets.token_urlsafe(40), secrets.token_urlsafe(32)
         old = http.cookies.SimpleCookie(self.headers.get("Cookie", ""))
         cookie = self.server.cookie_name
         if cookie in old:
             db.execute("DELETE FROM sessions WHERE token=?", (digest(old[cookie].value),))
         session_key = digest(token)
-        db.execute("INSERT INTO sessions VALUES(?,?,?,?,0)", (session_key, user, csrf, now + SESSION_MAX_AGE))
+        db.execute("INSERT INTO sessions VALUES(?,?,?,?,?)", (session_key, user, csrf, now + SESSION_MAX_AGE,
+                                                              now + 300 if verified_deletion else 0))
         if tokens is not None:
             self.server.cloud.remember_session(db, session_key, tokens, now)
         return {"ok": True}, self.session_cookie(token, SESSION_MAX_AGE)
@@ -277,15 +278,21 @@ class Handler(BaseHTTPRequestHandler):
         now = time.time()
         real_auth = self.server.auth_mode == "supabase"
         cloud = self.server.cloud
+        if path in ("/api/account/deletion/request", "/api/account/deletion/verify"):
+            if real_auth:
+                raise Error(503, "Use o ambiente HTTPS configurado para excluir uma conta real.")
+            body["purpose"] = "delete-login"
+            path = "/api/auth/request" if path.endswith("/request") else "/api/auth/verify"
         if path == "/api/config" and self.command == "GET":
             return {"auth_mode": self.server.auth_mode, "cloud_wallet": cloud is not None,
                     "configured": not real_auth or self.server.auth_provider.configured,
                     "otp_digits": 6, "otp_seconds": 300, "resend_seconds": 60 if real_auth else 0,
-                    "account_deletion_available": not real_auth}, {}
+                    "account_deletion_available": not real_auth,
+                    "site": site_information(), "preview": True}, {}
         if path == "/api/auth/request" and self.command == "POST":
             email = self.email(body.get("email"))
             purpose = body.get("purpose", "login")
-            if purpose not in ["login", "delete"]:
+            if purpose not in ["login", "delete", "delete-login"]:
                 raise Error(400, "Finalidade inválida.")
             if purpose == "delete" and self.session(db)["email"] != email:
                 raise Error(403, "Confirme o e-mail da sua própria conta.")
@@ -356,8 +363,10 @@ class Handler(BaseHTTPRequestHandler):
                 result, headers = {"verified_for_deletion": True}, {}
             else:
                 user = db.execute("SELECT id FROM users WHERE email=?", (row["email"],)).fetchone()
+                if row["purpose"] == "delete-login" and not user:
+                    raise Error(400, "Confira o e-mail e o código da conta que deseja excluir.")
                 user = user[0] if user else self.server.store.make_user(db, row["email"])
-                result, headers = self.issue_session(db, user, now)
+                result, headers = self.issue_session(db, user, now, verified_deletion=row["purpose"] == "delete-login")
             db.execute("UPDATE challenges SET used=1 WHERE id=?", (challenge,))
             return result, headers
 
@@ -466,7 +475,7 @@ class Handler(BaseHTTPRequestHandler):
             boot = json.dumps({"user": session["user"], "email": session["email"], "wallet": wallet["id"], "owner_email": owner_email, "role": "owner" if wallet["owner"] == session["user"] else "editor", "csrf": session["csrf"]}, ensure_ascii=True).replace("<", "\\u003c")
             self.send(200, html.replace("/*__PROTOTYPE_BOOT__*/null", boot).encode(), {"Content-Type": "text/html; charset=utf-8"}, raw=True)
             return None, None
-        files = {"/": "index.html", "/index.html": "index.html", "/conta.js": "conta.js", "/conta.css": "conta.css", "/favicon.svg": "favicon.svg", "/apple-touch-icon.png": "apple-touch-icon.png", "/privacidade.html": "privacidade.html", "/exemplo-backup.json": "exemplo-backup.json"}
+        files = {"/": "index.html", "/index.html": "index.html", "/conta.js": "conta.js", "/conta.css": "conta.css", "/favicon.svg": "favicon.svg", "/apple-touch-icon.png": "apple-touch-icon.png", "/privacidade.html": "privacidade.html", "/exemplo-backup.json": "exemplo-backup.json", "/suporte.html": "suporte.html", "/politica.js": "politica.js", "/publicacao.html": "publicacao.html", "/excluir-conta.html": "excluir-conta.html", "/excluir-conta.js": "excluir-conta.js"}
         if path not in files:
             raise Error(404, "Página não encontrada.")
         file = ROOT / "web" / files[path]
@@ -530,6 +539,11 @@ class Handler(BaseHTTPRequestHandler):
         prefs = valid_prefs(body.get("prefs"))
         saved = cloud.save(cloud.access(db, session), owner, revision[3:], prefs)
         return ([{"id": owner, "prefs": prefs}] if saved else []), {}
+
+
+def site_information():
+    site = json.loads((ROOT / "site.json").read_text())
+    return {key: site.get(key) for key in ("responsible", "support_email", "version", "privacy_updated")}
 
 
 def create_server(port=8768, db_path=None, seed=True, auth_mode="supabase", auth_provider=None, cloud_wallet=False):

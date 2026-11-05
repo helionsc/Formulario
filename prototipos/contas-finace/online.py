@@ -11,15 +11,19 @@ from urllib.parse import parse_qs, urlsplit
 
 from auth_supabase import AuthError, SupabaseAuth, normalize_email
 from carteira_nuvem import CloudWallet
-from server import Error, Handler, ROOT, valid_prefs
+from account_deletion import AccountDeletion, PROOF_SECONDS
+from server import Error, Handler, ROOT, valid_prefs, site_information
 
 REFRESH_MAX_AGE = 30 * 86400
 ACCESS_COOKIE = "__Secure-finace-access"
 REFRESH_COOKIE = "__Secure-finace-refresh"
+DELETION_COOKIE = "__Secure-finace-delete"
 PREFIX = "/conta/"
 FILES = {"": "index.html", "app.html": "app-online.html", "conta.js": "conta.js",
          "conta.css": "conta.css", "privacidade.html": "privacidade.html",
-         "exemplo-backup.json": "exemplo-backup.json", "favicon.svg": "favicon.svg"}
+         "exemplo-backup.json": "exemplo-backup.json", "favicon.svg": "favicon.svg",
+         "suporte.html": "suporte.html", "politica.js": "politica.js",
+         "excluir-conta.html": "excluir-conta.html", "excluir-conta.js": "excluir-conta.js"}
 
 
 def session_cookie(name, value, age):
@@ -82,6 +86,7 @@ class OnlineHandler(Handler):
             ):
                 raise Error(403, "Origem da solicitação recusada.")
             self.auth = online_auth()
+            self.deletion = AccountDeletion(self.auth)
             self.cloud = CloudWallet(self.auth)
             environment = os.environ.get("VERCEL_ENV")
             if environment not in ("preview", "production"):
@@ -117,6 +122,7 @@ class OnlineHandler(Handler):
 
     def set_session(self, tokens):
         access, refresh, age = tokens
+        self.session_refresh = refresh
         self.cookies_to_set = [session_cookie(ACCESS_COOKIE, access, age),
                                session_cookie(REFRESH_COOKIE, refresh, REFRESH_MAX_AGE)]
 
@@ -146,13 +152,49 @@ class OnlineHandler(Handler):
         if path == "api/config" and self.command == "GET":
             return {"auth_mode": "supabase", "configured": self.auth.configured,
                     "cloud_wallet": True, "online_wallet": True, "production_wallet": self.production, "resend_seconds": 60,
-                    "account_deletion_available": False}
+                    "account_deletion_available": self.deletion.available,
+                    "site": site_information(), "preview": not self.production}
+        if path == "api/account/deletion/request" and self.command == "POST":
+            self.deletion.require_available()
+            email = normalize_email(body.get("email"))
+            self.auth.request_code(email, create_user=False)
+            self.cookies_to_set.append(session_cookie(DELETION_COOKIE, "", 0))
+            return {"challenge": email, "simulated": False}
+        if path == "api/account/deletion/verify" and self.command == "POST":
+            self.deletion.require_available()
+            identity = self.auth.verify_code(normalize_email(body.get("challenge")), body.get("code"), include_tokens=True)
+            self.set_session(identity["tokens"])
+            proof = self.deletion.proof(identity["id"], identity["tokens"][1])
+            self.cookies_to_set.append(session_cookie(DELETION_COOKIE, proof, PROOF_SECONDS))
+            return {"verified_for_deletion": True}
         if path == "api/auth/request" and self.command == "POST":
+            if body.get("purpose") == "delete":
+                self.deletion.require_available()
+                user, _ = self.get_session()
+                if normalize_email(body.get("email")) != user["email"]:
+                    raise Error(403, "Confirme o e-mail da sua própria conta.")
+                self.auth.request_code(user["email"], create_user=False)
+                self.cookies_to_set.append(session_cookie(DELETION_COOKIE, "", 0))
+                return {"challenge": user["email"], "simulated": False}
+            if body.get("purpose", "login") != "login":
+                raise Error(400, "Finalidade inválida.")
             email = normalize_email(body.get("email"))
             self.auth.request_code(email)
             # O Supabase associa o código ao e-mail e limita o reenvio.
             return {"challenge": email, "simulated": False}
         if path == "api/auth/verify" and self.command == "POST":
+            if body.get("purpose") == "delete":
+                self.deletion.require_available()
+                current, _ = self.get_session()
+                identity = self.auth.verify_code(normalize_email(body.get("challenge")), body.get("code"))
+                if identity["id"] != current["id"] or identity["email"] != current["email"]:
+                    raise Error(403, "A confirmação não corresponde à sua conta.")
+                refresh = getattr(self, "session_refresh", None) or SimpleCookie(self.headers.get("Cookie", ""))[REFRESH_COOKIE].value
+                proof = self.deletion.proof(current["id"], refresh)
+                self.cookies_to_set.append(session_cookie(DELETION_COOKIE, proof, PROOF_SECONDS))
+                return {"verified_for_deletion": True}
+            if body.get("purpose", "login") != "login":
+                raise Error(400, "Finalidade inválida.")
             identity = self.auth.verify_code(normalize_email(body.get("challenge")), body.get("code"), include_tokens=True)
             self.cloud.ensure_wallet(identity["tokens"][0], initial_wallet())
             self.set_session(identity["tokens"])
@@ -168,9 +210,22 @@ class OnlineHandler(Handler):
                 if error.status != 401:
                     raise
             self.cookies_to_set = [session_cookie(ACCESS_COOKIE, "", 0), session_cookie(REFRESH_COOKIE, "", 0)]
+            self.cookies_to_set.append(session_cookie(DELETION_COOKIE, "", 0))
             return {"ok": True}
         user, token = self.get_session()
         owner, email = str(uuid.UUID(user["id"])), user["email"]
+        if path == "api/account/delete" and self.command == "POST":
+            cookies = SimpleCookie(self.headers.get("Cookie", ""))
+            if body.get("confirmation") != "EXCLUIR":
+                raise Error(403, "Digite EXCLUIR para confirmar.")
+            proof = cookies.get(DELETION_COOKIE)
+            self.deletion.validate(proof.value if proof else "", owner, cookies[REFRESH_COOKIE].value)
+            # A exclusão de auth.users remove a carteira e suas versões pelas FKs em cascata.
+            self.auth.call("/logout?scope=global", {}, token)
+            self.deletion.delete(owner)
+            self.cookies_to_set = [session_cookie(name, "", 0)
+                                   for name in (ACCESS_COOKIE, REFRESH_COOKIE, DELETION_COOKIE)]
+            return {"ok": True}
         if path == "api/session" and self.command == "GET":
             return {"user": {"id": owner, "email": email}, "invites": [], "wallets": [
                 {"id": owner, "name": "Minha carteira", "owner_email": email, "role": "owner"}
@@ -230,7 +285,9 @@ class OnlineHandler(Handler):
             else:
                 contents = re.sub(r'''(["'])/(api/|app\.html|conta\.css|conta\.js|privacidade\.html|exemplo-backup\.json|favicon\.svg)''',
                                   r"\1/conta/\2", contents)
-                contents = contents.replace('href="/" class="text-link"', 'href="/conta/" class="text-link"')
+                contents = re.sub(r'''(["'])/(suporte\.html|publicacao\.html|politica\.js|excluir-conta\.html|excluir-conta\.js)''',
+                                  r"\1/conta/\2", contents)
+                contents = contents.replace('href="/"', 'href="/conta/"')
                 contents = contents.replace("finace-teste:", "finace-conta:")
                 if path == "":
                     contents = contents.replace("PRÉVIA LOCAL", "CONTA FINACE" if self.production else "PRÉVIA ONLINE")

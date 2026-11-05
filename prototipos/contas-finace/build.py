@@ -25,6 +25,7 @@ source_sha256 = hashlib.sha256(source.encode()).hexdigest()
 if source_sha256 != PUBLISHED_SHA256:
     raise ValueError("O index da carteira deve corresponder à versão publicada.")
 html = source.replace("localStorage", "protoStorage").replace("sessionStorage", "protoSessionStorage")
+html = html.replace("Apagar tudo", "Limpar carteira")
 html = re.sub(r'<link[^>]+(?:fonts\.googleapis|fonts\.gstatic|rel="manifest")[^>]*>\s*', '', html)
 html = re.sub(r"const SB_URL\s*=.*?\nconst KEY_ID\s*=.*?;", "", html, flags=re.S)
 start = html.index("async function idCarteira()")

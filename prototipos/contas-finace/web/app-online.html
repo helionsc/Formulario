@@ -1473,7 +1473,7 @@ dialog.proto-modal::backdrop{background:#14213d66;backdrop-filter:blur(8px)}
   <button class="cta ghost" id="dLink">Conta e acesso em outro aparelho</button>
   <button class="cta ghost" id="dRec">Baixar cópia anterior</button>
   <p class="diario-rodape">Para usar em outro aparelho, entre na mesma conta. As aplicações ficam vinculadas à sua conta.</p>
-  <button class="cta danger" id="dWipe">Apagar tudo</button>
+  <button class="cta danger" id="dWipe">Limpar carteira</button>
 </div>
 <div class="sheet diario-sheet" id="sheetDia" role="dialog" aria-modal="true" aria-labelledby="diaTitulo">
   <div class="grab"></div><button class="fechar" aria-label="Fechar detalhes" data-fecha><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
@@ -3224,10 +3224,10 @@ $('dExp').onclick = () => { exportar(); fecharDados(); };
 $('dImp').onclick = () => $('fileBk').click();
 $('dWipe').onclick = () => {
   if(!carteira.length){ toast('Não há nada para apagar'); return; }
-  $('dWipe').textContent === 'Apagar tudo'
+  $('dWipe').textContent === 'Limpar carteira'
     ? ($('dWipe').textContent = 'Toque de novo para confirmar')
     : (guardarRecuperacao('Antes de apagar a carteira'), carteira = [], DIARIO = {}, SYNC.replaceHistory = true, DIARIO_FINGERPRINT = '', render(), salvar(), fecharDados(),
-       $('dWipe').textContent = 'Apagar tudo', toast('Carteira apagada'));
+       $('dWipe').textContent = 'Limpar carteira', toast('Carteira apagada'));
 };
 $('fileBk').onchange = e => { if(e.target.files[0]) importar(e.target.files[0]); e.target.value=''; fecharDados(); };
 addEventListener('orientationchange', () => setTimeout(()=>{ graficoHist(calcular()); graficoFut(calcular()); }, 350));

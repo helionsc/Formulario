@@ -1,12 +1,21 @@
 {
   "functions": {
     "api/finace-conta.py": {
-      "includeFiles": "{index.html,favicon.svg,prototipos/contas-finace/*.py,prototipos/contas-finace/web/**}"
+      "includeFiles": "{index.html,favicon.svg,prototipos/contas-finace/*.py,prototipos/contas-finace/site.json,prototipos/contas-finace/web/**}"
     }
   },
   "rewrites": [
-    { "source": "/conta", "destination": "/api/finace-conta" },
-    { "source": "/conta/", "destination": "/api/finace-conta" },
-    { "source": "/conta/:finace_route*", "destination": "/api/finace-conta?finace_route=:finace_route*" }
+    {
+      "source": "/conta",
+      "destination": "/api/finace-conta"
+    },
+    {
+      "source": "/conta/",
+      "destination": "/api/finace-conta"
+    },
+    {
+      "source": "/conta/:finace_route*",
+      "destination": "/api/finace-conta?finace_route=:finace_route*"
+    }
   ]
 }
