@@ -1,5 +1,6 @@
 {
   "buildCommand": "python3 prototipos/contas-finace/verificar_exclusao_real.py",
+  "outputDirectory": ".",
   "functions": {
     "api/finace-conta.py": {
       "includeFiles": "{index.html,favicon.svg,prototipos/contas-finace/*.py,prototipos/contas-finace/site.json,prototipos/contas-finace/web/**}"
